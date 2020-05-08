@@ -1,0 +1,298 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScraperView", "UScraper\ScraperView.csproj", "{1207C11F-9882-44A3-8A62-6205BE5CE341}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITResources", "ITResources\ITResources.csproj", "{C8F97591-92C9-4125-AA3C-551BAFA34C66}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{BD03B448-0C75-4763-87BF-1DF5EA36D1FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "View", "View", "{FD1BC19D-90D4-4D3D-8FE1-1C7E98C6AA02}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logic", "Logic", "{A64F2AAF-1516-4755-8D71-C5AFE2E0621B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITLogic", "ITLogic\ITLogic.csproj", "{74FE32A2-0FFD-4524-9FB0-4863EDEA7A45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScraperContracts", "UScraperContracts\ScraperContracts.csproj", "{CEB1341D-0E72-492D-AEE2-DD388A5238B2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScraperPresenter", "UScraperPresenter\ScraperPresenter.csproj", "{297D17BE-8D44-4441-96FA-832C8A780E47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdaterContracts", "UpdaterContracts\UpdaterContracts.csproj", "{423B0A26-3553-4346-8500-66B84D8CAF61}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdaterPresenter", "UpdaterPresenter\UpdaterPresenter.csproj", "{C8DB97C7-2631-4C24-9E55-5AB7A2CC94E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UpdaterView", "Updater\UpdaterView.csproj", "{4CA120EC-BB62-4149-972B-F6C283E311E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Updater", "Updater", "{4E14DACF-1664-4F3F-AB81-0417D9687E61}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scraper", "Scraper", "{EEAE2006-E508-4522-A263-3518C826F39F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataAccess", "DataAccess", "{8C3CC8BD-BAE3-46DE-90B7-5F7D02F7B9F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLL", "BLL\BLL.csproj", "{DA4F0DD1-F6EB-4953-92DC-0D4BA05579D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2BB2BB26-9735-49FC-86A3-E429CC2F8EAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITExceptions", "ITExceptions\ITExceptions.csproj", "{5C96EB5E-0B8C-4FA4-AC20-8C82419CC3E5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Service", "Service", "{A519B942-74C2-4B24-AB2C-9B1238CEA43B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITService", "ITService\ITService.csproj", "{88052E62-0C9E-4743-B2F4-3A4E477824A9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Registrator", "Registrator", "{CE62675C-0BBB-426D-A9E9-6E573E241EC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegistratorView", "RegistratorView\RegistratorView.csproj", "{DAB7D662-10B6-4F21-B45A-16256841C776}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BackEnd", "BackEnd", "{5FAE741B-8789-4219-BA53-8FCB69FB17B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackEndView", "ITBackEnd\Umbrella\BackEndView.csproj", "{E2E2E3FA-4F3A-4E08-9606-BA9552264672}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{AD72C9D1-0B8D-474A-A5C4-D0FD66DD5085}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITApi", "ITApi\ITApi.csproj", "{4677CBC2-EBB7-4872-B6D3-A38C8D45A665}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackEndViewTest", "BackEndViewTest\BackEndViewTest.csproj", "{85557116-A3FC-4BC9-8126-9D708956EFEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITReconciliatorServiceTest", "ITReconciliatorServiceTest\ITReconciliatorServiceTest.csproj", "{9B6B02ED-2BAC-4CEB-A156-C687B29604AB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AEServicios", "AEServicios", "{D4203EE9-2894-482A-9F53-2373648A242B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CobroDiario", "CobroDiario\CobroDiario.csproj", "{215419D1-7BD0-43C7-ABFF-9852D5FCEA37}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITReconciliatorService", "ITReconciliatorService\ITReconciliatorService.csproj", "{E01A4C4D-8948-494B-91DA-76FA5DAFFA02}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PaymentRequest", "PaymentRequest", "{061EACE9-9847-4A10-8B8D-A8E5407FC0B7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bennigton", "ITBackEnd\PaymentRequest\Bennigton.csproj", "{2880E731-DE6E-4706-B867-05F5A1E4AAA4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITCSScraper", "ITCSScraper\ITCSScraper.csproj", "{DF7EBCB6-7B18-4EE4-A684-AC75761BDF2E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{82076147-BC7C-42A7-853C-B8E2C07C39D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITChargeAccountScraperService", "ITChargeAccountScraperService\ITChargeAccountScraperService.csproj", "{4CBAB7CF-6F40-455C-BA6A-40D8FD95DFC9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1207C11F-9882-44A3-8A62-6205BE5CE341}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1207C11F-9882-44A3-8A62-6205BE5CE341}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1207C11F-9882-44A3-8A62-6205BE5CE341}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1207C11F-9882-44A3-8A62-6205BE5CE341}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8F97591-92C9-4125-AA3C-551BAFA34C66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8F97591-92C9-4125-AA3C-551BAFA34C66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8F97591-92C9-4125-AA3C-551BAFA34C66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8F97591-92C9-4125-AA3C-551BAFA34C66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74FE32A2-0FFD-4524-9FB0-4863EDEA7A45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74FE32A2-0FFD-4524-9FB0-4863EDEA7A45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74FE32A2-0FFD-4524-9FB0-4863EDEA7A45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74FE32A2-0FFD-4524-9FB0-4863EDEA7A45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEB1341D-0E72-492D-AEE2-DD388A5238B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEB1341D-0E72-492D-AEE2-DD388A5238B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEB1341D-0E72-492D-AEE2-DD388A5238B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEB1341D-0E72-492D-AEE2-DD388A5238B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{297D17BE-8D44-4441-96FA-832C8A780E47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{297D17BE-8D44-4441-96FA-832C8A780E47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{297D17BE-8D44-4441-96FA-832C8A780E47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{297D17BE-8D44-4441-96FA-832C8A780E47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{423B0A26-3553-4346-8500-66B84D8CAF61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{423B0A26-3553-4346-8500-66B84D8CAF61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{423B0A26-3553-4346-8500-66B84D8CAF61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{423B0A26-3553-4346-8500-66B84D8CAF61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8DB97C7-2631-4C24-9E55-5AB7A2CC94E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8DB97C7-2631-4C24-9E55-5AB7A2CC94E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8DB97C7-2631-4C24-9E55-5AB7A2CC94E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8DB97C7-2631-4C24-9E55-5AB7A2CC94E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CA120EC-BB62-4149-972B-F6C283E311E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CA120EC-BB62-4149-972B-F6C283E311E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CA120EC-BB62-4149-972B-F6C283E311E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CA120EC-BB62-4149-972B-F6C283E311E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA4F0DD1-F6EB-4953-92DC-0D4BA05579D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA4F0DD1-F6EB-4953-92DC-0D4BA05579D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA4F0DD1-F6EB-4953-92DC-0D4BA05579D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA4F0DD1-F6EB-4953-92DC-0D4BA05579D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5C96EB5E-0B8C-4FA4-AC20-8C82419CC3E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5C96EB5E-0B8C-4FA4-AC20-8C82419CC3E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5C96EB5E-0B8C-4FA4-AC20-8C82419CC3E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5C96EB5E-0B8C-4FA4-AC20-8C82419CC3E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88052E62-0C9E-4743-B2F4-3A4E477824A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88052E62-0C9E-4743-B2F4-3A4E477824A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88052E62-0C9E-4743-B2F4-3A4E477824A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88052E62-0C9E-4743-B2F4-3A4E477824A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAB7D662-10B6-4F21-B45A-16256841C776}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAB7D662-10B6-4F21-B45A-16256841C776}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAB7D662-10B6-4F21-B45A-16256841C776}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAB7D662-10B6-4F21-B45A-16256841C776}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2E2E3FA-4F3A-4E08-9606-BA9552264672}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2E2E3FA-4F3A-4E08-9606-BA9552264672}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2E2E3FA-4F3A-4E08-9606-BA9552264672}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2E2E3FA-4F3A-4E08-9606-BA9552264672}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4677CBC2-EBB7-4872-B6D3-A38C8D45A665}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4677CBC2-EBB7-4872-B6D3-A38C8D45A665}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4677CBC2-EBB7-4872-B6D3-A38C8D45A665}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4677CBC2-EBB7-4872-B6D3-A38C8D45A665}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85557116-A3FC-4BC9-8126-9D708956EFEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85557116-A3FC-4BC9-8126-9D708956EFEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85557116-A3FC-4BC9-8126-9D708956EFEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85557116-A3FC-4BC9-8126-9D708956EFEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B6B02ED-2BAC-4CEB-A156-C687B29604AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B6B02ED-2BAC-4CEB-A156-C687B29604AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B6B02ED-2BAC-4CEB-A156-C687B29604AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B6B02ED-2BAC-4CEB-A156-C687B29604AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{215419D1-7BD0-43C7-ABFF-9852D5FCEA37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{215419D1-7BD0-43C7-ABFF-9852D5FCEA37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{215419D1-7BD0-43C7-ABFF-9852D5FCEA37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{215419D1-7BD0-43C7-ABFF-9852D5FCEA37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E01A4C4D-8948-494B-91DA-76FA5DAFFA02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E01A4C4D-8948-494B-91DA-76FA5DAFFA02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E01A4C4D-8948-494B-91DA-76FA5DAFFA02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E01A4C4D-8948-494B-91DA-76FA5DAFFA02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2880E731-DE6E-4706-B867-05F5A1E4AAA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2880E731-DE6E-4706-B867-05F5A1E4AAA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2880E731-DE6E-4706-B867-05F5A1E4AAA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2880E731-DE6E-4706-B867-05F5A1E4AAA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF7EBCB6-7B18-4EE4-A684-AC75761BDF2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF7EBCB6-7B18-4EE4-A684-AC75761BDF2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF7EBCB6-7B18-4EE4-A684-AC75761BDF2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF7EBCB6-7B18-4EE4-A684-AC75761BDF2E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82076147-BC7C-42A7-853C-B8E2C07C39D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82076147-BC7C-42A7-853C-B8E2C07C39D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82076147-BC7C-42A7-853C-B8E2C07C39D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82076147-BC7C-42A7-853C-B8E2C07C39D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CBAB7CF-6F40-455C-BA6A-40D8FD95DFC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CBAB7CF-6F40-455C-BA6A-40D8FD95DFC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CBAB7CF-6F40-455C-BA6A-40D8FD95DFC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CBAB7CF-6F40-455C-BA6A-40D8FD95DFC9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1207C11F-9882-44A3-8A62-6205BE5CE341} = {EEAE2006-E508-4522-A263-3518C826F39F}
+		{C8F97591-92C9-4125-AA3C-551BAFA34C66} = {BD03B448-0C75-4763-87BF-1DF5EA36D1FB}
+		{74FE32A2-0FFD-4524-9FB0-4863EDEA7A45} = {A64F2AAF-1516-4755-8D71-C5AFE2E0621B}
+		{CEB1341D-0E72-492D-AEE2-DD388A5238B2} = {EEAE2006-E508-4522-A263-3518C826F39F}
+		{297D17BE-8D44-4441-96FA-832C8A780E47} = {EEAE2006-E508-4522-A263-3518C826F39F}
+		{423B0A26-3553-4346-8500-66B84D8CAF61} = {4E14DACF-1664-4F3F-AB81-0417D9687E61}
+		{C8DB97C7-2631-4C24-9E55-5AB7A2CC94E7} = {4E14DACF-1664-4F3F-AB81-0417D9687E61}
+		{4CA120EC-BB62-4149-972B-F6C283E311E6} = {4E14DACF-1664-4F3F-AB81-0417D9687E61}
+		{4E14DACF-1664-4F3F-AB81-0417D9687E61} = {FD1BC19D-90D4-4D3D-8FE1-1C7E98C6AA02}
+		{EEAE2006-E508-4522-A263-3518C826F39F} = {FD1BC19D-90D4-4D3D-8FE1-1C7E98C6AA02}
+		{DA4F0DD1-F6EB-4953-92DC-0D4BA05579D9} = {A64F2AAF-1516-4755-8D71-C5AFE2E0621B}
+		{5C96EB5E-0B8C-4FA4-AC20-8C82419CC3E5} = {A64F2AAF-1516-4755-8D71-C5AFE2E0621B}
+		{88052E62-0C9E-4743-B2F4-3A4E477824A9} = {A519B942-74C2-4B24-AB2C-9B1238CEA43B}
+		{CE62675C-0BBB-426D-A9E9-6E573E241EC5} = {FD1BC19D-90D4-4D3D-8FE1-1C7E98C6AA02}
+		{DAB7D662-10B6-4F21-B45A-16256841C776} = {CE62675C-0BBB-426D-A9E9-6E573E241EC5}
+		{5FAE741B-8789-4219-BA53-8FCB69FB17B3} = {FD1BC19D-90D4-4D3D-8FE1-1C7E98C6AA02}
+		{E2E2E3FA-4F3A-4E08-9606-BA9552264672} = {5FAE741B-8789-4219-BA53-8FCB69FB17B3}
+		{4677CBC2-EBB7-4872-B6D3-A38C8D45A665} = {AD72C9D1-0B8D-474A-A5C4-D0FD66DD5085}
+		{85557116-A3FC-4BC9-8126-9D708956EFEC} = {2BB2BB26-9735-49FC-86A3-E429CC2F8EAA}
+		{9B6B02ED-2BAC-4CEB-A156-C687B29604AB} = {2BB2BB26-9735-49FC-86A3-E429CC2F8EAA}
+		{D4203EE9-2894-482A-9F53-2373648A242B} = {FD1BC19D-90D4-4D3D-8FE1-1C7E98C6AA02}
+		{215419D1-7BD0-43C7-ABFF-9852D5FCEA37} = {D4203EE9-2894-482A-9F53-2373648A242B}
+		{E01A4C4D-8948-494B-91DA-76FA5DAFFA02} = {A519B942-74C2-4B24-AB2C-9B1238CEA43B}
+		{061EACE9-9847-4A10-8B8D-A8E5407FC0B7} = {FD1BC19D-90D4-4D3D-8FE1-1C7E98C6AA02}
+		{2880E731-DE6E-4706-B867-05F5A1E4AAA4} = {061EACE9-9847-4A10-8B8D-A8E5407FC0B7}
+		{DF7EBCB6-7B18-4EE4-A684-AC75761BDF2E} = {EEAE2006-E508-4522-A263-3518C826F39F}
+		{82076147-BC7C-42A7-853C-B8E2C07C39D6} = {8C3CC8BD-BAE3-46DE-90B7-5F7D02F7B9F5}
+		{4CBAB7CF-6F40-455C-BA6A-40D8FD95DFC9} = {A519B942-74C2-4B24-AB2C-9B1238CEA43B}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 23
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://instapago.visualstudio.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = ITResources\\ITResources.csproj
+		SccProjectTopLevelParentUniqueName1 = InstaTransfer.sln
+		SccProjectName1 = ITResources
+		SccLocalPath1 = ITResources
+		SccProjectUniqueName2 = ITLogic\\ITLogic.csproj
+		SccProjectTopLevelParentUniqueName2 = InstaTransfer.sln
+		SccProjectName2 = ITLogic
+		SccLocalPath2 = ITLogic
+		SccProjectUniqueName3 = UpdaterContracts\\UpdaterContracts.csproj
+		SccProjectTopLevelParentUniqueName3 = InstaTransfer.sln
+		SccProjectName3 = UpdaterContracts
+		SccLocalPath3 = UpdaterContracts
+		SccProjectUniqueName4 = UpdaterPresenter\\UpdaterPresenter.csproj
+		SccProjectTopLevelParentUniqueName4 = InstaTransfer.sln
+		SccProjectName4 = UpdaterPresenter
+		SccLocalPath4 = UpdaterPresenter
+		SccProjectUniqueName5 = UScraperContracts\\ScraperContracts.csproj
+		SccProjectTopLevelParentUniqueName5 = InstaTransfer.sln
+		SccProjectName5 = UScraperContracts
+		SccLocalPath5 = UScraperContracts
+		SccProjectUniqueName6 = UScraperPresenter\\ScraperPresenter.csproj
+		SccProjectTopLevelParentUniqueName6 = InstaTransfer.sln
+		SccProjectName6 = UScraperPresenter
+		SccLocalPath6 = UScraperPresenter
+		SccProjectUniqueName7 = UScraper\\ScraperView.csproj
+		SccProjectTopLevelParentUniqueName7 = InstaTransfer.sln
+		SccProjectName7 = UScraper
+		SccLocalPath7 = UScraper
+		SccProjectUniqueName8 = Updater\\UpdaterView.csproj
+		SccProjectTopLevelParentUniqueName8 = InstaTransfer.sln
+		SccProjectName8 = Updater
+		SccLocalPath8 = Updater
+		SccProjectUniqueName9 = BLL\\BLL.csproj
+		SccProjectTopLevelParentUniqueName9 = InstaTransfer.sln
+		SccProjectName9 = BLL
+		SccLocalPath9 = BLL
+		SccProjectUniqueName10 = ITExceptions\\ITExceptions.csproj
+		SccProjectTopLevelParentUniqueName10 = InstaTransfer.sln
+		SccProjectName10 = ITExceptions
+		SccLocalPath10 = ITExceptions
+		SccProjectUniqueName11 = ITService\\ITService.csproj
+		SccProjectTopLevelParentUniqueName11 = InstaTransfer.sln
+		SccProjectName11 = ITService
+		SccLocalPath11 = ITService
+		SccProjectUniqueName12 = RegistratorView\\RegistratorView.csproj
+		SccProjectTopLevelParentUniqueName12 = InstaTransfer.sln
+		SccProjectName12 = RegistratorView
+		SccLocalPath12 = RegistratorView
+		SccProjectUniqueName13 = ITBackEnd\\Umbrella\\BackEndView.csproj
+		SccProjectTopLevelParentUniqueName13 = InstaTransfer.sln
+		SccProjectName13 = ITBackEnd/Umbrella
+		SccLocalPath13 = ITBackEnd\\Umbrella
+		SccProjectUniqueName14 = ITApi\\ITApi.csproj
+		SccProjectTopLevelParentUniqueName14 = InstaTransfer.sln
+		SccProjectName14 = ITApi
+		SccLocalPath14 = ITApi
+		SccProjectUniqueName15 = BackEndViewTest\\BackEndViewTest.csproj
+		SccProjectTopLevelParentUniqueName15 = InstaTransfer.sln
+		SccProjectName15 = BackEndViewTest
+		SccLocalPath15 = BackEndViewTest
+		SccProjectUniqueName16 = ITReconciliatorServiceTest\\ITReconciliatorServiceTest.csproj
+		SccProjectTopLevelParentUniqueName16 = InstaTransfer.sln
+		SccProjectName16 = ITReconciliatorServiceTest
+		SccLocalPath16 = ITReconciliatorServiceTest
+		SccProjectUniqueName17 = CobroDiario\\CobroDiario.csproj
+		SccProjectTopLevelParentUniqueName17 = InstaTransfer.sln
+		SccProjectName17 = CobroDiario
+		SccLocalPath17 = CobroDiario
+		SccProjectUniqueName18 = ITReconciliatorService\\ITReconciliatorService.csproj
+		SccProjectTopLevelParentUniqueName18 = InstaTransfer.sln
+		SccProjectName18 = ITReconciliatorService
+		SccLocalPath18 = ITReconciliatorService
+		SccProjectUniqueName19 = ITBackEnd\\PaymentRequest\\Bennigton.csproj
+		SccProjectTopLevelParentUniqueName19 = InstaTransfer.sln
+		SccProjectName19 = ITBackEnd/PaymentRequest
+		SccLocalPath19 = ITBackEnd\\PaymentRequest
+		SccProjectUniqueName20 = ITCSScraper\\ITCSScraper.csproj
+		SccProjectTopLevelParentUniqueName20 = InstaTransfer.sln
+		SccProjectName20 = ITCSScraper
+		SccLocalPath20 = ITCSScraper
+		SccProjectUniqueName21 = DataAccess\\DataAccess.csproj
+		SccProjectTopLevelParentUniqueName21 = InstaTransfer.sln
+		SccProjectName21 = DataAccess
+		SccLocalPath21 = DataAccess
+		SccProjectUniqueName22 = ITChargeAccountScraperService\\ITChargeAccountScraperService.csproj
+		SccProjectTopLevelParentUniqueName22 = InstaTransfer.sln
+		SccProjectName22 = ITChargeAccountScraperService
+		SccLocalPath22 = ITChargeAccountScraperService
+	EndGlobalSection
+EndGlobal

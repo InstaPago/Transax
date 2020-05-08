@@ -1,0 +1,235 @@
+﻿@{
+    //keys definidas en el webconfig
+    var AppSettings = System.Configuration.ConfigurationManager.AppSettings;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="descripcion">
+    <meta name="author" content="legendsoft">
+
+
+    <link rel="shortcut icon" href="@Url.Content("~/Content/images/favicon.ico")">
+
+    <title>@ViewBag.Title</title>
+
+    <!-- Plugins  -->
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/datatablesjs")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundle/common")
+    @Scripts.Render("~/bundles/scripts")
+    @*<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">*@
+    @Styles.Render("~/Content/custombox")
+    @Styles.Render("~/Content/datatablescss")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/css/fileinput.css" rel="stylesheet" />
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    @RenderSection("contents", false)
+
+</head>
+
+
+<body class="widescreen @*pace-done*@ fixed-left-void">
+    <style>
+    </style>
+    <!-- Begin page -->
+    <div id="wrapper" class="enlarged forced">
+
+        <!-- Top Bar Start -->
+        @Html.Partial("_TopBar")
+        <!-- Top Bar End -->
+        <!-- ========== Left Sidebar Start ========== -->
+        @Html.Partial("_LeftSideBar")
+        <!-- Left Sidebar End -->
+        <!-- ============================================================== -->
+        <!-- Content -->
+        <!-- ============================================================== -->
+        <div class="content-page">
+            <!-- Start content -->
+            <div class="content">
+                <div class="container">
+                    @RenderBody()
+                    <div id="loading" style="display:none;">
+
+                    </div>
+                    <div id="loader" style="display:none;">
+
+                    </div>
+                </div>
+                <!-- end container -->
+            </div>
+            <!-- end content -->
+
+            <footer class="footer text-right">
+                @DateTime.Now.ToString("yyyy") © @AppSettings["projectName"].
+            </footer>
+
+        </div>
+        <!-- End Content -->
+        <!-- ============================================================== -->
+        <!-- Right side bar -->
+        <!-- ============================================================== -->
+        @Html.Partial("_RightSideBar")
+        <!-- End Right side bar -->
+
+
+    </div>
+    <!-- END wrapper -->
+
+
+    <script>
+        var resizefunc = [];
+    </script>
+
+
+
+
+
+    <script type="text/javascript">
+
+        // Verifica la sesion para ejecutar el callback o devolver al login
+        function checkSession(callback) {
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("CheckSession", "Account")"
+            }).done(function (r) {
+                if (r) {
+                    callback();
+                }
+                else {
+                    window.location.href = "@Url.Action("Login", "Account")";
+                }
+            })
+        }
+
+        // Show/Hide Loader
+        function ShowLoader() {
+            $("#loader").fadeIn('500');
+            $("#loading").fadeIn('500');
+        }
+        function HideLoader() {
+            $("#loader").fadeOut('500');
+            $("#loading").fadeOut('500');
+        }
+
+        // Show/Hide Sidebar
+        function ShowSidebar() {
+            $("#wrapper").addClass('right-bar-enabled');
+        }
+        function HideSidebar() {
+            $("#wrapper").removeClass('right-bar-enabled');
+        }
+
+        jQuery(document).ready(function ($) {
+            //$(".side-menu").hide();
+            paceOptions = {
+                ajax: true
+            };
+            @*al hacer click fuera del sidebar, el mismo se cierra *@
+            $(document).on("click", function (e) {
+                var sidebar = $("#rsidebar");
+                if (!sidebar.is(e.target) && sidebar.has(e.target).length === 0) {
+                    $("#wrapper").removeClass('right-bar-enabled');
+                }
+                e.stopPropagation();
+            });
+
+
+            //$(document).on('click', '.button-menu-mobile', function () {
+            //    if ($(".side-menu").is(':visible'))
+            //        $(".side-menu").hide();
+            //    else
+            //        $(".side-menu").show();
+            //});
+        });
+
+    </script>
+    <script>
+        $(document).ready(function () {
+
+            moment.locale('es-VE');
+
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": false,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "2000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            }
+        });
+
+
+
+
+        (function ($) {
+
+            'use strict';
+
+            function initNavbar() {
+
+                $('.navbar-toggle').on('click', function (event) {
+                    $(this).toggleClass('open');
+                    $('#navigation').slideToggle(400);
+                });
+
+                $('.navigation-menu>li').slice(-1).addClass('last-elements');
+
+                $('.navigation-menu li.has-submenu a[href="#"]').on('click', function (e) {
+                    if ($(window).width() < 992) {
+                        e.preventDefault();
+                        $(this).parent('li').toggleClass('open').find('.submenu:first').toggleClass('open');
+                    }
+                });
+            }
+
+            // === following js will activate the menu in left side bar based on url ====
+            function initNavbarMenuActive() {
+                $(".navigation-menu a").each(function () {
+                    if (this.href == window.location.href) {
+                        $(this).parent().addClass("active"); // add active to li of the current link
+                        $(this).parent().parent().parent().addClass("active"); // add active class to an anchor
+                        $(this).parent().parent().parent().parent().parent().addClass("active"); // add active class to an anchor
+                    }
+                });
+            }
+
+            function init() {
+                initNavbar();
+                initNavbarMenuActive();
+            }
+
+            init();
+
+        })(jQuery)
+
+    </script>
+
+    
+
+    @*<script src="@Url.Content("~/Scripts/datatables.init.js")"></script>*@
+
+    @RenderSection("scripts", required: false)
+</body>
+
+
+
+</html>

@@ -1,0 +1,87 @@
+﻿
+@model List<InstaTransfer.DataAccess.PaymentRequest>
+@using InstaTransfer.ITResources.Constants
+@{
+    ViewBag.Title = "Solicitudes de Pagos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<InstaTransfer.DataAccess.PaymentRequestStatus> statusList = ViewBag.statusList;
+}
+<!-- #region Page Title -->
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new PaymentRequest.Models.PageTitle { title = ViewBag.Title }); }
+<!-- #endregion -->
+<div class="row">
+
+    <div class="col-sm-12">
+        <div class="card-box table-responsive">
+            <div class="row">
+                <div class="col-xs-10">
+                    <h4 class="header-title">Listado de Solicitudes</h4>
+                </div>
+            </div>
+            <p class="text-muted font-13 m-b-30">
+                Detalle de las solicitudes registradas en el sistema.
+            </p>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="toolbar">
+                        <select id="filterRoles" class="form-control">
+                            <option value="">Todas</option>
+                            @if (statusList.Count > 0)
+                            {
+                                foreach (var status in statusList)
+                                {
+                                    <text>
+                                        <option value="@status.PRDescription.ToString().Trim()">@status.PRDescription.ToString().Trim()</option>
+                                    </text>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            @{Html.RenderPartial("_PaymentRequestsTable", Model); }
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <!--Bootstrap Touchspin-->
+    <script src="@Url.Content("~/plugins/bootstrap-toushspin/dist/jquery.bootstrap-touchspin.min.js")"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            // Filtro por estado
+            var oTable = $('#paymentrequests-table').DataTable();
+            $('#filterRoles').change(function () {
+                var val = $(this).val();
+                oTable.search('');
+                oTable.column(4).search(val).draw();
+            });
+
+            // Crear Solicitud
+            $(".createRequest").on("click", function (e) {
+                ShowLoader();
+                e.preventDefault();
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("RequestPayment", "PaymentRequest")"
+                }).done(function (response) {
+                    Pace.stop();
+                    $("#rightsidebar-title").html("Crear Solicitud");
+                    $("#rsidebar").html(response);
+                    $('#wrapper').toggleClass('right-bar-enabled');
+                    HideLoader();
+                }).fail(function (response) {
+                    HideLoader();
+                });
+            });    
+
+            // Tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+
+}

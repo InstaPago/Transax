@@ -1,0 +1,163 @@
+﻿@model InstaTransfer.DataAccess.EndUser
+
+<style>
+    /*workaround*/
+
+
+    .intl-tel-input .flag-container {
+        z-index: 4;
+    }
+
+    .input-group .intl-tel-input .form-control {
+        border-top-left-radius: 4px;
+        border-top-right-radius: 0;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 0;
+    }
+
+    .intl-tel-input {
+        width: 100%;
+    }
+</style>
+
+<div class="row">
+
+    <div class="clearfix"></div>
+
+    <form role="form" id="userform" novalidate data-parsley-validate>
+
+        @Html.AntiForgeryToken()
+        <div class="col-xs-12 visible-xs text-center">
+            <h3>Datos</h3>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="rif">Nombre</label>
+                <input type="text" value="@Model.Name" id="nombre" name="@Html.NameFor(m=> m.Name)" class="form-control" required data-parsley-maxlength="30" data-parsley-trigger="focusout focusin input change">
+            </div>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="rif">Apellido</label>
+                <input type="text" value="@Model.LastName" id="apellido" name="@Html.NameFor(m=> m.LastName)" class="form-control" required data-parsley-maxlength="30" data-parsley-trigger = "focusout focusin input change">
+            </div>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="contactemail">Correo Electrónico</label>
+                <input type="email" value="@Model.AspNetUser.Email" id="email" class="form-control" required data-parsley-maxlength="50" data-parsley-type="email" data-parsley-trigger = "focusout focusin input change">
+            </div>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="phone">Teléfono</label>
+                <input type="tel" value="@Model.Phone.Trim()" id="phone" name="@Html.NameFor(m=> m.Phone)" class="form-control" data-parsley-maxlength="20" required data-parsley-intl-tel-no data-parsley-trigger = "focusout focusin input change" >
+            </div>
+        </div>
+        @*<div class="col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="contraseña">Contraseña</label>
+                    <input type="password" value="@Model.Password.Trim()" id="contraseña" name="@Html.NameFor(m=> m.Password)" class="form-control">
+                </div>
+            </div>
+            <div class="col-sm-6 col-xs-12">
+                <div class="form-group">
+                    <label for="confirmarcontraseña">Confirmar Contraseña</label>
+                    <input type="password" value="@Model.ConfirmPassword.Trim()" id="confirmarcontraseña" name="@Html.NameFor(m=> m.ConfirmPassword)" class="form-control">
+                </div>
+            </div>*@
+        <div class="col-xs-12">
+            <button id="modify-user-data" class="btn btn-primary waves-effect waves-light w-md" type="button">
+                Guardar
+                <i class="md md-save"></i>
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Parsley JS -->
+<script type="text/javascript" src="~/plugins/parsleyjs/dist/parsley.min.js"></script>
+<script src="~/plugins/parsleyjs/dist/i18n/es.js"></script>
+
+<script type="text/javascript">
+
+    function modifyUser() {
+        ShowLoader();
+        var model = {
+            Name: $("#nombre").val(),
+            LastName: $("#apellido").val(),
+            Email: $("#email").val(),
+            Phone: $("#phone").val(),
+            //Password: $("#contraseña").val(),
+            //ConfirmPassword: $("#confirmarcontraseña").val()
+        };
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("ModifyUser", "Profile")",
+            data: { __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').attr('value'), model: model },
+            })
+    .done(function (r) {
+        HideLoader();
+        if (r.success) {
+            toastr.success(r.message, 'Éxito!');
+            profilePanelInit();
+        } else {
+            toastr.error(r.message, 'Error!');
+        }
+    });
+    HideLoader();
+    }
+
+    $(document).ready(function () {
+
+
+
+        // International Telephone Input
+        var telInput = $("#phone");
+
+        // initialise plugin
+        telInput.intlTelInput({
+            nationalMode: true,
+            onlyCountries: ["ve"],
+            allowDropdown: false,
+            formatOnDisplay: false,
+            utilsScript: "@Url.Content("~/plugins/intl-tel-input/utils.js")"
+        });
+        // Establecemos el numero y pais desde el modelo
+        telInput.intlTelInput("setCountry", "ve");
+        telInput.intlTelInput("setNumber", "@Model.Phone");
+
+        // Parsley
+        var formInstance = $('#userform').parsley();
+
+        window.Parsley.addValidator('intlTelNo', {
+            requirementType: 'integer',
+            validateNumber: (val, requirement, options) => {
+                return $(options.element).intlTelInput("isValidNumber");
+            },
+            messages: {
+                es: 'Número de teléfono inválido.'
+            }
+        });
+
+        // Deshabilitar submit
+        $('#modify-user-data').prop('disabled', true);
+
+        // Activar boton submit
+        $(":input").on("keyup change autocompletechange", function () {
+            if (formInstance.isValid()) {
+                $('#modify-user-data').prop('disabled', false);
+            } else {
+                $('#modify-user-data').prop('disabled', 'disabled');
+            }
+        });
+
+        // Modificacion de datos de usuario
+        $('#modify-user-data').click(function () {
+            checkSession(function () {
+                modifyUser();
+            });
+        });
+
+    });
+</script>

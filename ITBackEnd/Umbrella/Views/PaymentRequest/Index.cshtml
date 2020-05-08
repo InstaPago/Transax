@@ -1,0 +1,105 @@
+﻿
+@model List<InstaTransfer.DataAccess.PaymentRequest>
+@using InstaTransfer.ITResources.Constants
+@{
+    ViewBag.Title = "Solicitudes de Pagos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<InstaTransfer.DataAccess.PaymentRequestStatus> statusList = ViewBag.statusList;
+}
+<!-- #region Page Title -->
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = ViewBag.Title }); }
+<!-- #endregion -->
+<div class="row">
+
+    <div class="col-sm-12">
+        <div class="card-box table-responsive">
+            <div class="row">
+                <div class="col-xs-10">
+                    <h4 class="header-title">Listado de Solicitudes</h4>
+                </div>
+                @if (User.IsInRole(UserRoleConstant.CommerceAdmin) || (User.IsInRole(UserRoleConstant.CommerceUser)))
+                {
+                    <div class="col-xs-2 text-right">
+                        <a href="#" class="btn waves-effect waves-light btn-primary m-b-5 createRequest">
+                            Solicitar Pago &nbsp; <span><i class="md md-send"></i></span>
+                        </a>
+                    </div>
+                }
+            </div>
+            <p class="text-muted font-13 m-b-30">
+                Detalle de las solicitudes registradas en el sistema.
+            </p>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="toolbar">
+                        <select id="filterRoles" class="form-control">
+                            <option value="">Todas</option>
+                            @if (statusList.Count > 0)
+                            {
+                                foreach (var status in statusList)
+                                {
+                                    <text>
+                                        <option value="@status.Description.ToString().Trim()">@status.Description.ToString().Trim()</option>
+                                    </text>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            @{Html.RenderPartial("_PaymentRequestsTable", Model); }
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <!--Garlic JS-->
+    <script src="~/plugins/garlicjs/garlic.min.js"></script>
+    <!--International Telephone Input-->
+    <link href="~/Content/css/intlTelInput.css" rel="stylesheet" />
+    <script src="@Url.Content("~/Content/js/intlTelInput.js")"></script>
+
+    <!--Bootstrap Touchspin-->
+    <script src="@Url.Content("~/plugins/bootstrap-toushspin/dist/jquery.bootstrap-touchspin.min.js")"></script>
+
+    <script type="text/javascript">
+
+        function requestPayment() {
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("RequestPayment", "PaymentRequest")"
+            }).done(function (response) {
+                Pace.stop();
+                $("#rightsidebar-title").html("Crear Solicitud");
+                $("#rsidebar").html(response);
+                $('#wrapper').toggleClass('right-bar-enabled');
+                HideLoader();
+            })
+        }
+
+        $(document).ready(function () {
+
+            // Filtro por estado
+            var Table = $('#PaymentRequests-table').DataTable();
+            $('#filterRoles').change(function () {
+                var val = $(this).val();
+                Table.search('');
+                Table.column(8).search(val).draw();
+            });
+
+            // Crear Solicitud
+            $(".createRequest").on("click", function (e) {
+                ShowLoader();
+                e.preventDefault();
+                // Verificamos la sesion y llamamos a la funcion para mostrar el formulario de solicitud
+                checkSession(requestPayment);
+            });
+
+
+            // Tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+
+}

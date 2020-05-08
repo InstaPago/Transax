@@ -1,0 +1,86 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="InstaTransfer.DataAccess.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="InstaTransfer_DevelopmentConnectionString" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;Data Source=LEGENDSERVERII;Initial Catalog=InstaTransfer_Development;Persist Security Info=True;User ID=sa&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">Data Source=LEGENDSERVERII;Initial Catalog=InstaTransfer_Development;Persist Security Info=True;User ID=sa</Value>
+    </Setting>
+    <Setting Name="ITConnectionString" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;Data Source=LEGENDSERVERII;Initial Catalog=InstaTransfer_Development;Persist Security Info=True;User ID=sa;Password=legendsoft$$11&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">Data Source=LEGENDSERVERII;Initial Catalog=InstaTransfer_Development;Persist Security Info=True;User ID=sa;Password=legendsoft$$11</Value>
+    </Setting>
+    <Setting Name="InstaTransfer_DevelopmentConnectionString1" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;Data Source=PC-J2PB;Initial Catalog=InstaTransfer_Development;Integrated Security=True&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">Data Source=PC-J2PB;Initial Catalog=InstaTransfer_Development;Integrated Security=True</Value>
+    </Setting>
+    <Setting Name="InstaTransfer_SourceConnectionString" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;Data Source=LEGENDSERVERII;Initial Catalog=InstaTransfer_Source;Persist Security Info=True;User ID=sa;Password=legendsoft$$11&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">Data Source=LEGENDSERVERII;Initial Catalog=InstaTransfer_Source;Persist Security Info=True;User ID=sa;Password=legendsoft$$11</Value>
+    </Setting>
+    <Setting Name="InstaTransfer_DevelopmentConnectionString2" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;Data Source=legendserverii;Initial Catalog=InstaTransfer_Development;User ID=sa;Password=legendsoft$$11&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">Data Source=legendserverii;Initial Catalog=InstaTransfer_Development;User ID=sa;Password=legendsoft$$11</Value>
+    </Setting>
+    <Setting Name="InstaTransfer_DevelopmentConnectionString3" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;Data Source=localhost\SQLEXPRESS;Initial Catalog=InstaTransfer_Development;User ID=sa;Password=MAMALOnojoda$$11&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">Data Source=localhost\SQLEXPRESS;Initial Catalog=InstaTransfer_Development;User ID=sa;Password=MAMALOnojoda$$11</Value>
+    </Setting>
+    <Setting Name="InstaTransfer_DevelopmentConnectionString4" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;Data Source=localhost\SQLEXPRESS;Initial Catalog=InstaTransfer_Development;Persist Security Info=True;User ID=sa;Password=MAMALOnojoda$$11&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">Data Source=localhost\SQLEXPRESS;Initial Catalog=InstaTransfer_Development;Persist Security Info=True;User ID=sa;Password=MAMALOnojoda$$11</Value>
+    </Setting>
+    <Setting Name="InstaTransfer_DevelopmentConnectionString5" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;Data Source=localhost\sqlexpress;Initial Catalog=InstaTransfer_Development;User ID=sa;Password=MAMALOnojoda$$11&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">Data Source=localhost\sqlexpress;Initial Catalog=InstaTransfer_Development;User ID=sa;Password=MAMALOnojoda$$11</Value>
+    </Setting>
+    <Setting Name="InstaTransferConnectionString" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;Data Source=localhost\SQLEXPRESS;Initial Catalog=InstaTransfer;Persist Security Info=True;User ID=sa;Password=MAMALOnojoda$$11&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">Data Source=localhost\SQLEXPRESS;Initial Catalog=InstaTransfer;Persist Security Info=True;User ID=sa;Password=MAMALOnojoda$$11</Value>
+    </Setting>
+    <Setting Name="InstaTransfer_SourceConnectionString1" Type="(Connection string)" Scope="Application">
+      <DesignTimeValue Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
+&lt;SerializableConnectionString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
+  &lt;ConnectionString&gt;Data Source=108.168.173.11;Initial Catalog=InstaTransfer_Source;Persist Security Info=True;User ID=sa;Password=^x2@sg`]RR(S`&amp;amp;bs&lt;/ConnectionString&gt;
+  &lt;ProviderName&gt;System.Data.SqlClient&lt;/ProviderName&gt;
+&lt;/SerializableConnectionString&gt;</DesignTimeValue>
+      <Value Profile="(Default)">Data Source=108.168.173.11;Initial Catalog=InstaTransfer_Source;Persist Security Info=True;User ID=sa;Password=^x2@sg`]RR(S`&amp;bs</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

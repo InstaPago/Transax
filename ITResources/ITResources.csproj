@@ -1,0 +1,433 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C8F97591-92C9-4125-AA3C-551BAFA34C66}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>InstaTransfer.ITResources</RootNamespace>
+    <AssemblyName>ITResources</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="FiddlerCore">
+      <HintPath>..\..\..\..\..\Desktop\FiddlerCoreAPI\FiddlerCore.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Bennington\BenningtonErrors.Designer.cs">
+      <DependentUpon>BenningtonErrors.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Bennington\BenningtonResources.Designer.cs">
+      <DependentUpon>BenningtonResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="BackEnd\BackEndErrors.Designer.cs">
+      <DependentUpon>BackEndErrors.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="BackEnd\BackEndResources.Designer.cs">
+      <DependentUpon>BackEndResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Api\ApiResources.Designer.cs">
+      <DependentUpon>ApiResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Api\ApiErrors.Designer.cs">
+      <DependentUpon>ApiErrors.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Constants\ScraperBanescoPEConstant.cs" />
+    <Compile Include="Constants\UserRoleConstant.cs" />
+    <Compile Include="Constants\BanescOnlineErrorConstant.cs" />
+    <Compile Include="Enums\DateTypeEnum.cs" />
+    <Compile Include="Enums\UserRoleEnum.cs" />
+    <Compile Include="Enums\BankEnum.cs" />
+    <Compile Include="Enums\StatusEnum.cs" />
+    <Compile Include="Enums\TypeEnum.cs" />
+    <Compile Include="General\GeneralErrors.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GeneralErrors.resx</DependentUpon>
+    </Compile>
+    <Compile Include="General\GeneralResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GeneralResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Global\BackendGlobals.cs" />
+    <Compile Include="Properties\Settings1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Scraper\ScraperBanesco2\ScraperBanesco2Errors.Designer.cs">
+      <DependentUpon>ScraperBanesco2Errors.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Scraper\ScraperBanesco2\ScraperBanesco2Resources.Designer.cs">
+      <DependentUpon>ScraperBanesco2Resources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Scraper\ScraperBanescoPE\ScraperBanescoPEErrors.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ScraperBanescoPEErrors.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Scraper\ScraperBanescoPE\ScraperBanescoPEResources1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ScraperBanescoPEResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Scraper\ScraperErrors.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ScraperErrors.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Scraper\ScraperResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ScraperResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service\Reconciliator\ReconciliatorServiceResources.Designer.cs">
+      <DependentUpon>ReconciliatorServiceResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Service\Reconciliator\ReconciliatorServiceErrors.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ReconciliatorServiceErrors.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Service\ScraperPE\ScraperPEServiceResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ScraperPEServiceResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Updater\UpdaterErrors.Designer.cs">
+      <DependentUpon>UpdaterErrors.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Updater\UpdaterResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>UpdaterResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Scraper\ScraperProvincial\ScraperProvincialErrors.Designer.cs">
+      <DependentUpon>ScraperProvincialErrors.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Scraper\ScraperProvincial\ScraperProvincialResources.Designer.cs">
+      <DependentUpon>ScraperProvincialResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Scraper\ScraperBanesco\ScraperBanescoErrors.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ScraperBanescoErrors.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Scraper\ScraperBanesco\ScraperBanescoResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ScraperBanescoResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Bennington\BenningtonErrors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>BenningtonErrors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Bennington\BenningtonResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>BenningtonResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BackEnd\BackEndErrors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>BackEndErrors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BackEnd\BackEndResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>BackEndResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Api\ApiResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ApiResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Api\ApiErrors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ApiErrors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="General\GeneralErrors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>GeneralErrors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="General\GeneralResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>GeneralResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scraper\ScraperBanesco2\ScraperBanesco2Errors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ScraperBanesco2Errors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scraper\ScraperBanesco2\ScraperBanesco2Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ScraperBanesco2Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scraper\ScraperBanescoPE\ScraperBanescoPEErrors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ScraperBanescoPEErrors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scraper\ScraperBanescoPE\ScraperBanescoPEResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ScraperBanescoPEResources1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scraper\ScraperErrors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ScraperErrors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scraper\ScraperResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ScraperResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Service\Reconciliator\ReconciliatorServiceResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ReconciliatorServiceResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Service\Reconciliator\ReconciliatorServiceErrors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ReconciliatorServiceErrors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Service\ScraperPE\ScraperPEServiceResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ScraperPEServiceResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Updater\UpdaterErrors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>UpdaterErrors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Updater\UpdaterResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>UpdaterResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scraper\ScraperProvincial\ScraperProvincialErrors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ScraperProvincialErrors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scraper\ScraperProvincial\ScraperProvincialResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ScraperProvincialResources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scraper\ScraperBanesco\ScraperBanescoErrors.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>ScraperBanescoErrors.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Scraper\ScraperBanesco\ScraperBanescoResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>ScraperBanescoResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Library\intl-tel-input\.github\CONTRIBUTING.md" />
+    <None Include="Library\intl-tel-input\.github\ISSUE_TEMPLATE.md" />
+    <None Include="Library\intl-tel-input\.gitignore" />
+    <None Include="Library\intl-tel-input\.travis.yml" />
+    <None Include="Library\intl-tel-input\bower.json" />
+    <None Include="Library\intl-tel-input\CHANGELOG.md" />
+    <None Include="Library\intl-tel-input\composer.json" />
+    <None Include="Library\intl-tel-input\examples\template.html.ejs" />
+    <None Include="Library\intl-tel-input\grunt\tmpl\sprite.scss.mustache" />
+    <None Include="Library\intl-tel-input\intl-tel-input.jquery.json" />
+    <None Include="Library\intl-tel-input\LICENSE" />
+    <None Include="Library\intl-tel-input\package.json" />
+    <None Include="Library\intl-tel-input\README.md" />
+    <None Include="Library\intl-tel-input\src\css\demo.scss" />
+    <None Include="Library\intl-tel-input\src\css\intlTelInput.scss" />
+    <None Include="Library\intl-tel-input\src\css\sprite%402x.scss" />
+    <None Include="Library\intl-tel-input\src\css\sprite.scss" />
+    <None Include="Library\intl-tel-input\src\js\intlTelInput.js.ejs" />
+    <None Include="Library\intl-tel-input\src\js\wrapper.js.ejs" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings1.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="DataAccess\JobUnlockUser.sql" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Library\FiddlerCoreAPI\BCMakeCert.dll" />
+    <Content Include="Library\FiddlerCoreAPI\CertMaker.dll" />
+    <Content Include="Library\FiddlerCoreAPI\DotNet3Dot5\BCMakeCert.dll" />
+    <Content Include="Library\FiddlerCoreAPI\DotNet3Dot5\CertMaker.dll" />
+    <Content Include="Library\FiddlerCoreAPI\DotNet3Dot5\EQATEC.Analytics.Monitor.dll" />
+    <Content Include="Library\FiddlerCoreAPI\DotNet3Dot5\FiddlerCore3dot5.dll" />
+    <Content Include="Library\FiddlerCoreAPI\DotNet3Dot5\FiddlerCore3dot5.pdb" />
+    <Content Include="Library\FiddlerCoreAPI\DotNet3Dot5\FiddlerCore3dot5.XML" />
+    <Content Include="Library\FiddlerCoreAPI\DotNet4\BasicFormatsForCore.dll" />
+    <Content Include="Library\FiddlerCoreAPI\DotNet4\BCMakeCert.dll" />
+    <Content Include="Library\FiddlerCoreAPI\DotNet4\CertMaker.dll" />
+    <Content Include="Library\FiddlerCoreAPI\DotNet4\EQATEC.Analytics.Monitor.dll" />
+    <Content Include="Library\FiddlerCoreAPI\DotNet4\FiddlerCore4.dll" />
+    <Content Include="Library\FiddlerCoreAPI\DotNet4\FiddlerCore4.pdb" />
+    <Content Include="Library\FiddlerCoreAPI\DotNet4\FiddlerCore4.XML" />
+    <Content Include="Library\FiddlerCoreAPI\EQATEC.Analytics.Monitor.dll" />
+    <Content Include="Library\FiddlerCoreAPI\FiddlerCore.dll" />
+    <Content Include="Library\FiddlerCoreAPI\FiddlerCore.pdb" />
+    <Content Include="Library\FiddlerCoreAPI\FiddlerCore.XML" />
+    <Content Include="Library\FiddlerCoreAPI\LicenseForFreeAndInternalusageFiddlerCore.txt" />
+    <Content Include="Library\FiddlerCoreAPI\makecert.exe" />
+    <Content Include="Library\FiddlerCoreAPI\notices.txt" />
+    <Content Include="Library\FiddlerCoreAPI\uninst.exe" />
+    <Content Include="Library\intl-tel-input\build\css\demo.css" />
+    <Content Include="Library\intl-tel-input\build\css\intlTelInput.css" />
+    <Content Include="Library\intl-tel-input\build\img\flags%402x.png" />
+    <Content Include="Library\intl-tel-input\build\img\flags.png" />
+    <Content Include="Library\intl-tel-input\build\js\intlTelInput.js" />
+    <Content Include="Library\intl-tel-input\build\js\intlTelInput.min.js" />
+    <Content Include="Library\intl-tel-input\build\js\utils.js" />
+    <Content Include="Library\intl-tel-input\demo.html" />
+    <Content Include="Library\intl-tel-input\examples\css\countrySync.css" />
+    <Content Include="Library\intl-tel-input\examples\css\isValidNumber.css" />
+    <Content Include="Library\intl-tel-input\examples\css\prism.css" />
+    <Content Include="Library\intl-tel-input\examples\gen\country-sync.html" />
+    <Content Include="Library\intl-tel-input\examples\gen\default-country-ip.html" />
+    <Content Include="Library\intl-tel-input\examples\gen\hidden-input.html" />
+    <Content Include="Library\intl-tel-input\examples\gen\is-valid-number.html" />
+    <Content Include="Library\intl-tel-input\examples\gen\modify-country-data.html" />
+    <Content Include="Library\intl-tel-input\examples\gen\national-mode.html" />
+    <Content Include="Library\intl-tel-input\examples\gen\only-countries-europe.html" />
+    <Content Include="Library\intl-tel-input\examples\js\countrySync.js" />
+    <Content Include="Library\intl-tel-input\examples\js\defaultCountryIp.js" />
+    <Content Include="Library\intl-tel-input\examples\js\hiddenInput.js" />
+    <Content Include="Library\intl-tel-input\examples\js\isValidNumber.js" />
+    <Content Include="Library\intl-tel-input\examples\js\modifyCountryData.js" />
+    <Content Include="Library\intl-tel-input\examples\js\nationalMode.js" />
+    <Content Include="Library\intl-tel-input\examples\js\onlyCountriesEurope.js" />
+    <Content Include="Library\intl-tel-input\examples\js\prism.js" />
+    <Content Include="Library\intl-tel-input\examples\partials\countrySync.html" />
+    <Content Include="Library\intl-tel-input\examples\partials\hiddenInput.html" />
+    <Content Include="Library\intl-tel-input\examples\partials\isValidNumber.html" />
+    <Content Include="Library\intl-tel-input\examples\partials\nationalMode.html" />
+    <Content Include="Library\intl-tel-input\examples\partials\simpleInput.html" />
+    <Content Include="Library\intl-tel-input\Gruntfile.js" />
+    <Content Include="Library\intl-tel-input\grunt\bump.js" />
+    <Content Include="Library\intl-tel-input\grunt\exec.js" />
+    <Content Include="Library\intl-tel-input\grunt\imagemin.js" />
+    <Content Include="Library\intl-tel-input\grunt\jasmine.js" />
+    <Content Include="Library\intl-tel-input\grunt\jshint.js" />
+    <Content Include="Library\intl-tel-input\grunt\replace.js" />
+    <Content Include="Library\intl-tel-input\grunt\responsive_images.js" />
+    <Content Include="Library\intl-tel-input\grunt\retinafy.js" />
+    <Content Include="Library\intl-tel-input\grunt\sass.js" />
+    <Content Include="Library\intl-tel-input\grunt\shell.js" />
+    <Content Include="Library\intl-tel-input\grunt\sprite.js" />
+    <Content Include="Library\intl-tel-input\grunt\template.js" />
+    <Content Include="Library\intl-tel-input\grunt\uglify.js" />
+    <Content Include="Library\intl-tel-input\grunt\watch.js" />
+    <Content Include="Library\intl-tel-input\index.js" />
+    <Content Include="Library\intl-tel-input\screenshot.png" />
+    <Content Include="Library\intl-tel-input\spec.html" />
+    <Content Include="Library\intl-tel-input\src\js\data.js" />
+    <Content Include="Library\intl-tel-input\src\js\utils.js" />
+    <Content Include="Library\intl-tel-input\src\spec\helpers\helpers.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\core\countrychangeEvent.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\core\dropdownShortcuts.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\core\initialValues.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\core\multipleInstances.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\core\usingDropdown.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\core\usingInput.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\methods\destroy.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\methods\getExtension.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\methods\getNumber.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\methods\getNumberType.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\methods\getSelectedCountryData.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\methods\getValidationError.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\methods\isValidNumber.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\methods\setCountry.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\methods\setNumber.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\allowDropdown.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\autoHideDialCode.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\autoPlaceholder.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\customPlaceholder.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\dropdownContainer.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\excludeCountries.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\formatOnDisplay.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\geoIpLookup.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\initialCountry.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\nationalMode.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\onlyCountries.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\placeholderNumberType.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\preferredCountries.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\separateDialCode.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\options\utilsScript.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\static\defaults.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\static\getCountryData.js" />
+    <Content Include="Library\intl-tel-input\src\spec\tests\static\loadUtils.js" />
+    <Content Include="Library\MyHelpers.dll" />
+    <Content Include="Library\Rotativa.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,40 @@
+﻿@model List<InstaTransfer.DataAccess.AE_ArchivoUpload>
+@{
+    Layout = null;
+}
+
+
+<table id="datatable-buttonsasd" class="dtinit table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+    <thead>
+
+        <tr>
+            @*
+                <th>Rif</th>*@
+            <th>Fecha </th>
+            @*
+                <th>Saldo Inicial</th>*@
+            <th>Nombre Archivo</th>
+            <th>Acción</th>
+
+
+
+            @*
+                <th>Tipo</th>*@
+            @*
+                <th>Acciones</th>*@
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (InstaTransfer.DataAccess.AE_ArchivoUpload item in Model)
+                    {
+                    <tr dtaction="#">
+                        <td>@item.Fecha</td>
+                        <td>@item.FileName </td>
+                        <td><a href="@Url.Action("lnkfilepath_Click", "Nativa", new { ruta = @item.Ruta , filename = @item.FileName })" class="descarga" ruta="@item.Ruta">descargar</a></td>
+                        
+                    </tr>
+                    }
+    </tbody>
+</table>
+
+

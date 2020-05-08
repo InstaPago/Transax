@@ -1,0 +1,112 @@
+﻿@model Umbrella.Models.cDetailsTabs
+@if (Model != null)
+{
+ 
+    <ul class="nav nav-tabs tabs">
+        <li class="active tab">
+            <a href="#datos" data-toggle="tab" aria-expanded="true" data-action="@Url.Action("TabCommerceData", "Commerce", new { rif = Model.RifCommerce })">
+                <span class="visible-xs"><i class="fa fa-database"></i></span>
+                <span class="hidden-xs">Datos del Comercio</span>
+            </a>
+        </li>
+        @*<li class="tab">
+            <a href="#ocompra" idtable="ocompra-table" data-toggle="tab" aria-expanded="false" data-action="@Url.Action("TabOrders", "Commerce", new { rif = Model.RifCommerce })">
+                <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
+                <span class="hidden-xs">Órdenes de Compra</span>
+            </a>
+        </li>*@
+        @if (!Model.isProfile)
+        {
+            @*<li class="tab">
+                <a href="#declaraciones" idtable="declarations-table" data-toggle="tab" aria-expanded="false" data-action="@Url.Action("TabDeclarations", "Commerce", new { rif = Model.RifCommerce })">
+                    <span class="visible-xs"><i class="fa fa-files-o"></i></span>
+                    <span class="hidden-xs">Declaraciones</span>
+                </a>
+            </li>*@
+        }
+        <li class="tab">
+            <a href="#avance" idtable="advance-table" data-toggle="tab" aria-expanded="false" data-action="@Url.Action("TabCashAdvance", "Commerce", new { rif = Model.RifCommerce })">
+                <span class="visible-xs"><i class="fa fa-money"></i></span>
+                <span class="hidden-xs">Avance Efectivo</span>
+            </a>
+        </li>
+        <li class="tab">
+            <a href="#avancehistory" idtable="advancehistory-table" data-toggle="tab" aria-expanded="false" data-action="@Url.Action("TabCashAdvanceHistory", "Commerce", new { rif = Model.RifCommerce })">
+                <span class="visible-xs"><i class="fa fa-address-book"></i></span>
+                <span class="hidden-xs">Historial Avances</span>
+            </a>
+        </li>
+        <li class="tab">
+            <a href="#documentos" idtable="documentos-table" data-toggle="tab" aria-expanded="false" data-action="@Url.Action("TabDocumentos", "Commerce", new { rif = Model.RifCommerce })">
+                <span class="visible-xs"><i class="fa fa-address-book"></i></span>
+                <span class="hidden-xs">Documentos</span>
+            </a>
+        </li>
+        <li class="tab">
+            <a href="#usuarios" idtable="users-table" data-toggle="tab" aria-expanded="false" data-action="@Url.Action("TabUsers", "Commerce", new { rif = Model.RifCommerce })">
+                <span class="visible-xs"><i class="fa fa-user"></i></span>
+                <span class="hidden-xs">Usuarios</span>
+            </a>
+        </li>
+    </ul>
+        <div class="tab-content">
+            <div class="tab-pane active fade in" id="datos">
+                <div class="row">
+                    <div class="col-md-12">
+                        Cargando Información... <i class="fa fa-spinner fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            @if (!Model.isProfile)
+            {
+                <div class="tab-pane fade" id="declaraciones">
+                    <div class="row">
+                        <div class="col-md-12">
+                            Cargando Información... <i class="fa fa-spinner fa-spin"></i>
+                        </div>
+                    </div>
+
+                </div>
+            }
+            <div class="tab-pane fade" id="ocompra">
+                <div class="row">
+                    <div class="col-md-12">
+                        Cargando Información... <i class="fa fa-spinner fa-spin"></i>
+                    </div>
+                </div>
+
+            </div>
+            <div class="tab-pane fade" id="avance">
+                <div class="row">
+                    <div class="col-md-12">
+                        Cargando Información... <i class="fa fa-spinner fa-spin"></i>
+                    </div>
+                </div>
+
+            </div>
+            <div class="tab-pane fade" id="avancehistory">
+                <div class="row">
+                    <div class="col-md-12">
+                        Cargando Información... <i class="fa fa-spinner fa-spin"></i>
+                    </div>
+                </div>
+
+            </div>
+            <div class="tab-pane fade" id="documentos">
+                <div class="row">
+                    <div class="col-md-12">
+                        Cargando Información... <i class="fa fa-spinner fa-spin"></i>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="tab-pane fade" id="usuarios">
+                <div class="row">
+                    <div class="col-md-12">
+                        Cargando Información... <i class="fa fa-spinner fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+}

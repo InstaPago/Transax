@@ -1,0 +1,232 @@
+﻿@model InstaTransfer.BLL.Models.PaymentRequest.PaymentRequestModel
+@{
+//InstaTransfer.BLL.Models.CashOut.CashOutTotals totals = ViewBag.totals;
+//List<InstaTransfer.DataAccess.CommerceBankAccount> bankAccounts = ViewBag.bankAccounts;
+//decimal IVA = ViewBag.IVA;
+//string IVAString = ViewBag.IVAString;
+//string commissionPercentageString = ViewBag.commissionPercentageString;
+//decimal commissionPercentage = ViewBag.commissionPercentage;
+
+}
+<div class="col-xs-12">
+
+    <h4 id="rightsidebar-title">
+        Solicitar Pago
+    </h4>
+</div>
+<div id="rightsidebar-body" class="col-xs-12">
+    <div class="row">
+        <div class="col-md-12">
+            <form id="requestPaymentForm" method="post" novalidate class="text-left" data_parsley_validate="">
+
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    <label class="control-label ">Cédula</label>
+                    @Html.TextBoxFor(m => m.UserCI, new { @class = "form-control", data_parsley_required = "", data_parsley_type = "digits", data_parsley_range = "[99999, 99999999]", data_parsley_trigger = "change autocompletechange" })
+                </div>
+                <div class="form-group">
+                    <label class="control-label ">Nombre</label>
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", data_parsley_required = "", data_parsley_maxlength = "50", data_parsley_trigger = "change autocompletechange" })
+                </div>
+                <div class="form-group">
+                    <label class="control-label ">Apellido</label>
+                    @Html.TextBoxFor(m => m.UserLastName, new { @class = "form-control", data_parsley_required = "", data_parsley_maxlength = "50", data_parsley_trigger = "change autocompletechange" })
+                </div>
+                <div class="form-group">
+                    <label class="control-label ">Email de Contacto</label>
+                    @Html.TextBoxFor(m => m.RequestEmail, new { @class = "form-control", data_parsley_required = "", data_parsley_trigger = "change autocompletechange", type = "email", data_parsley_maxlength = "50" })
+                </div>
+                <div class="form-group">
+                    <label class="control-label ">Teléfono de Contacto</label>
+                    @Html.TextBoxFor(m => m.UserPhone, new { @class = "form-control", type = "tel", data_parsley_required = "", data_parsley_trigger = "change autocompletechange", data_parsley_maxlength = "30" })
+                </div>
+                <div class="form-group">
+                    <label class="control-label ">Monto</label>
+                    @Html.TextBoxFor(m => m.Amount, new { @class = "form-control", data_parsley_required = "", data_parsley_trigger = "change autocompletechange", data_parsley_gte = "0.00" })
+                </div>
+                <div class="form-group">
+                    <label class="control-label ">Descripción</label>
+                    @Html.TextBoxFor(m => m.Description, new { @class = "form-control", data_parsley_required = "", data_parsley_trigger = "change autocompletechange", data_parsley_maxlength = "100" })
+                </div>
+                <div class="form-group">
+                    <div class="form-control-static">
+                        <button id="submitRequest" class="col-sm-12 btn btn-primary waves-effect waves-light btn-submitRequest" style="margin-bottom:10px;" type="button" disabled="disabled">
+                            Enviar Solicitud
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Parsley JS -->
+<script src="~/plugins/parsleyjs/dist/parsley.min.js"></script>
+<script src="~/plugins/parsleyjs/dist/i18n/es.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        @*var amount =  $("input[name='Amount']").value;
+        var currentBalance = @totals.BalanceTotals.CurrentBalance.ToString("0.00#", new System.Globalization.CultureInfo("en-US"));
+        var commissionFixed = @totals.BalanceTaxes.Commission.ToString("0.00#", new System.Globalization.CultureInfo("en-US"));
+        var commissionTotal = @totals.BalanceTaxes.CommissionTotal.ToString("0.00#", new System.Globalization.CultureInfo("en-US"));
+        var IVA = @IVA.ToString("0.00#", new System.Globalization.CultureInfo("en-US"));
+        var commissionIVA =  @totals.BalanceTaxes.CommissionIVA.ToString("0.00#", new System.Globalization.CultureInfo("es-US"));
+        var commissionPercentage = @commissionPercentage.ToString("0.00#", new System.Globalization.CultureInfo("en-US"));
+        var maxCashOut = currentBalance;
+        var minCashOut = @totals.Amount.ToString("0.00#", new System.Globalization.CultureInfo("en-US"));*@
+        var minRequest = 10;
+
+        //  ----------------------------------------------Validaciones-------------------------------------------
+
+        //var $validator = $("#requestCashOutForm").validate({
+        //    lang: 'es',
+        //    rules: {
+        //        Description: {
+        //            required: false,
+        //            maxlength: 40
+        //        },
+        //        BankAccountId: {
+        //            required: true
+        //        }
+        //    }
+        //});
+
+        //$('#BankAccountId').on('blur', function() {
+        //    if ($("#requestCashOutForm").valid()) {
+        //        $('#submitRequest').prop('disabled', false);
+        //    } else {
+        //        $('#submitRequest').prop('disabled', 'disabled');
+        //    }
+        //});
+
+        //$('#Description').on('blur', function() {
+        //    if ($("#requestCashOutForm").valid()) {
+        //        $('#submitRequest').prop('disabled', false);
+        //    } else {
+        //        $('#submitRequest').prop('disabled', 'disabled');
+        //    }
+        //});
+
+        //  ----------------------------------------------End Validaciones-------------------------------------------
+
+        // Funcion para recalcular los labels
+        //function setLabelsAmounts(_amount){
+        //    var commissionPercentage2 = _amount * commissionPercentage;
+        //    var commissionIVA = (commissionFixed + commissionPercentage2) * IVA;
+        //    var commissionTotal = commissionIVA + commissionFixed + commissionPercentage2;
+        //    var total = _amount - commissionTotal;
+        //    $('#commissionPercentageLabel').html(Number(commissionPercentage2).toLocaleString("es-VE", {minimumFractionDigits: 2}));
+        //    $('#commissionIVALabel').html(Number(commissionIVA).toLocaleString("es-VE", {minimumFractionDigits: 2}));
+        //    $('#totalCashoutLabel').html(Number(_amount).toLocaleString("es-VE", {minimumFractionDigits: 2}));
+        //    $('#commissionTotalLabel').html(Number(commissionTotal).toLocaleString("es-VE", {minimumFractionDigits: 2}));
+        //    $('#totalLabel').html(Number(total).toLocaleString("es-VE", {minimumFractionDigits: 2}));
+        //};
+
+        //Nicescroll
+        $(".nicescroll").niceScroll();
+
+        //Bootstrap-TouchSpin
+        $("input[name='Amount']").TouchSpin({
+            initval: minRequest,
+            min: minRequest,
+            //max: maxCashOut,
+            stepinterval: 50,
+            decimals: 2,
+            //postfix: "Retirar todo",
+            //postfix_extraclass : "btn btn-default btn-retirarTodo",
+            buttondown_class: "btn btn-primary",
+            buttonup_class: "btn btn-primary",
+            maxboostedstep: 10000000,
+            prefix: 'Bs.'
+        });
+
+        // Parsley
+        var formInstance = $('#requestPaymentForm').parsley();
+
+        // International Telephone Input
+        var telInput = $("#UserPhone");
+
+        // initialise plugin
+        telInput.intlTelInput({
+            nationalMode: true,
+            onlyCountries: ["ve"],
+            allowDropdown: false,
+            utilsScript: "@Url.Content("~/Content/js/utils.js")"
+        });
+
+        // Activar boton submit
+        $(":input").on("keyup change autocompletechange", function () {
+            if (formInstance.isValid()) {
+                $('#submitRequest').prop('disabled', false);
+            } else {
+                $('#submitRequest').prop('disabled', 'disabled');
+            }
+        });
+
+        //// Boton "Retirar todo"
+        //$(document).on('click', '.btn-retirarTodo', function () {
+        //    $("input[name='Amount']").val(Number(maxCashOut));
+        //    setLabelsAmounts(Number(maxCashOut));
+        //});
+
+        @*$(document).on('click', '#submitRequest', function () {
+            @(totals.Amount = amount);
+        });*@
+
+        //// Al perder el foto del monto recalculo los labels
+        //$("input[name='Amount']").on("blur", function () {
+        //    var amount2 = Number(this.value);
+        //    setLabelsAmounts(Number(amount2));
+        //});
+
+        //// Al aumentar o disminuir el touchspin recalculo los labels
+        //$("input[name='Amount']").on("touchspin.on.stopspin", function () {
+        //    var amount2 = Number(this.value);
+        //    setLabelsAmounts(amount2);
+        //});
+
+        //// Input en el monto
+        //$("input[name='Amount']").on('input', function(){
+        //    $('#totalCashoutLabel').html(amount.toLocaleString("es-VE"));
+        //});
+
+        // Submit
+        $('#submitRequest').on('click', function () {
+            swal({
+                title: "¿Seguro desea realizar la solicitud?",
+                text: "No podrá revertir esta operación",
+                type: "info",
+                showCancelButton: true,
+                cancelButtonText: "Cancelar",
+                confirmButtonText: "Si, solicitar el pago",
+                closeOnConfirm: false
+            }, function () {
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: '@Url.Action("CreatePaymentRequest", "PaymentRequest")',
+                    data: $("#requestPaymentForm").serialize()
+                })
+        .done(function (r) {
+            Pace.stop();
+            if (r.success) {
+                swal({
+                    title: "Exito!",
+                    text: r.message,
+                    type: "success",
+                }, function () {
+                    location.reload();
+                });
+            } else {
+                swal("Error!", r.message, "error");
+            }
+        });
+
+            });
+        });
+
+    });
+</script>

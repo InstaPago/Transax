@@ -1,0 +1,27 @@
+﻿@model Umbrella.Models.PageTitle
+@if (Model != null)
+{
+
+    <!-- Page-Title -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-title-box">
+                <ol class="breadcrumb pull-right">
+                    <li><a href="@Url.Action("Index", "Home")">Transax</a></li>
+                    <li class="active">
+                        @if (@Model.breadcumb.IsEmpty())
+                        {
+                          @Model.title
+                        }
+                        else
+                        {
+                            @Model.breadcumb
+                        }
+                    </li>
+                </ol>
+                <h4 class="page-title">@(Model.header != null ? Model.header : Model.title) </h4>
+            </div>
+        </div>
+    </div>
+}
+

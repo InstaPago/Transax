@@ -1,0 +1,197 @@
+﻿@model List<InstaTransfer.DataAccess.UDeclaration>
+@using InstaTransfer.ITResources.Enums
+<table id="declarations-table" class="dtinit dtdeclarations table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+    <thead>
+        <tr>
+            <th>Fecha de Transacción</th>
+            <th>Referencia</th>
+            <th>Monto</th>
+            <th>Comercio</th>
+            <th>Registro en Sistema</th>
+            <th>Estado</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+            {
+            <tr guid="@item.Id" crif="@item.RifCommerce">
+                <td>@item.TransactionDate.ToString("yyyy/MM/dd", new System.Globalization.CultureInfo("es-VE")).Trim()</td>
+                <td>@item.Reference.Trim()</td>
+                <td>@item.Amount.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()</td>
+                <td>@item.Commerce.BusinessName.Trim()</td>
+                <td>@item.CreateDate.ToString("yyyy/MM/dd h:mm tt", new System.Globalization.CultureInfo("es-VE")).Trim()</td>
+                <td class="text-center">
+
+
+                    @if (item.UDeclarationStatus.Id == (int)DeclarationStatus.ReconciliationPending)
+                    {
+                        <span class="badge badge-warning" data-toggle="tooltip" data-placement="top" title="" data-original-title="@item.UDeclarationStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                            <i class="md md-access-time"></i>
+                        </span>
+                    }
+                    @if (item.UDeclarationStatus.Id == (int)DeclarationStatus.Reconciled)
+                    {
+                        <span class="badge badge-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="@item.UDeclarationStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                            <i class="md md-check"></i>
+                        </span>
+                    }
+                    @if (item.UDeclarationStatus.Id == (int)DeclarationStatus.Annulled)
+                    {
+                        <span class="badge badge-danger" data-toggle="tooltip" data-placement="top" title="" data-original-title="@item.UDeclarationStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                            <i class="md md-close"></i>
+                        </span>
+                    }
+                </td>
+                <td class="text-center">
+                    @item.UDeclarationStatus.Description.ToString().Trim()
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+<script type="text/javascript">
+
+    // Detalle de la declaracion seleccionada
+    function sideDeclaration(guid, crif) {
+        if (guid) {
+            ShowLoader();
+            Pace.start();
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("SideDeclarations", "Declaration")",
+                data: { Id: guid, rif: crif },
+            })
+        .done(function (msg) {
+            Pace.stop();
+            $("#rsidebar").html(msg);
+            if (!$('#wrapper').hasClass('right-bar-enabled')) {
+                $('#wrapper').toggleClass('right-bar-enabled');
+            }
+            HideLoader();
+        });
+        }
+        e.stopPropagation();
+    }
+
+
+    $(document).ready(function () {
+        var filename = "@InstaTransfer.ITResources.BackEnd.BackEndResources.FilenameTableDeclarations";
+        var doctitle = "Lista de Declaraciones";
+
+        // Init Datatable
+        var table = $('#declarations-table').DataTable({
+            "columnDefs": [
+       {
+           "targets": [5],
+           "orderable": false,
+           "searchable": false
+       },
+       {
+           "targets": [6],
+           "searchable": true,
+           "visible": false
+
+       }
+            ],
+            order: [4, 'desc'],
+            buttons: [{
+                text: 'Copiar',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 6]
+                },
+                extend: "copy",
+                className: "btn-sm"
+            }, {
+                extend: "csv",
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 6]
+                },
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    if ($('#filterRoles').val() != "" && $('#filterRoles').val() != undefined) {
+                        config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");;
+                    } else {
+                        config.filename = filename;
+                    }
+                    config.title = doctitle;
+                    $.fn.dataTable.ext.buttons.csvHtml5.action(e, dt, button, config);
+                }
+            }, {
+                extend: "excel",
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 6]
+                },
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    if ($('#filterRoles').val() != "" && $('#filterRoles').val() != undefined) {
+                        config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                    } else {
+                        config.filename = filename;
+                    }
+                    config.title = doctitle;
+                    $.fn.dataTable.ext.buttons.excelHtml5.action(e, dt, button, config);
+                }
+            }, {
+                extend: "pdf",
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 6]
+                },
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    if ($('#filterRoles').val() != "" && $('#filterRoles').val() != undefined) {
+                        config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                    } else {
+                        config.filename = filename;
+                    }
+                    config.title = doctitle;
+                    $.fn.dataTable.ext.buttons.pdfHtml5.action(e, dt, button, config);
+                }
+            }, {
+                extend: "print",
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 6]
+                },
+                text: '<i class="md md-lg md-print"></i>',
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    if ($('#filterRoles').val() != "" && $('#filterRoles').val() != undefined) {
+                        config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");;
+                    } else {
+                        config.filename = filename;
+                    }
+                    config.title = doctitle;
+                    $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+                }
+            }],
+            language: {
+                url: "@Url.Content("~/Scripts/datatables/spanish.json")",
+                buttons: {
+                    copyTitle: 'Tabla copiada al portapapeles',
+                    copySuccess: {
+                        _: 'Se han copiado %d filas.',
+                        1: 'Se ha copiado 1 fila.'
+                    }
+                }
+            },
+            //responsive: true,
+            "dom": '<"row"<"col-md-6 col-xs-12"B><"col-md-6 col-xs-12 text-right"f>><"row"<"col-md-6 col-xs-12"l>><"row"<"col-md-6"r>><"row"<"col-xs-12"t>><"clearfix"><"col-md-6 col-xs-12"i><"col-md-6 col-xs-12"p>'
+        });
+
+
+        // Click Declaration Row - SideDeclaration
+        $('.dtdeclarations td').on('click', function (e) {
+            var guid = $(this).closest('tr').attr('guid');
+            var crif = $(this).closest('tr').attr('crif');
+
+            checkSession(function () {
+                sideDeclaration(guid, crif);
+            })
+        });
+    });
+
+    $('[data-toggle="tooltip"]').tooltip();
+</script>

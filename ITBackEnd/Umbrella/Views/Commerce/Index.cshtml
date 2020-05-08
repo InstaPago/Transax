@@ -1,0 +1,136 @@
+﻿@model List<InstaTransfer.DataAccess.Commerce>
+@{
+    ViewBag.Title = "Comercios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = ViewBag.Title }); }
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-box table-responsive">
+            <h4 class="header-title"><b>Listado de Comercios</b></h4>
+
+            <p class="text-muted font-13 m-b-30">
+                Detalles de los Comercios registrados en Transax.
+            </p>
+            <div class="clearfix"></div>
+
+            @*<input onclick="switchTestMode(this)" type="checkbox" data-plugin="switchery" data-color="#00b19d" >*@
+            <div class="clearfix"></div>
+            @*ojo con el width:100%*@
+            <table id="datatable-buttonsasd" class="dtcommerce table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Rif</th>
+                        <th>Comercio</th>
+                        <th>Razon social</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        @*<th>Acciones</th>*@
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (InstaTransfer.DataAccess.Commerce item in Model)
+                    {
+                        <tr dtaction="@Url.Action("Details", "Commerce", new { id = item.Rif })">
+                            <td>@item.Rif</td>
+                            <td>@item.BusinessName</td>
+                            <td>@item.SocialReasonName</td>
+                            <td>@item.Address</td>
+                            <td>@item.Phone</td>
+                            @*<td>
+                                    <a  class="btn btn-primary waves-effect waves-light btn-sm" commerceid="@item.Rif">Detalles</a>
+                                </td>*@
+                            @*<td><input onclick="switchTestMode(this)" data-size="small" type="checkbox" data-plugin="switchery" data-color="#00b19d"></td>*@
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- details Modal -->
+<div id="details-modal" class="modal-demo">
+    <button type="button" class="close" onclick="Custombox.close();">
+        <span>&times;</span><span class="sr-only">Close</span>
+    </button>
+    <h4 class="custom-modal-title">Comercio</h4>
+    <div class="custom-modal-text">
+        <div id="modalbody"></div>
+    </div>
+</div>
+
+@section scripts{
+
+
+    <script type="text/javascript">
+        function switchTestMode(element) {
+            alert(element.checked);
+        }
+        $('.dtcommerce td').on('click', function () {
+            var dtaction = $(this).closest('tr').attr('dtaction');
+            window.location.replace(dtaction);
+        });
+     
+        $(document).ready(function () {
+           
+            var table = $('table.dtcommerce').DataTable({
+
+                order: [0, 'asc'],
+
+                buttons: [{
+                    text: 'Copiar',
+                    extend: "copy",
+                    className: "btn-sm"
+                }, {
+                    extend: "csv",
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                      
+                        config.filename = projectname;
+                  
+
+                        $.fn.dataTable.ext.buttons.Html5.action(e, dt, button, config);
+                    }
+                }, {
+                    extend: "excel",
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        config.filename = projectname;
+
+                        $.fn.dataTable.ext.buttons.excelHtml5.action(e, dt, button, config);
+                    }
+                }, {
+                    extend: "pdf",
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        config.filename = projectname;
+
+                        $.fn.dataTable.ext.buttons.pdfHtml5.action(e, dt, button, config);
+                    }
+                }, {
+                    extend: "print",
+                    text: 'Imprimir',
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        config.filename = projectname;
+                        $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+                    }
+                }],
+                language: {
+                url: "@Url.Content("~/Scripts/datatables/spanish.json")",
+                    buttons: {
+                        copyTitle: 'Tabla copiada al portapapeles',
+                        copySuccess: {
+                            _: 'Se han copiado %d filas.',
+                            1: 'Se ha copiado 1 fila.'
+                        }
+                    }
+                },
+                "dom": '<"row"<"col-md-6 col-sm-12"B><"col-md-6 col-sm-12  text-right"f>><"row"<"col-md-6 col-sm-12"l>><"row"<"col-md-6"r>><"row"<"col-sm-12"t>><"clearfix"><"col-md-6 col-sm-12"i><"col-md-6 col-sm-12 text-right"p>'
+            });
+        });  
+
+    </script>
+}
+
+

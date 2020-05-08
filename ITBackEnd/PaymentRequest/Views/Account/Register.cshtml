@@ -1,0 +1,260 @@
+﻿@model PaymentRequest.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Registrarme";
+    //Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+    Layout = null;
+}
+<style>
+    .validation-summary-valid {
+        display: none;
+    }
+</style>
+<link href="~/Content/css/intlTelInput.css" rel="stylesheet" />
+
+@using reCAPTCHA.MVC
+<!doctype html>
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- TITLE OF SITE -->
+    <title>Transax – Plataforma de conciliación automática de pagos e impulsadora de negocios</title>
+    <meta name="description" content="Implementa en tu negocio la única herramienta automatizada de conciliación de pagos por transferencia. Impulsa tu empresa con análisis de ingresos y avances de efectivo en línea." />
+
+    <!-- FAVICON  -->
+    <link rel="shortcut icon" href="~/Content/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="~/Content/images/favicon.ico" type="image/x-icon">
+    <!-- =========================
+       STYLESHEETS
+    ============================== -->
+    <!-- BOOTSTRAP CSS -->
+    <link href="~/Content/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/css/bootstrap.css" rel="stylesheet" />
+    <!-- FONT ICONS -->
+    <link href="~/Content/css/icons/iconfont.css" rel="stylesheet" />
+    <link href="~/Content/css/font-awesome.min.css" rel="stylesheet" />
+
+    <!-- PLUGINS STYLESHEET -->
+    <link href="~/Content/css/plugins/magnific-popup.css" rel="stylesheet" />
+    <link href="~/Content/css/plugins/owl.carousel.css" rel="stylesheet" />
+    <link href="~/Content/css/plugins/loaders.css" rel="stylesheet" />
+    <link href="~/Content/css/plugins/animate.css" rel="stylesheet" />
+    <link href="~/Content/css/plugins/parsley.css" rel="stylesheet" />
+    <!-- CUSTOM STYLESHEET -->
+    <!--link rel="stylesheet" href="css/style.css"-->
+    <link href="~/Content/css/transax.css" rel="stylesheet" />
+    <!-- RESPONSIVE FIXES -->
+    <link href="~/Content/css/login-responsive.css" rel="stylesheet" />
+</head>
+<body data-spy="scroll" style="background-image: url('../../Content/images/login_cover.jpg'); background-repeat: no-repeat; background-attachment: fixed; background-size: cover">
+    <!-- Preloader -->
+    <div class="loader bg-white">
+        <div class="loader-inner ball-scale-ripple-multiple vh-center">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <!-- =========================
+            REGISTER SECTION
+    ============================== -->
+    <div class="register text-center">
+        <img src="~/Content/images/logo-white.png" alt="Transax" title="Transax" class="text-center wow fadeIn" data-wow-delay="0.2s">
+        <div class="register-ctn">
+            @using (Html.BeginForm("Register", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form", novalidate = "", data_parsley_validate = "" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary("Registro fallido", new { @class = "text-danger" })
+
+                <div class="form-group">
+                    @*<label class="control-label">Nombre</label>*@
+                    @Html.TextBoxFor(m => m.commerceUserModel.Name, new { @class = "form-control", @placeholder = "Nombre", required = "", data_parsley_maxlength = "30", data_parsley_trigger = "focusout" })
+                    @*@Html.ValidationMessageFor(m => m.commerceUserModel.Name, null, new { @class = "text-danger" })*@
+                </div>
+                <div class="form-group">
+                    <label class="control-label">@*Apellido*@</label>
+                    @Html.TextBoxFor(m => m.commerceUserModel.LastName, new { @class = "form-control", @placeholder = "Apellido", required = "", data_parsley_maxlength = "30", data_parsley_trigger = "focusout" })
+                    @*@Html.ValidationMessageFor(m => m.commerceUserModel.LastName, null, new { @class = "text-danger" })*@
+                </div>
+                <div class="form-group">
+                    @*<label class="control-label">Correo electrónico</label>*@
+                    @Html.TextBoxFor(m => m.Email, new { @id = "sfEmail", @class = "form-control", @placeholder = "Correo Electrónico", required = "", parsley_trigger = "change",
+                   data_parsley_maxlength = "50", data_parsley_type = "email",
+                   data_parsley_trigger = "focusout" @*data_parsley_remote = "/Account/CheckUser"*@ })
+                    @*@Html.ValidationMessageFor(m => m.Email, null, new { @class = "text-danger" })*@
+                </div>
+                <div class="form-group">
+                    @*<label class="control-label">Contraseña</label>*@
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Contraseña", parsley_trigger = "change", required = "", data_parsley_length = "[8, 16]", data_parsley_trigger = "focusout" })
+                    @*@Html.ValidationMessageFor(m => m.Password, null, new { @class = "text-danger" })*@
+                </div>
+                <div class="form-group">
+                    @*<label class="control-label">Confirmar Contraseña</label>*@
+                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", @placeholder = "Confirmar Contraseña", required = "", data_parsley_length = "[8, 16]", data_parsley_equalto = "#Password", data_parsley_equalto_message = "Las contraseñas deben coincidir", data_parsley_trigger = "focusout" })
+                    @*@Html.ValidationMessageFor(m => m.ConfirmPassword, null, new { @class = "text-danger" })*@
+                </div>
+                <div class="form-group">
+                    @*<label class="control-label" for="rif">Rif</label>*@
+                    @Html.TextBoxFor(m => m.commerceModel.Rif, new { @class = "form-control", @placeholder = "Rif", required = "", data_parsley_pattern = "^[Jj][0-9]{9}$", data_parsley_trigger = "focusout" })
+                    @*@Html.ValidationMessageFor(m => m.commerceModel.Rif, null, new { @class = "text-danger" })*@
+                </div>
+                <div class="form-group">
+                    @*<label class="control-label" for="company">Nombre Comercial</label>*@
+                    @Html.TextBoxFor(m => m.commerceModel.BusinessName, new { @class = "form-control", @placeholder = "Nombre Comercial", required = "", data_parsley_maxlength = "30", data_parsley_trigger = "focusout" })
+                    @*@Html.ValidationMessageFor(m => m.commerceModel.BusinessName, null, new { @class = "text-danger" })*@
+                </div>
+                <div class="form-group">
+                    @*<label class="control-label" for="socialreasonname">Razón social</label>*@
+                    @Html.TextBoxFor(m => m.commerceModel.SocialReasonName, new { @class = "form-control", @placeholder = "Razón Social", required = "", data_parsley_maxlength = "30", data_parsley_trigger = "focusout" })
+                    @*@Html.ValidationMessageFor(m => m.commerceModel.SocialReasonName, null, new { @class = "text-danger" })*@
+                </div>
+                <div class="form-group">
+                    @*<label class="control-label" for="address">Dirección</label>*@
+                    @Html.TextAreaFor(m => m.commerceModel.Address, new { @class = "form-control", @placeholder = "Dirección", required = "", data_parsley_maxlength = "100", data_parsley_trigger = "focusout" })
+                    @*@Html.ValidationMessageFor(m => m.commerceModel.Address, null, new { @class = "text-danger" })*@
+                </div>
+                <div class="form-group">
+                    @*<label class="control-label" for="phone">Teléfono</label>*@
+                    <div>
+                        @Html.TextBoxFor(m => m.commerceModel.Phone, new { @class = "form-control block", @type = "tel", required = ""})
+                        @*@Html.ValidationMessageFor(m => m.commerceModel.Phone, null, new { @class = "text-danger" })*@
+                        <span id="valid-msg" class="hide text-success">Número de teléfono válido</span>
+                        <span id="error-msg" class="hide text-danger">Número de teléfono inválido</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div>
+                        @Html.Recaptcha()
+                        @Html.ValidationMessage("ReCaptcha")
+                    </div>
+                </div>
+                @*<div class="form-group">
+                        <div class="checkbox checkbox-primary">
+                            <input id="checkbox-signup" type="checkbox" checked="checked">
+                            <label for="checkbox-signup">
+                                He leído y acepto los  <a href="#">Términos y Condiciones</a>
+                            </label>
+                        </div>
+                    </div>*@
+                <div class="form-group">
+                    <button type="submit" class="btn btn-blue">REGISTRARME</button>
+                </div>
+                <div class="form-group">
+                    <div class="separator"></div>
+                </div>
+
+                <div class="form-group m-t-30">
+                    <div class="text-center">
+                        <a href="@Url.Action("Login")" class="text-muted small">¿Ya tienes cuenta?</a>
+                    </div>
+                </div>
+            }
+        </div>
+        <!-- =========================
+        FIRMA
+        ============================== -->
+        <section class="p-y firma firma-login">
+            <div class="text-center">
+                <div class="row">
+                    <div class="firma-ctn">
+                        <p class="small">Powered By</p>
+                        <a href="http://legendsoft.com.ve/" target="_blank">
+                            <img src="~/Content/images/legendsoft-white.png" alt="">
+                        </a>
+                    </div>
+                </div>
+            </div><!-- /End Container -->
+        </section>
+        <!-- /End Firma -->
+    </div>
+    <!-- /End Login -->
+    <!-- =========================
+         SCRIPTS
+    ============================== -->
+    <script src="~/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.easing.1.3.min.js"></script>
+    <script src="~/Scripts/jquery.countTo.js"></script>
+    <script src="~/Scripts/jquery.jCounter-0.1.4.js"></script>
+    <script src="~/Scripts/jquery.magnific-popup.min.js"></script>
+    <script src="~/Scripts/jquery.vide.min.js"></script>
+    <script src="~/Scripts/owl.carousel.min.js"></script>
+    <script src="~/Scripts/spectragram.min.js"></script>
+    <script src="~/Scripts/wow.min.js"></script>
+    <!-- Custom Script -->
+    <script src="~/Scripts/custom/custom.js"></script>
+</body>
+</html>
+
+<!--International Telephone Input-->
+<script src="@Url.Content("~/Content/js/intlTelInput.js")"></script>
+<!-- Parsley JS -->
+<script type="text/javascript" src="~/plugins/parsleyjs/dist/parsley.min.js"></script>
+<script src="~/plugins/parsleyjs/dist/i18n/es.js"></script>
+<!--JQuery Validation-->
+<script src="~/plugins/jquery-validate/jquery.validate.min.js"></script>
+<script src="~/plugins/jquery-validate/localization/messages_es.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        // International Telephone Input
+        var telInput = $("#commerceModel_Phone"),
+        errorMsg = $("#error-msg"),
+        validMsg = $("#valid-msg");
+
+        // initialise plugin
+        telInput.intlTelInput({
+            nationalMode: true,
+            onlyCountries: ["ve"],
+            allowDropdown: false,
+            utilsScript: "@Url.Content("~/Content/js/utils.js")"
+        });
+        var reset = function () {
+            telInput.removeClass("error");
+            errorMsg.addClass("hide");
+            validMsg.addClass("hide");
+        };
+
+        // on blur: validate
+        telInput.blur(function () {
+            reset();
+            if ($.trim(telInput.val())) {
+                if (telInput.intlTelInput("isValidNumber")) {
+                    validMsg.removeClass("hide");
+                } else {
+                    telInput.addClass("error");
+                    errorMsg.removeClass("hide");
+                }
+            }
+        });
+
+        // on keyup / change flag: reset
+        telInput.on("keyup change", reset);
+
+        // ReCaptcha
+        var RecaptchaOptions = {
+            lang: 'es'
+        };
+
+        // Parsley
+        $('form').parsley();
+    });
+</script>
+<script>
+    var verifyCallback = function (response) {
+        alert("grecaptcha is ready!");
+    };
+
+    var expiredCallback = function () {
+        alert("grecaptcha is expired!");
+    };
+</script>
+
+<script src='https://www.google.com/recaptcha/api.js'></script>
+
+
+

@@ -1,0 +1,340 @@
+﻿@model Umbrella.Models.DashboardViewModels.TransactionsByDateAndStatusModel
+@{
+    int CantidadAvancesRealizados = ViewBag.CantidadAvancesRealizados;
+    int CantidadAvancesActivos = ViewBag.CantidadAvancesActivos;
+    int CantidadAvancesRealizadosMes = ViewBag.CantidadAvancesRealizadosMes;
+    int CantidadAvancesRealizadosAno = ViewBag.CantidadAvancesRealizadosAno;
+    decimal Cobrado = ViewBag.Cobrado;
+    decimal Reembolso = ViewBag.Reembolso;
+    decimal Prestado = ViewBag.Prestado;
+    decimal PendientePorCobrar = ViewBag.PendientePorCobrar;
+    List<Umbrella.Controllers.HomeController.CobroDiarioGeneral> CobroDiario = ViewBag.CobroDiario;
+    List<InstaTransfer.DataAccess.AE_Avance> Avances = ViewBag.Avances;
+    decimal Promedio = ViewBag.Promedio;
+    int i = 0;
+
+
+    var currency = "$";
+
+
+}
+
+
+@if (Model != null)
+{
+    @section contents{
+        <link href="~/plugins/morris/morris.css" rel="stylesheet">
+    }
+
+
+    <div class="row">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card-box widget-icon">
+                <div>
+                    <i class="md md-schedule" style="color: #22bdd6;"></i>
+                    <div class="wid-icon-info text-right">
+                        <p class="text-muted m-b-5 font-13 text-uppercase">Hoy</p>
+                        <h4 class="m-t-0 m-b-5 counter font-bold" data-count="@CantidadAvancesActivos"></h4>
+                        <small style="color: #544c9f;"><b>Avances en Curso</b></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*<div class="col-sm-6 col-xl-3">
+                <div class="widget-simple-chart text-right card-box">
+                    <div class="circliful-chart circliful" data-dimension="90" data-text="75%" data-width="5" data-fontsize="14" data-percent="75" data-fgcolor="#3bafda" data-bgcolor="#ebeff2" style="width: 90px;"><span class="circle-text" style="line-height: 90px; font-size: 14px;">75%</span><canvas width="90" height="90"></canvas></div>
+                    <h3 class="text-primary counter m-t-10">5685</h3>
+                    <p class="text-muted text-nowrap m-b-10">Daily visitors</p>
+                </div>
+            </div>*@
+        <div class="col-sm-6 col-lg-3">
+            <div class="card-box widget-icon">
+                <div>
+                    <i class="md md-filter-frames" style="color: #22bdd6;"></i>
+                    <div class="wid-icon-info text-right">
+
+                        <p class="text-muted m-b-5 font-13 text-uppercase">Mes</p>
+                        <h4 class="m-t-0 m-b-5 counter font-bold" data-count="@CantidadAvancesRealizadosMes"></h4>
+                        <small style="color: #544c9f;"><b>Avances Colocados</b></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="card-box widget-icon">
+                <div>
+                    <i class="md md-today" style="color: #22bdd6;"></i>
+                    <div class="wid-icon-info text-right">
+                        <p class="text-muted m-b-5 font-13 text-uppercase">@DateTime.Now.Year</p>
+                        <h4 class="m-t-0 m-b-5 counter font-bold" data-count="@CantidadAvancesRealizadosAno"></h4>
+                        <small style="color: #544c9f;"><b>Avances Colocados</b></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card-box widget-icon">
+                <div>
+                    <i class="md md-archive" style="color: #22bdd6;"></i>
+                    <div class="wid-icon-info text-right">
+                        <p class="text-muted m-b-5 font-13 text-uppercase">De Por Vida</p>
+                        <h4 class="m-t-0 m-b-5 counter font-bold" data-count="@CantidadAvancesRealizados"></h4>
+                        <small style="color: #544c9f;"><b>Avances Realizados</b></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end row -->
+
+    <div class="row">
+        <div class="col-sm-6 col-lg-6">
+            <div class="widget-simple text-left card-box">
+                <p class="text-muted">Avances Activos</p>
+                <small style="color: #544c9f;"><b>Total Prestado</b></small>
+                <h3 class="text-right font-bold">@currency <span class="counter-totals" id="counter1" data-count="@Prestado.ToString("0.00#", new System.Globalization.CultureInfo("en-US"))"></span></h3>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-6">
+            <div class="widget-simple text-left card-box">
+                <p class="text-muted">Avances Activos</p>
+                <small style="color: #544c9f;"><b>Estimado Retorno</b></small>
+                <h3 class="text-right font-bold">@currency <span class="counter-totals" id="counter3" data-count="@Reembolso.ToString("0.00#", new System.Globalization.CultureInfo("en-US"))"></span></h3>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-lg-6">
+            <div class="widget-simple text-left card-box">
+                <p class="text-muted">Avances Activos</p>
+                <small style="color: #544c9f;"><b>Total Cobrado</b></small>
+                <h3 class="text-right font-bold">@currency <span class="counter-totals" id="counter2" data-count="@Cobrado.ToString("0.00#", new System.Globalization.CultureInfo("en-US"))"></span></h3>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-6">
+            <div class="widget-simple text-left card-box">
+                <p class="text-muted">Avance Activos</p>
+                <small style="color: #544c9f;"><b>Pendiente Por Cobrar</b></small>
+                <h3 class="text-right font-bold">@currency <span class="counter-totals" id="counter4" data-count="@PendientePorCobrar.ToString("0.00#", new System.Globalization.CultureInfo("en-US"))"></span></h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card-box">
+                <h4 class="text-dark  header-title m-t-0">Ingreso Total por Cuenta Bancaria</h4>
+                <p class="text-muted m-b-25 font-13">
+                    Cobros Totales Diarios
+                </p>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Día</th>
+                                <th>Banco</th>
+
+                                <th class="text-right">Monto</th>
+                                <th>Detalle</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in CobroDiario.OrderByDescending(u => u.Fecha).Take(23).ToList())
+                            {
+
+                                <tr>
+
+                                    <td>@item.Fecha.ToShortDateString()</td>
+                                    <td>Banesco</td>
+                                    <td class="text-right">@item.Monto.ToString("N2") $</td>
+                                    <td>
+                                        <input type="button" class="btn btn-default" data-toggle="modal" data-target="#@i" value="Detalle" />
+                                        <div id="@i" class="modal fade" role="dialog">
+                                            <div class="modal-dialog">
+
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <h4 class="modal-title">Detalle</h4>
+                                                    </div>
+
+                                                    <div class="modal-body">
+                                                        <table class="table table-hover">
+                                                            <thead>
+                                                                <tr>
+
+                                                                    <th>ID-Avance</th>
+                                                                    <th>Nombre comercio</th>
+                                                                    <th class="text-right">Monto</th>
+
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+
+                                                                @foreach (var _item in item.Lista)
+                                                                {
+                                                                    <tr>
+                                                                        <td>@_item.IdAvance</td>
+                                                                        <td>@_item.AE_Avance.Commerce.BusinessName</td>
+                                                                        <td>@_item.Monto</td>
+
+                                                                    </tr>
+                                                                }
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div class="modal-footer">
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                i++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+        </div>
+        <!-- end col 8 -->
+        <div class="col-lg-6">
+            <div class="card-box">
+                <h4 class="text-dark  header-title m-t-0">Ultimos 10 </h4>
+                <p class="text-muted m-b-25 font-13">
+                    Avances realizados.
+                </p>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Inicio</th>
+                                <th>Comercio</th>
+                                <th>Estado</th>
+                                <th class="text-right">Monto Otorgado</th>
+                                <th class="text-right">Monto Retorno</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Avances.OrderByDescending(u => u.FechaInicioCobro).Take(10).ToList())
+                            {
+                                string moneda = "Bs";
+                                if (item.Id == 192 || item.Id == 193 || item.Id == 198 || item.Id == 200 || item.Id == 201 || item.Id == 203 || item.Id == 205 || item.Id > 205)
+                                {
+                                    moneda = "$";
+                                }
+                                <tr>
+
+                                    <td>@(item.FechaInicioCobro == null ? "Pendiente" : item.FechaInicioCobro.Value.ToShortDateString()  )</td>
+                                    <td>@item.Commerce.BusinessName</td>
+                                    @if (item.IdEstatus == 1)
+                                    {
+                                        <td><span class="label label-success">Activo</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td><span class="label label-warning">Cerrado</span></td>
+                                    }
+                                    <td class="text-right">@item.Avance.ToString("N2") @moneda</td>
+                                    <td class="text-right">@item.Reembolso.ToString("N2") @moneda</td>
+                                </tr>
+
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- end col 4-->
+    </div>
+
+    <!-- end row -->
+}
+
+<!-- Chart JS -->
+<script src="@Url.Content("~/plugins/chartjs/Chart.min.js")"></script>
+<!-- Count Up -->
+<script src="@Url.Content("~/plugins/countUp/countUp.js")"></script>
+<script src="@Url.Content("~/plugins/countUp/countUp-jquery.js")"></script>
+
+<script>
+
+    $(document).on('ready', function () {
+        // Count Up Monto Total
+        var options = {
+            useEasing : true,
+            useGrouping : true,
+            separator : '.',
+            decimal : ',',
+        };
+
+        $('.counter-totals').each(function() {
+
+            var $this = $(this),
+                countTo = $this.attr('data-count'),
+                id = $this.attr('id');
+
+            var demo = new CountUp(id, 0, countTo, 2, 3, options);
+            demo.start();
+
+        });
+
+        // Count Up Cuenta Declaraciones
+        $('.counter').each(function() {
+
+            var $this = $(this),
+                countTo = $this.attr('data-count');
+
+            $({ countNum: $this.text()}).animate({
+                countNum: countTo
+            },
+
+            {
+                useGrouping : true,
+                decimal : ',',
+                separator : '.',
+                decimals : 2,
+                duration: 1000,
+                easing:'linear',
+                step: function() {
+                    $this.text(Math.floor(this.countNum));
+                },
+                complete: function() {
+                    $this.text(this.countNum);
+                    //alert('finished');
+                }
+
+            });
+
+
+
+        });
+
+        // Chart JS Bar - Total Por Banco Origen (Declaraciones Conciliadas)
+        var ctx = document.getElementById("bar").getContext('2d');
+
+
+        var currency = @Html.Raw(Json.Encode(currency));
+
+
+    });
+
+</script>
+<!-- end row -->

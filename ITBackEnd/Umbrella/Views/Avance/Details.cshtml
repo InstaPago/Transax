@@ -1,0 +1,975 @@
+﻿@model InstaTransfer.DataAccess.AE_Avance
+@{
+    ViewBag.Title = "Avance Detalle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<InstaTransfer.DataAccess.AE_EstadoCuenta>
+    EstadoCuenta = (List<InstaTransfer.DataAccess.AE_EstadoCuenta>
+        )ViewBag.EstadoCuenta;
+    List<InstaTransfer.DataAccess.AE_Archivo>
+        Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
+            )ViewBag.Archivos;
+    string[] _fechaNames = ViewBag.fechas;
+    decimal[] _montos = ViewBag.montos;
+    decimal[] _montobase = ViewBag.montobase;
+    decimal totalpagado = ViewBag.totalpagado;
+    decimal totalintereses = ViewBag.totalintereses;
+    decimal porcentaje = ViewBag.porcentaje;
+    decimal saldoinicial = 0;
+    if (Model.Modalidad)
+    {
+        saldoinicial = Model.Avance - totalpagado;
+    }
+    else {
+        saldoinicial = Model.Reembolso - totalpagado;
+    }
+    //decimal saldoinicial = Model.Reembolso - totalpagado;
+    decimal tasa = ViewBag.Tasa;
+    var isTransaXUser = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.TransaXUser);
+    var isTransaXAdmin = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.TransaXAdmin);
+    var isCommerceAdmin = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.CommerceAdmin);
+    var isCommerceUser = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.CommerceUser);
+    var isInversionista = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.Inversionista);
+    string moneda = "Bs";
+    if (Model.Id == 192 || Model.Id == 193 || Model.Id == 198 || Model.Id == 200 || Model.Id == 201 || Model.Id == 203 || Model.Id == 205 || Model.Id > 205)
+    {
+        moneda = "$";
+    }
+
+    }
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = "Detalle Avance  ( " + Model.Commerce.BusinessName + ")" }); }
+
+@section contents{
+    <link href="~/plugins/morris/morris.css" rel="stylesheet">
+}
+<!--Morris Chart-->
+<input type="hidden" value="@porcentaje" id="por" />
+<input type="hidden" value="@Model.Id" id="idavance" />
+<div class="row">
+
+    <div class="col-sm-12">
+        <div class="card-box table-responsive">
+
+
+            <div class="col-lg-12" style="margin-top:3%;"></div>
+
+            <div class="col-lg-6">
+                <div class="col-lg-12 col-md-12 col-sm-12 text-center">
+                    <img src="@Url.Content("~/Content/images/transax-logo.png")" height=40 />
+                </div>
+                <input type="hidden" id="AvanceId" value="@Model.Id" />
+                <div class="col-lg-12 col-md-12 col-sm-12 text-center" style="margin-top:3%;">
+                    Los fondos estarán disponibles en tu cuenta el próximo día hábil.
+                    <br />
+                    <br />
+                    @Model.FechaCreacion.ToString("dd") de  @Model.FechaCreacion.ToString("MMMM") de @Model.FechaCreacion.ToString("yyyy")
+                    <br />
+                    <br />
+                </div>
+                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12 col-lg-offset-2 col-lg-offset-2 col-sm-offset-2">
+
+                    <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-center propuesta" style="border:1px solid green; padding:4%;">
+
+                        <label>Opción Seleccionada</label>
+                        <br />
+                        <h2>  @Model.Avance.ToString("N2") @moneda</h2>
+                        <br />
+                        @if (!Model.Modalidad)
+                            {
+                            <span>
+                                Pagas con el @Model.Porcentaje % de las ventas diarias de tarjeta<br />
+                                hasta que hayas reembolsado
+                            </span>
+
+                            <br />
+
+                            @Model.Reembolso.ToString("N2") @moneda
+
+                            <br />
+                            <span> (máximo cobro diario por @Model.MaximoCobro.ToString("N2") Bs)</span>
+                        }
+                        else
+                        {
+
+                        }
+                    </div>
+
+
+                </div>
+                <div class="col-lg-12" id="progressbarwizard" style="margin-top:5%;">
+                    @if (!Model.Modalidad)
+                    {
+                        <h4 class="text-dark" style="font-size:15px;"> Tasa Interes: <strong> @( ((Model.Reembolso - Model.Avance) * 100 / Model.Avance ).ToString("N2")) % </strong></h4>
+                        <h4 class="text-dark" style="font-size:15px;"> Cobro Minimo Esperado: <strong> @Model.Reembolso @moneda </strong></h4>
+                        <hr />
+
+                        <div class="col-lg-6" style="padding:0px;">
+
+                            <h4 class="text-dark" style="font-size:15px;"> Monto Cobrado: <strong> @totalpagado.ToString("N2") @moneda </strong></h4>
+                            <h4 class="text-dark" style="font-size:15px;"> Monto Por Cobrar: <strong> @((Model.Reembolso - totalpagado).ToString("N2")) @moneda </strong> </h4>
+
+
+                        </div>
+                
+
+                        <div class="col-lg-12" style="padding:0px;">
+                            <hr />
+                            <h4 class="text-dark  header-title m-t-0" style="font-size:14px;"> @ViewBag.porcentaje % Progreso</h4>
+                            <div id="bar2" class="progress progress-striped active">
+                                <div class="bar progress-bar progress-bar-primary"></div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <h4 class="text-dark" style="font-size:15px;"> Tasa Interes: <strong> @( ((Model.Reembolso - Model.Avance) * 100 / Model.Avance).ToString("N2") ) % </strong></h4>
+                        <h4 class="text-dark" style="font-size:15px;"> Cobro Minimo Esperado: <strong> @Model.Reembolso @moneda </strong></h4>
+                        <hr />
+                      
+                        <div class="col-lg-6" style="padding:0px;">
+
+                            <h4 class="text-dark" style="font-size:15px;"> Capital Cobrado: <strong> @totalpagado.ToString("N2") @moneda </strong></h4>
+                            <h4 class="text-dark" style="font-size:15px;"> Capital Por Cobrar: <strong> @((Model.Avance - totalpagado).ToString("N2")) @moneda </strong> </h4>
+                            
+                           
+                        </div>
+                        <div class="col-lg-6">
+                            <h4 class="text-dark" style="font-size:15px;"> Intereses Cobrado: <strong> @totalintereses.ToString("N2") @moneda </strong> </h4>
+                            <h4 class="text-dark" style="font-size:15px;"> Intereses Generados: <strong> por definir </strong> </h4>
+                        </div>
+                        
+                        <div class="col-lg-12" style="padding:0px;">
+                            <hr />
+                            <h4 class="text-dark  header-title m-t-0" style="font-size:14px;"> @ViewBag.porcentaje % Progreso</h4>
+                            <div id="bar2" class="progress progress-striped active">
+                                <div class="bar progress-bar progress-bar-primary"></div>
+                            </div>
+                        </div>
+             
+                    }
+                </div>
+                @if (isTransaXUser || isTransaXAdmin)
+    {
+                    <div class="col-lg-12">
+                        <button id="update-config" style="width:auto;" class="btn btn-default waves-effect waves-light" type="button" data-toggle="modal" data-target="#updateconfig">
+                            @*Configuración*@
+
+                            <i class="md  md-settings" style="font-size:20px;"></i>
+                        </button>
+                        <!-- Modal -->
+                        <div id="updateconfig" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Datos Usuario - Banco</h4>
+                                    </div>
+                                    <form action="@Url.Action("_UpdateConfig", "Avance")" typeof="post" id="formupdateconfig">
+                                        <div class="modal-body">
+                                            <input type="hidden" value="@Model.Id" name="id" />
+                                            <label>Numero Cuenta</label>
+                                            <input type="number" class="form-control" name="numerocuenta" id="numerocuenta" value="@Model.NumeroCuenta" required="required" />
+                                            <label>Usuario</label>
+                                            <input type="text" class="form-control" name="usuario" id="usuario" value="@Model.Usuario" required="required" />
+                                            <label>Contraseña</label>
+                                            <input type="text" class="form-control" name="clave" id="clave" value="@Model.Clave" required="required" />
+                                        </div>
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Propuesta Aceptada</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <label>Monto aprobado</label>
+                                            <input type="text" class="form-control" name="avance" id="avance" value="@Model.Avance" required="required" />
+                                            <label>Retorno</label>
+                                            <input type="text" class="form-control" name="retorno" id="retorno" value="@Model.Reembolso" required="required" />
+                                            <label>Maximo cobro posible</label>
+                                            <input type="text" class="form-control" name="maximo" id="maximo" value="@Model.MaximoCobro" required="required" />
+                                            <label>Gasto Banco %</label>
+                                            <input type="text" class="form-control" name="gastobanco" id="gastobanco" value="@Model.GastoBanco" required="required" />
+                                        </div>
+                                        <div class="modal-header">
+                                            <h4 class="modal-title">Fecha Inicio Cobro</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <label>Fecha Inicio : @(Model.FechaInicioCobro == null ? " " : Model.FechaInicioCobro.Value.ToString("yyyy-MM-dd") )</label>
+                                            <input type="date" class="form-control" Name="FechaInicioCobro" id="FechaInicioCobro" value="@(Model.FechaInicioCobro == null ? " " : Model.FechaInicioCobro.Value.ToString("yyyy-MM-dd") )" />
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <input type="submit" id="updateinfo" class="btn btn-primary" value="Guardar" />
+                                        </div>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-lg-6">
+                <!-- Bar Chart-->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="portlet">
+                            <!-- /primary heading -->
+                            <div class="portlet-heading">
+                                <h3 class="portlet-title text-dark">
+                                    <span class="header-title">COBROS DIARIOS</span>
+                                </h3>
+                                <div class="portlet-widgets">
+                                    <a href="javascript:;" data-toggle="reload"><i class="ion-refresh"></i></a>
+                                    <span class="divider"></span>
+                                    <a data-toggle="collapse" data-parent="#accordion1" href="#portlet4"><i class="ion-minus-round"></i></a>
+                                    <span class="divider"></span>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div id="portlet4" class="panel-collapse collapse in">
+                                <div class="portlet-body">
+                                    <canvas id="bar" height="auto"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                @if (isTransaXUser || isTransaXAdmin)
+                {
+                    <div class="col-lg-12">
+                        <h4 class="text-dark  header-title m-t-0">ACCIONES</h4>
+                        <hr />
+                        @*<div class="col-lg-4">
+                                <input type="text" id="fechacobro" class="form-control " />
+                                <br />
+                                <input type="button" value="Generar Cobro" id="btncobro" class="btn btn-default" />
+                            </div>*@
+                        <div class="col-lg-4 col-lg-offset-4 text-right">
+
+                            <input type="button" value="Agregar Movimiento" id="addmovimiento" class="btn btn-success" data-toggle="modal" data-target="#modaladdmovimiento" />
+
+                        </div>
+                        <!-- Modal -->
+                        <div id="modaladdmovimiento" class="modal fade" role="dialog">
+                            <div class="modal-dialog">
+
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Agregar Movimiento</h4>
+                                    </div>
+                                    @if (!Model.Modalidad)
+                                    {
+                                        <form action="@Url.Action("_AddMovimiento", "Avance")" typeof="post" id="foraddmovimiento">
+                                            <div class="modal-body">
+                                                <input type="hidden" value="@Model.Id" name="id" />
+                                                <label>Monto Bs</label>
+                                                <input type="number" class="form-control" name="monto" id="monto" required="required" />
+                                                <label>Numero Lote</label>
+                                                <input type="number" class="form-control" name="lote" id="lote" required="required" />
+                                                <label>Tasa</label>
+                                                <input type="number" class="form-control" name="tasa" id="tasa" value="@tasa" required="required" />
+                                                @*<label>Contraseña</label>
+                                                    <input type="text" class="form-control" name="clave" id="clave" value="@Model.Clave" required="required" />*@
+                                                <input type="hidden" value="false" name="soloutilidad" />
+                                                <label>Fecha Movimiento:</label>
+                                                <input type="date" class="form-control" Name="fecha" id="FechaRegistro" required />
+                                                <label>Forma cobro</label>
+                                                <select class="form-control" name="efectivo">
+                                                    <option value="false">Normal</option>
+                                                    <option value="true">Efectivo</option>
+                                                </select>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <input type="submit" id="add_movimiento" class="btn btn-primary" value="Agregar" />
+                                            </div>
+                                        </form>
+                                    }
+                                    else
+                                    {
+
+                                        <form action="@Url.Action("_AddMovimiento", "Avance")" typeof="post" id="foraddmovimiento">
+                                            <div class="modal-body">
+                                                <input type="hidden" value="@Model.Id" name="id" />
+                                                <label>Monto Bs</label>
+                                                <input type="number" class="form-control" name="monto" id="monto" required="required" />
+                                                <label>Numero Lote</label>
+                                                <input type="number" class="form-control" name="lote" id="lote" required="required" />
+                                                <label>Tasa</label>
+                                                <input type="number" class="form-control" name="tasa" id="tasa" value="@tasa" required="required" />
+                                                @*<label>Contraseña</label>
+                                                    <input type="text" class="form-control" name="clave" id="clave" value="@Model.Clave" required="required" />*@
+
+                                                <label>Fecha Movimiento:</label>
+                                                <input type="date" class="form-control" Name="fecha" id="FechaRegistro" required />
+                                                <label>Tipo</label>
+                                                <select class="form-control" name="soloutilidad">
+                                                    <option value="true">Intereses</option>
+                                                    <option value="false">Abono Capital</option>
+                                                </select>
+                                                <label>Forma cobro</label>
+                                                <select class="form-control" name="efectivo">
+                                                    <option value="false">Normal</option>
+                                                    <option value="true">Efectivo</option>
+                                                </select>
+
+                                            </div>
+                                            <div class="modal-footer">
+                                                <input type="submit" id="add_movimiento" class="btn btn-primary" value="Agregar" />
+                                            </div>
+                                        </form>
+                                    }
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                }
+
+            </div>
+            <div class="clearfix"></div>
+
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="col-lg-12">
+
+        <ul class="nav nav-tabs tabs">
+            <li class="active tab">
+                <a href="#estadocuenta" data-toggle="tab" aria-expanded="true" data-action="">
+                    <span class="visible-xs"><i class="fa fa-database"></i></span>
+                    <span class="hidden-xs">Estado de Cuenta</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="#abonolotepos" idtable="avance-abono" data-toggle="tab" aria-expanded="false" data-action="">
+                    <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
+                    <span class="hidden-xs">Abono de Lotes POS</span>
+                </a>
+            </li>
+            @if (isTransaXUser || isTransaXAdmin)
+            {
+                <li class="tab">
+                    <a href="#archivos" idtable="avance-table" data-toggle="tab" aria-expanded="false" data-action="">
+                        <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
+                        <span class="hidden-xs">Archivos cargo en cuenta</span>
+                    </a>
+                </li>
+            }
+        </ul>
+
+
+        <div class="tab-pane active fade in" id="estadocuenta">
+            <div class="card-box table-responsive">
+                <h4 class="header-title"><b>Estado de Cuenta</b></h4>
+
+                <p class="text-muted font-13 m-b-30">
+                    Detalles de los avances y cobros registrados en Transax.
+                </p>
+                <div class="clearfix"></div>
+
+                @*<input onclick="switchTestMode(this)" type="checkbox" data-plugin="switchery" data-color="#00b19d">*@
+                <div class="clearfix"></div>
+                @*ojo con el width:100%*@
+                @if (!Model.Modalidad)
+                {
+                    <table id="datatable-buttonsasd" class="dtinit table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Fecha </th>
+                                <th>Lote</th>
+                                <th>Monto Bs</th>
+                                <th>Tasa</th>
+
+                                <th>Débito @moneda</th>
+                                <th>Abono</th>
+
+                                <th>Saldo </th>
+                                @if (isTransaXUser || isTransaXAdmin)
+                                {
+                                    <th>Acción </th>
+                                }
+
+                                @*
+                                    <th>Tipo</th>*@
+                                @*
+                                    <th>Acciones</th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (InstaTransfer.DataAccess.AE_EstadoCuenta item in EstadoCuenta.OrderByDescending(u => u.FechaOperacion).ThenByDescending(u => u.Lote).ToList())
+                            {
+                                if (item.Monto != 0)
+                                {
+                                    <tr dtaction="@Url.Action("Details", "Avance")">
+
+                                        <td>@item.FechaOperacion.ToString("dd/MM/yyyy")</td>
+
+                                        <td>@(item.Lote == null ? "-" : item.Lote.Value.ToString() ) </td>
+
+
+                                        @if (item.Abono)
+                                        {
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>@item.Monto.ToString("N2") @moneda</td>
+                                            if (Model.Modalidad)
+                                            {
+                                                <td>@item.Monto.ToString("N2") @moneda</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@item.SaldoFinal.ToString("N2") @moneda</td>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <td>@(item.MontoBs == null ? item.Monto.ToString("N2") + " Bs" : item.MontoBs.Value.ToString("N2") + " Bs")</td>
+                                            <td>@(item.Tasa == null ? "-" : item.Tasa.Value.ToString("N2"))</td>
+                                            <td>@item.Monto.ToString("N2") @moneda</td>
+                                            <td></td>
+                                            <td>@((saldoinicial).ToString("N2")) @moneda</td>
+                                        }
+                                        @if (isTransaXUser || isTransaXAdmin)
+                                        {
+                                            <td><input type="button" class="btn btn-success-alert modificando" value="Modificar" _target="@item.Id" _id="@item.Id" _monto="@(item.MontoBs == null ? 0 : item.MontoBs.Value  )" _tasa="@(item.Tasa == null ? 0 : item.Tasa)" _fecha="@item.FechaOperacion.ToString("yyyy-MM-dd")" _lote="@(item.Lote == null ? 0 : item.Lote)" /></td>
+                                        }
+                                    </tr>
+                                }
+                                if (!item.Abono)
+                                {
+                                    saldoinicial = saldoinicial + item.Monto;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <table id="datatable-buttonsasd" class="dtinit table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Fecha </th>
+                                <th>Lote</th>
+                                <th>Monto Bs</th>
+                                <th>Tasa</th>
+                                <th> @moneda</th>
+                                <th>Abono</th>
+
+                                <th>Saldo </th>
+                                @if (isTransaXUser || isTransaXAdmin)
+                {
+                                    <th>Acción </th>
+                                }
+
+                                @*
+                                    <th>Tipo</th>*@
+                                @*
+                                    <th>Acciones</th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (InstaTransfer.DataAccess.AE_EstadoCuenta item in EstadoCuenta.OrderByDescending(u => u.FechaOperacion).ThenByDescending(u => u.Lote).ToList())
+                            {
+                                if (item.Monto != 0)
+                                {
+                                    <tr dtaction="@Url.Action("Details", "Avance")" style="@(item.Abono ? "" : item.SoloUtilidad ? "" :  "background-color:#aeeff7; color:black;"  )">
+
+                                        <td>@item.FechaOperacion.ToString("dd/MM/yyyy")</td>
+
+                                        <td>@(item.Lote == null ? "-" : item.Lote.Value.ToString() ) </td>
+
+
+                                        @if (item.Abono)
+                                        {
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td>@item.Monto.ToString("N2") @moneda</td>
+                                            <td>@item.Monto.ToString("N2") @moneda</td>
+                                        }
+                                        else if (item.SoloUtilidad)
+                                        {
+                                            <td>@(item.MontoBs == null ? item.Monto.ToString("N2") + " Bs" : item.MontoBs.Value.ToString("N2") + " Bs")</td>
+                                            <td>@(item.Tasa == null ? "-" : item.Tasa.Value.ToString("N2"))</td>
+                                            <td>@item.Monto.ToString("N2") @moneda</td>
+                                            <td></td>
+                                            <td>@((saldoinicial).ToString("N2")) @moneda</td>
+                                        }
+                                        else
+                                        {
+                                            <td>@(item.MontoBs == null ? item.Monto.ToString("N2") + " Bs" : item.MontoBs.Value.ToString("N2") + " Bs")</td>
+                                            <td>@(item.Tasa == null ? "-" : item.Tasa.Value.ToString("N2"))</td>
+                                            <td>@item.Monto.ToString("N2") @moneda</td>
+                                            <td></td>
+                                            <td>@((saldoinicial).ToString("N2")) @moneda</td>
+                                        }
+                                        @if (isTransaXUser || isTransaXAdmin)
+                        {
+                                            <td><input type="button" class="btn btn-success-alert modificando" value="Modificar" _target="@item.Id" _id="@item.Id" _monto="@(item.MontoBs == null ? 0 : item.MontoBs.Value  )" _tasa="@(item.Tasa == null ? 0 : item.Tasa)" _fecha="@item.FechaOperacion.ToString("yyyy-MM-dd")" _lote="@(item.Lote == null ? 0 : item.Lote)" /></td>
+                                        }
+                                    </tr>
+                                }
+                                if (!item.Abono)
+                                {
+                                    if (item.SoloUtilidad)
+                                    {
+
+                                    }
+                                    else
+                                    {
+                                        saldoinicial = saldoinicial + item.Monto;
+                                    }
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+        <!-- Modal EDITAR-->
+        <div id="ModalEditarMovimiento" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Editar</h4>
+                    </div>
+          
+                        <form action="@Url.Action("_EditMovimiento", "Avance")" typeof="post" id="FormEditMovimiento">
+                            <div class="modal-body">
+                                <input type="hidden" value="@Model.Id" name="id" id="_IdMovimiento" />
+                                <label>Monto Bs</label>
+                                <input type="text" class="form-control" name="monto" id="_Monto" value="" required="required" />
+                                <label>Tasa</label>
+                                <input type="text" class="form-control" name="tasa" id="_Tasa" value="" required="required" />
+                                <label>Numero Lote</label>
+                                <input type="number" class="form-control" name="lote" id="_Lote" value="" required="required" />
+                                <label>Fecha Movimiento:</label>
+                                <input type="date" class="form-control" Name="fecha" id="_Fecha" value="" required="required" />
+                            </div>
+                            <div class="modal-footer">
+                                <input type="submit" id="add_movimiento" class="btn btn-primary" value="Editar" />
+                            </div>
+
+                        </form>
+              
+                </div>
+
+            </div>
+        </div>
+
+        <div class="tab-pane active" id="abonolotepos">
+            <div class="card-box table-responsive">
+                <h4 class="header-title"><b>Abonos Lotes POS</b></h4>
+
+                <p class="text-muted font-13 m-b-30">
+                    Detalles de los abonos de lotes.
+                </p>
+                <div class="clearfix"></div>
+
+                @*<input onclick="switchTestMode(this)" type="checkbox" data-plugin="switchery" data-color="#00b19d">*@
+                <div class="clearfix"></div>
+                @*ojo con el width:100%*@
+                <table id="datatable-buttonsasd" class="dtinit table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+                    <thead>
+
+                        <tr>
+                            @*
+                                <th>Rif</th>*@
+                            <th>Fecha </th>
+                            @*
+                                <th>Saldo Inicial</th>*@
+                            <th>Lote</th>
+                            <th>Descripcion</th>
+
+                            <th>Monto Bs</th>
+
+                            @*
+                                <th>Tipo</th>*@
+                            @*
+                                <th>Acciones</th>*@
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (InstaTransfer.DataAccess.AE_EstadoCuenta item in EstadoCuenta.Where(u => !u.Abono).OrderByDescending(u => u.FechaOperacion).ThenByDescending(u => u.Lote))
+                        {
+                            if (item.Monto != 0)
+                            {
+
+
+                                <tr dtaction="@Url.Action("Details", "Avance")">
+                                    @*
+                                        <td>@item.AE_Avance.RifCommerce</td>*@
+                                    <td>@item.FechaOperacion.ToShortDateString()</td>
+
+                                    <td>@(item.Lote == null ? "-" : item.Lote.Value.ToString() ) </td>
+
+
+
+
+                                    <td>Abono Lote POS</td>
+
+
+                                    <td>@item.MontoBase.Value.ToString("N2") Bs</td>
+
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @if (isTransaXUser || isTransaXAdmin)
+            {
+            <div class="tab-pane p-t-10 fade" id="archivos">
+                <div class="card-box table-responsive">
+                    <h4 class="header-title"><b>Archivos Generados</b></h4>
+
+                    <p class="text-muted font-13 m-b-30">
+                        Detalles de los archivos generados
+                    </p>
+                    <div class="clearfix"></div>
+
+                    @*<input onclick="switchTestMode(this)" type="checkbox" data-plugin="switchery" data-color="#00b19d">*@
+                    <div class="clearfix"></div>
+                    @*ojo con el width:100%*@
+                    <table id="datatable-buttonsasd" class="dtinit table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+                        <thead>
+                            <tr>
+                                @*<th>Rif</th>*@
+                                <th>Fecha Elaboracion</th>
+                                <th>Fecha Ejecucion</th>
+                                <th>Monto Bs</th>
+                                <th>Estado</th>
+                                <th>Descargar</th>
+                                @*
+                                    <th>Acciones</th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (InstaTransfer.DataAccess.AE_Archivo _item in Archivos.OrderByDescending(u => u.FechaCreacion))
+                            {
+                                <tr dtaction="@Url.Action("Details", "Avance")">
+                                    @*<td>@_item.AE_Avance.RifCommerce</td>*@
+                                    <td>@_item.FechaCreacion.ToShortDateString()</td>
+                                    <td>@_item.FechaEjecucion.ToShortDateString()</td>
+                                    <td>@_item.Monto.ToString("N2") Bs</td>
+                                    <td>@_item.AE_ArchivosStatus.Description.Trim()</td>
+                                    <td><a href="@Url.Action("lnkfilepath_Click", "Avance", new { ruta = @_item.Ruta })" class="descarga" ruta="@_item.Ruta">descargar</a></td>
+
+                                    @*
+                                        <td>
+                                            <a class="btn btn-primary waves-effect waves-light btn-sm" commerceid="@item.Rif">Detalles</a>
+                                        </td>*@
+                                    @*
+                                        <td><input onclick="switchTestMode(this)" data-size="small" type="checkbox" data-plugin="switchery" data-color="#00b19d"></td>*@
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+
+
+
+
+@section scripts {
+
+
+    <!-- Chart JS -->
+    <script src="~/Scripts/Chart.min.js"></script>
+    <script src="~/Scripts/jquery.core.js"></script>
+    <script src="~/Scripts/jquery.app.js"></script>
+    @*
+        <script src="~/Scripts/pages/jquery.chartjs.init.js"></script>*@
+    <script>
+        $(document).on('ready', function () {
+
+            $(document).on('submit', '#formupdateconfig', function (e) {
+
+                Pace.start();
+                var cuenta = $('#numerocuenta').val();
+
+
+                if (cuenta.length == 20 && cuenta.substring(0, 4) == "0134") {
+                    $.ajax({
+                        method: "POST",
+                        url: "@Url.Action("_UpdateConfig", "Avance")",
+                        data: $("#formupdateconfig").serialize(),
+                    })
+                .done(function (r) {
+
+                    if (r.success) {
+                        // $.Notification.notify('success', 'top right', 'Éxito!', r.message)
+                        toastr.success("Información actualizada de forma correcta", 'Éxito!');
+                        window.setTimeout(location.reload(), 4000);
+
+
+                    } else {
+                        // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                        toastr.error(r.message, 'Error!');
+                    }
+                });
+                }
+                else {
+                    toastr.error("Número de cuenta incorrecto", 'Error!');
+
+                }
+
+                Pace.stop();
+                return false;
+            });
+            @*$(".descarga").on("click", function () {
+                var ruta = $(this).attr("ruta");
+                alert(ruta);
+                var datos = { ruta:ruta};
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("lnkfilepath_Click", "Avance")",
+                    data: datos,
+                });
+                toastr.success("Descarga Solicitada!", 'Éxito!');
+
+            });*@
+
+            $(".modificando").on("click", function () {
+                Pace.start();
+                var ejemplo = $(this).attr("_monto");
+                $("#_Monto").val(ejemplo);
+                var lote = $(this).attr("_lote");
+                $("#_Lote").val(lote);
+
+                var tasa = $(this).attr("_tasa");
+                $("#_Tasa").val(tasa);
+                var fecha = $(this).attr("_fecha");
+                $("#_Fecha").val(fecha);
+                var id = $(this).attr("_id");
+                $("#_IdMovimiento").val(id);
+                $('#ModalEditarMovimiento').modal('toggle');
+            });
+            $("#FormEditMovimiento").on("submit", function () {
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("EditMovimiento", "Avance")",
+                    data: $("#FormEditMovimiento").serialize(),
+                })
+             .done(function (r) {
+
+                 if (r.success) {
+
+                     toastr.success("Movimiento modificiado de manera correcta!", 'Éxito!');
+                     window.setTimeout(location.reload(), 2000);
+                 } else {
+                     // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                     toastr.error(r.message, 'Error!');
+                 }
+             });
+                Pace.stop();
+                return false;
+            });
+            $("#foraddmovimiento").on("submit", function () {
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("AddMovimiento", "Avance")",
+                    data: $("#foraddmovimiento").serialize(),
+                })
+                    .done(function (r) {
+
+                        if (r.success) {
+
+                            toastr.success("Movimiento agregado de manera correcta!", 'Éxito!');
+                            window.setTimeout(location.reload(), 2000);
+                        } else {
+                            // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                            toastr.error(r.message, 'Error!');
+                        }
+                    });
+                Pace.stop();
+                return false;
+            });
+
+            $("#btncobro").on("click", function () {
+                var _fecha = $("#fechacobro").val();
+                var idavance = $("#idavance").val();
+                var datos = { _fecha:_fecha, idavance:idavance};
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("_IniciarProcesoCobro", "Commerce")",
+                    data: datos,
+                })
+                .done(function (r) {
+
+                    if (r.success) {
+
+                        toastr.success("Cobro Solicitado con exito!", 'Éxito!');
+                        //window.setTimeout(location.reload(), 4000);
+                    } else {
+                        // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                        toastr.error(r.message, 'Error!');
+                    }
+                });
+                Pace.stop();
+            });
+
+            var por = $("#por").val() + '%';
+            $('#progressbarwizard').find('.bar').css({ width: por });
+
+            var _fechaNames = @Html.Raw(Json.Encode(_fechaNames));
+            var _montos = @Html.Raw(Json.Encode(_montos));
+            var _montobase = @Html.Raw(Json.Encode(_montobase));
+
+            var ctx = document.getElementById("bar").getContext('2d');
+
+            var barChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: _fechaNames,
+                    datasets: [{
+                        label: "Reportado",
+                        backgroundColor: "#22bdd6",
+                        borderColor: "#22bdd6",
+                        data:_montobase,
+                        fill: false,
+                    }, {
+                        label: "Cobrado",
+                        fill: false,
+                        backgroundColor: "#4156bb",
+                        borderColor: "#4156bb",
+                        data: _montos,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'Detalle transacciones'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Días'
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Bolivares'
+                            }
+                        }]
+                    }
+                }
+            });
+
+            $(document).ready(function () {
+
+                //var projectname = "Transax";
+                var table = $('table.dtinit').DataTable({
+
+                    order: [],
+                    "pageLength": 50,
+                    buttons: [{
+                        text: 'Copiar',
+                        extend: "copy",
+                        className: "btn-sm"
+                    }, {
+                        extend: "csv",
+                        className: "btn-sm",
+                        action: function (e, dt, button, config) {
+                            //if ($('#filterRoles').val() != "") {
+                            //    config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");;
+                            //} else {
+                            config.filename = projectname;
+                            //}
+
+                            $.fn.dataTable.ext.buttons.Html5.action(e, dt, button, config);
+                        }
+                    }, {
+                        extend: "excel",
+                        className: "btn-sm",
+                        action: function (e, dt, button, config) {
+                            //if ($('#filterRoles').val() != "") {
+                            //    config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                            //} else {
+                            config.filename = projectname;
+                            //}
+
+                            $.fn.dataTable.ext.buttons.excelHtml5.action(e, dt, button, config);
+                        }
+                    }, {
+                        extend: "pdf",
+                        className: "btn-sm",
+                        action: function (e, dt, button, config) {
+                            //if ($('#filterRoles').val() != "") {
+                            //    config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                            //} else {
+                            config.filename = projectname;
+                            //}
+
+                            $.fn.dataTable.ext.buttons.pdfHtml5.action(e, dt, button, config);
+                        }
+                    }, {
+                        extend: "print",
+                        text: 'Imprimir',
+                        className: "btn-sm",
+                        action: function (e, dt, button, config) {
+                            //if ($('#filterRoles').val() != "") {
+                            //    config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");;
+                            //} else {
+                            config.filename = projectname;
+                            //}
+
+                            $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+                        }
+                    }],
+                    language: {
+                        url: "@Url.Content("~/Scripts/datatables/spanish.json")",
+                        buttons: {
+                            copyTitle: 'Tabla copiada al portapapeles',
+                            copySuccess: {
+                                _: 'Se han copiado %d filas.',
+                                1: 'Se ha copiado 1 fila.'
+                            }
+                        }
+                    },
+                    //responsive: true,
+                    @*"ajax": '@Url.Action("GetData", "CUser")',*@
+                    "dom": '<"row"<"col-md-6 col-sm-12"B><"col-md-6 col-sm-12  text-right"f>><"row"<"col-md-6 col-sm-12"l>><"row"<"col-md-6"r>><"row"<"col-sm-12"t>><"clearfix"><"col-md-6 col-sm-12"i><"col-md-6 col-sm-12 text-right"p>'
+                });
+
+            });
+
+
+        });
+    </script>
+}
+
+

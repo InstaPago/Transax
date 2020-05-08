@@ -1,0 +1,19 @@
+﻿@model List<InstaTransfer.DataAccess.AE_ArchivoUpload>
+@{
+    Umbrella.Controllers.CommerceController controller = new Umbrella.Controllers.CommerceController();
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="">
+            <h4 class="header-title"><b>Listado de Documentos</b></h4>
+
+
+            <p class="text-muted font-13 m-b-30">
+                Detalles de los documentos asociados al comercio.
+            </p>
+            <div class="clearfix"></div>
+            @{Html.RenderPartial("~/Views/Commerce/_Documentos.cshtml", Model); }
+        </div>
+    </div>
+</div>

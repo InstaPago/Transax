@@ -1,0 +1,396 @@
+﻿@model InstaTransfer.DataAccess.CashOutTransaction
+@using InstaTransfer.ITResources.Enums
+@using InstaTransfer.ITResources.Constants
+@{
+    InstaTransfer.DataAccess.CommerceBankAccount bankAccount = Model.CommerceBankAccount;
+}
+
+<div class="nicescroll">
+    <div class="col-xs-12">
+        <h4 id="rightsidebar-title">
+            Detalle del Retiro
+        </h4>
+    </div>
+    <div id="rightsidebar-body" class="col-xs-12">
+        <div class="row">
+
+
+            <div class="col-md-12">
+                @if (Model.CashOutTransactionStatus.Id == (int)CashOutStatus.Pending)
+                {
+                    <div class="alert alert-warning">
+                        <strong><i class="md md-access-time"></i></strong>
+                        @Model.CashOutTransactionStatus.Description.ToString().Trim()
+                    </div>
+                }
+                @if (Model.CashOutTransactionStatus.Id == (int)CashOutStatus.Approved)
+                {
+                    <div class="alert alert-success">
+                        <strong><i class="md md-done-all"></i></strong>
+                        @Model.CashOutTransactionStatus.Description.ToString().Trim()
+                    </div>
+                }
+                @if (Model.CashOutTransactionStatus.Id == (int)CashOutStatus.Completed)
+                {
+                    <div class="alert alert-success">
+                        <strong><i class="md md-check"></i></strong>
+                        @Model.CashOutTransactionStatus.Description.ToString().Trim()
+                    </div>
+                }
+                @if (Model.CashOutTransactionStatus.Id == (int)CashOutStatus.Rejected || Model.CashOutTransactionStatus.Id == (int)CashOutStatus.Annulled)
+                {
+                    <div class="alert alert-danger">
+                        <strong><i class="md md-close"></i></strong>
+                        @Model.CashOutTransactionStatus.Description.ToString().Trim()
+                    </div>
+                }
+
+                <h3 class="text-center">Bs. @Model.Amount.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()</h3>
+                <hr />
+            </div>
+            <div class="col-md-12">
+
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label ">Monto</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static  text-muted">
+                                @Model.Amount.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label ">Comercio</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static  text-muted">
+                                @Model.CommerceBankAccount.Commerce.BusinessName.Trim()
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label ">Referencia</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static  text-muted">
+                                @(Model.Reference != null ? Model.Reference.Trim() : "No Especificado")
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label ">Registro en Sistema</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static  text-muted">
+                                @(Model.CreateDate.ToString("yyyy/MM/dd h:mm tt", new System.Globalization.CultureInfo("es-VE")).Trim())
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label ">Estado</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static ">
+
+                                @if (Model.CashOutTransactionStatus.Id == (int)CashOutStatus.Pending)
+                                {
+                                    <span class="badge badge-warning" data-toggle="tooltip" data-placement="top" title="" data-original-title="@Model.CashOutTransactionStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                                        <i class="md md-access-time"></i>
+                                    </span>
+                                }
+                                @if (Model.CashOutTransactionStatus.Id == (int)CashOutStatus.Completed)
+                                {
+                                    <span class="badge badge-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="@Model.CashOutTransactionStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                                        <i class="md md-done-all"></i>
+                                    </span>
+                                }
+                                @if (Model.CashOutTransactionStatus.Id == (int)CashOutStatus.Approved)
+                                {
+                                    <span class="badge badge-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="@Model.CashOutTransactionStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                                        <i class="md md-check"></i>
+                                    </span>
+                                }
+                                @if (Model.CashOutTransactionStatus.Id == (int)CashOutStatus.Annulled)
+                                {
+                                    <span class="badge badge-danger" data-toggle="tooltip" data-placement="top" title="" data-original-title="@Model.CashOutTransactionStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                                        <i class="md md-close"></i>
+                                    </span>
+                                }
+                                @if (Model.CashOutTransactionStatus.Id == (int)CashOutStatus.Rejected)
+                                {
+                                    <span class="badge badge-danger" data-toggle="tooltip" data-placement="top" title="" data-original-title="@Model.CashOutTransactionStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                                        <i class="md md-block"></i>
+                                    </span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <label class="" style="color:#544c9f">Id: @Model.Id.ToString().Trim()</label>
+                    </div>
+                    <div class="form-group text-center">
+                        @if (Model.CashOutTransactionStatus.Id == (int)CashOutStatus.Pending)
+                        {
+                            if (User.IsInRole(UserRoleConstant.CommerceAdmin) || User.IsInRole(UserRoleConstant.CommerceUser))
+                            {
+                                <button class="btn btn-icon btn-xs waves-effect waves-light btn-danger-alert m-b-5 btn-icon btn-anular" guid="@Model.Id">
+                                    <i class="md md-close"></i>
+                                    Anular
+                                </button>
+                            }
+                            if (User.IsInRole(UserRoleConstant.TransaXAdmin) || User.IsInRole(UserRoleConstant.TransaXUser))
+                            {
+                                <button class="btn btn-icon btn-xs waves-effect waves-light btn-danger-alert m-b-5 btn-icon btn-rechazar" guid="@Model.Id">
+                                    <i class="md md-highlight-remove"></i>
+                                    Rechazar
+                                </button>
+                                <button class="btn btn-icon btn-xs waves-effect waves-light btn-success-alert m-b-5 btn-icon btn-aprobar" guid="@Model.Id">
+                                    <i class="md md-check"></i>
+                                    Aprobar
+                                </button>
+                            }
+                        }
+                        @if (Model.CashOutTransactionStatus.Id == (int)CashOutStatus.Approved && (User.IsInRole(UserRoleConstant.TransaXAdmin) || User.IsInRole(UserRoleConstant.TransaXUser)))
+                        {
+                            <button class="btn btn-icon btn-xs waves-effect waves-light btn-success-alert m-b-5 btn-icon btn-completar" guid="@Model.Id">
+                                <i class="md md-done-all"></i>
+                                Completar
+                            </button>
+                        }
+
+                    </div>
+                </div>
+            </div>
+            @*Registros asociados*@
+            <div class="col-md-12">
+                <hr />
+                <h4>Cuenta Asociada</h4>
+                @if (bankAccount != null)
+                {
+                    <div class="col-md-12">
+
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label ">Alias</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static  text-muted">
+                                        @bankAccount.Alias.Trim()
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label ">Número de Cuenta</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static  text-muted">
+                                        @bankAccount.AccountNumber.Trim()
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label ">Banco</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static  text-muted">
+                                        @bankAccount.UBank.Name.Trim()
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label ">Tipo</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static  text-muted">
+                                        @bankAccount.CommerceBankAccountType.Description.Trim()
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        No hay cuentas asociadas.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    // Aprobar Cashout
+    function approveCashout(requestId) {
+        swal({
+            title: "¿Está seguro de aprobar esta solicitud?",
+            text: "No podrá revertir esta operación",
+            type: "info",
+            showCancelButton: true,
+            confirmButtonText: "Si, aprobar esta solicitud",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true
+        }, function () {
+            ShowLoader();
+            $.ajax({
+                method: "POST",
+                url: '@Url.Action("ApproveCashOutRequest", "CashOut")',
+                data: { requestId: requestId },
+            })
+    .done(function (r) {
+        HideLoader();
+        if (r.success) {
+            swal({
+                title: "Exito!",
+                text: r.message,
+                type: "success",
+            }, function () {
+                location.reload();
+            });
+        } else {
+            swal("Error!", r.message, "error");
+        }
+
+    });
+        });
+        HideLoader();
+    }
+
+    // Completar Cashout
+    function completeCashout(requestId) {
+        swal({
+            title: "¿Está seguro de completar esta solicitud?",
+            text: "No podrá revertir esta operación",
+            type: "info",
+            showCancelButton: true,
+            confirmButtonText: "Si, completar esta solicitud",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true
+        }, function () {
+            ShowLoader();
+            $.ajax({
+                method: "POST",
+                url: '@Url.Action("CompleteCashOutRequest", "CashOut")',
+                data: { requestId: requestId },
+            })
+    .done(function (r) {
+        HideLoader();
+        if (r.success) {
+            swal({
+                title: "Exito!",
+                text: r.message,
+                type: "success",
+            }, function () {
+                location.reload();
+            });
+        } else {
+            swal("Error!", r.message, "error");
+        }
+    });
+        });
+        HideLoader();
+    }
+
+    // Anular Cashout    
+    function annulCashout(requestId) {
+        swal({
+            title: "¿Está seguro de anular esta solicitud?",
+            text: "No podrá revertir esta operación",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: 'btn-warning',
+            confirmButtonText: "Si, anular esta solicitud",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true
+        }, function () {
+            ShowLoader();
+            Pace.start();
+            $.ajax({
+                method: "POST",
+                url: '@Url.Action("AnnullCashOutRequest", "CashOut")',
+                data: { requestId: requestId },
+            })
+    .done(function (r) {
+        HideLoader();
+        Pace.stop();
+        if (r.success) {
+            swal({
+                title: "Exito!",
+                text: r.message,
+                type: "success",
+            }, function () {
+                location.reload();
+            });
+        } else {
+            swal("Error!", r.message, "error");
+        }
+    });
+        });
+        HideLoader();
+    }
+
+    // Rechazar Cashout
+    function rejectCashout(requestId) {
+        swal({
+            title: "¿Está seguro de rechazar esta solicitud?",
+            text: "No podrá revertir esta operación",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: 'btn-warning',
+            confirmButtonText: "Si, rechazar esta solicitud",
+            closeOnConfirm: false,
+            showLoaderOnConfirm: true
+        }, function () {
+            ShowLoader();
+            $.ajax({
+                method: "POST",
+                url: '@Url.Action("RejectCashOutRequest", "CashOut")',
+                data: { requestId: requestId },
+            })
+    .done(function (r) {
+        HideLoader();
+        if (r.success) {
+            swal({
+                title: "Exito!",
+                text: r.message,
+                type: "success",
+            }, function () {
+                location.reload();
+            });
+        } else {
+            swal("Error!", r.message, "error");
+        }
+    });
+        });
+        HideLoader();
+    }
+
+    $(document).ready(function () {
+
+        // Anular CashOut
+        $(document).on('click', '.btn-anular', function () {
+            var requestId = $(this).attr('guid');
+            checkSession(function () {
+                annulCashout(requestId);
+            })
+        });
+
+        // Rechazar CashOut
+        $(document).on('click', '.btn-rechazar', function () {
+            var requestId = $(this).attr('guid');
+            checkSession(function () {
+                rejectCashout(requestId);
+            })
+        });
+
+        // Aprobar CashOut
+        $(document).on('click', '.btn-aprobar', function () {
+            var requestId = $(this).attr('guid');
+            checkSession(function () {
+                approveCashout(requestId);
+            })
+        });
+
+        // Completar CashOut
+        $(document).on('click', '.btn-completar', function () {
+            var requestId = $(this).attr('guid');
+            checkSession(function () {
+                completeCashout(requestId);
+            })
+        });
+    });
+</script>

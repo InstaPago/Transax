@@ -1,0 +1,1069 @@
+/* ==========================================================================
+   RESPONSIVE FIXES
+ ========================================================================== */ 
+
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+@media only screen and (max-width : 1199px) {
+    
+    /*------------------------------------------*/
+    /*    Back to Top Button
+    /*------------------------------------------*/
+    .top {
+        height: 40px;
+        width: 40px;
+        right: 10px;
+        bottom: 50px;
+    }
+
+    /*------------------------------------------*/
+    /*    Navbar with Login and Signup
+    /*------------------------------------------*/
+    .navbar-nav>li>a.btn-login {
+        margin-left: 100px;
+        margin-right: 10px;
+    }
+
+    /*------------------------------------------*/
+    /*    Hero Closeup
+    /*------------------------------------------*/
+    .closeup-box img {
+        width: 100%;
+        height: auto;
+    }
+
+    /*------------------------------------------*/
+    /*  Content Dashboard
+    /*------------------------------------------*/ 
+    .content-dashboard .dash-left {
+        margin-left: -500px;
+    }
+
+    /*------------------------------------------*/
+    /*  Features Device
+    /*------------------------------------------*/ 
+    .features-device {
+        padding-top: 0;
+    }
+
+    /*------------------------------------------*/
+    /*  Cta section
+    /*------------------------------------------*/
+    .cta .outline .lead {
+        margin-top: 0;
+    }
+
+    /*------------------------------------------*/
+    /*  Testimonial Section
+    /*------------------------------------------*/
+    .testimonials .big-img-left blockquote p {
+        padding-top: 5px;
+    }
+
+    /*------------------------------------------*/
+    /*  Video Section
+    /*------------------------------------------*/
+    .video .popup-text {
+        padding-top: 15px;
+    }
+
+    /*------------------------------------------*/
+    /*  Pricing Section
+    /*------------------------------------------*/
+    .pricing-st .h2 {
+        padding-top: 0;
+    }
+	
+}
+
+
+
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+@media only screen and (max-width : 991px) {
+	
+	/*------------------------------------------*/
+	/*    Typography
+	/*------------------------------------------*/
+	h1, .h1 {
+		font-size: 40px;
+	}
+
+	h2, .h2 {
+		font-size: 32px;
+	}
+
+	h3, .h3 {
+	    font-size: 28px;
+	}
+
+	h4, .h4 {
+	    font-size: 26px;
+	}
+
+	.lead {
+	    font-size: 20px;
+	    line-height: 24px;
+	}
+
+    /*------------------------------------------*/
+    /*    Cols/Rows Spacing & Alignment
+    /*------------------------------------------*/
+    .c2 div[class^="col-md"]:nth-child(1),
+    .c3 div[class^="col-md"]:nth-child(1),
+    .c3 div[class^="col-md"]:nth-child(2),
+    .c4 div[class^="col-md"]:nth-child(1),
+    .c4 div[class^="col-md"]:nth-child(2),
+    .c4 div[class^="col-md"]:nth-child(3) {
+        margin-bottom: 30px;
+    }
+
+    .c2.text-center div[class^="col-md"],
+    .c3.text-center div[class^="col-md"],
+    .c4.text-center div[class^="col-md"] {
+        padding-left: 110px;
+        padding-right: 110px;
+    }
+
+    .new-row-md {
+        margin-top: 30px;
+    }
+
+    .center-md {
+        text-align: center;
+    }
+
+
+    .section {
+    height: initial;
+    }
+
+    .top-bg {
+    height: initial;
+    margin-top: 40px;
+    }
+
+    .col-md-3 {
+        width: 50%;
+        float: left;
+    }
+
+    .col-lg-3 {
+        width: 30%;
+        float: left;
+    }
+
+    .col-lg-2 {
+        width: 35%;
+        float: left;
+    }
+
+    .col-md-4 {
+        width: 100%;
+        float: left;
+    }
+
+    .col-md-9 p {
+        padding-top: 15px;
+    }
+
+    .col-lg-10 {
+        width: 55%;
+        float: left;
+    }
+    /*--------------------------------------------------------------*/
+    /*    Form Inline
+    /*--------------------------------------------------------------*/
+    .form-inline {
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+
+    .form-inline .form-group, 
+    .form-inline .form-control, 
+    .form-inline.double-input .form-group,
+    .form-inline.double-input .form-control, 
+    .form-inline button, 
+    .form-inline.double-input button {
+        width: 100%;
+        margin-bottom: 2px;
+    }
+
+    /*--------------------------------------------------------------*/
+    /*    Show Navbar Toggle and Hide Navbar Menu, Bootstrap Fixes
+    /*--------------------------------------------------------------*/
+    .navbar-header {
+        float: none;
+    }
+
+    .navbar-toggle {
+        display: block;
+    }
+
+    .navbar-collapse {
+        box-shadow: none;
+        margin-top: 15px;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+
+     .navbar-collapse .m-l-md {
+        margin-left: 0 !important;
+    }
+
+
+
+
+    .bg-color .navbar-collapse {
+        border-top-color: #fff;
+    }
+            
+    .navbar-collapse.collapse {
+        display: none!important;
+    }
+
+    .navbar-collapse.collapse.in {  
+        display: block!important; 
+    }
+
+    .navbar-nav {
+        float: none!important;
+        margin: 7.5px 0;
+    }
+
+    .navbar-nav>li {
+        float: none;
+    }
+
+    .navbar-nav>li>a {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        display: block;
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        border-radius: 0;
+    }
+
+    .navbar.bg-transparent .navbar-nav > li > a, .navbar.bg-color .navbar-nav > li > a {
+
+    font-size: 15px;
+
+    }
+
+    .navbar-nav>li>a.btn-nav {
+        border-bottom: none;
+    }
+
+    .bg-color .navbar-nav>li>a {
+        border-bottom-color: #fff;
+    }
+
+    .navbar-nav>li>a:hover, 
+    .navbar-nav>li>a:focus, 
+    .navbar-nav>.active>a, 
+    .navbar-nav>.active>a:focus, 
+    .navbar-nav>.active>a:hover  {
+        background-color: transparent;
+    }
+
+    .navbar-nav>li>a.btn-nav {
+        margin: 10px 0 5px 10px;
+        padding: 10px 15px; 
+        display: inline-block;
+        width: auto;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+    }  
+
+    /* Dropdown Menu */
+    .navbar-nav .open .dropdown-menu {
+        position: static;
+        float: none;
+        width: auto;
+        margin-top: 0;
+        background-color: transparent;
+        border: 0;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+
+    .navbar-nav .open .dropdown-menu.multi-level {
+        height: 70px;
+        overflow-y:scroll;
+    }
+
+    .navbar-nav .open .dropdown-menu>li>a {
+        line-height: 20px;
+        display:inline-block;
+    }
+
+    .navbar-nav .open .dropdown-menu .dropdown-header,
+    .navbar-nav .open .dropdown-menu>li>a {
+        padding: 5px 15px 5px 25px;
+    }
+
+    /*-----------------------------------------------------------*/
+    /*    Navbar Transparent
+    /*-----------------------------------------------------------*/
+    .navbar.bg-transparent {
+        background-color: #fff;
+    }
+
+    .navbar.bg-transparent .logo-white {
+        display: none;
+    }
+
+    .navbar.bg-transparent .logo-black {
+        display: block;
+    }
+
+    .navbar.bg-transparent .navbar-nav>li>a {
+        color: #404B55;
+    }
+
+    .navbar.bg-transparent .navbar-nav>li>a.btn-nav {
+        color: #fff;
+    }   
+
+    /*-----------------------------------------------------------*/
+    /*    Navbar-Only-Logo
+    /*-----------------------------------------------------------*/
+    .nav-onlylogo.navbar-static-top.bg-transparent {
+        background-color: transparent;
+    }
+
+    .navbar.nav-onlylogo.bg-transparent .logo-white{
+        display: none;
+    }
+
+    .navbar.nav-onlylogo.bg-transparent .logo-black{
+        display: block;
+    }
+
+    /*------------------------------------------*/
+    /*    Navbar with Login and Signup
+    /*------------------------------------------*/
+    .navbar-nav>li>a.btn-login, 
+    .navbar-nav>li>a.btn-signup {
+        margin: 10px 0 0 10px;
+        display: inline-block;
+        float: left;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+        border: 0;
+    }
+
+    .navbar-nav>li>a.btn-login, 
+    .navbar-nav>li>a.btn-signup {
+        padding: 10px 25px;
+    }
+
+    /*-----------------------------------------------------------*/
+    /*    Navbar 3cols
+    /*-----------------------------------------------------------*/
+    .nav-3cols-logo {
+        text-align: left;
+    }
+
+    .navbar.bg-transparent .nav-3cols {
+        color: #404B55;
+    }
+
+    .navbar.bg-transparent .nav-3cols-logo .logo-white, 
+    .navbar.bg-transparent .nav-3cols-logo .logo-black {
+        float: left;
+    }
+
+    /*-----------------------------------------------------------*/
+    /*    Hero Section
+    /*-----------------------------------------------------------*/
+    .hero {
+        text-align: center;
+    }
+
+    /*-----------------------------------------------------------*/
+    /*    Hero-General
+    /*-----------------------------------------------------------*/
+    .hero, .hero.height-800 {
+        height: 600px;
+    }
+
+    /*-----------------------------------------------------------*/
+    /*    Hero-Closeup
+    /*-----------------------------------------------------------*/
+    .closeup-box {
+        display: none;
+    }
+
+    /*-----------------------------------------------------------*/
+    /*    Hero Dashboard
+    /*-----------------------------------------------------------*/
+    .dashboard-box img {
+        height: 500px;
+    }
+
+    /*------------------------------------------*/
+    /*  Hero Leadbox
+    /*------------------------------------------*/
+    .hero-leadbox .form-horizontal {
+        margin-top: 50px;
+    }
+
+    /*------------------------------------------*/
+    /*  About
+    /*------------------------------------------*/
+    .about p {
+    width: 100%;
+    }
+
+    /*------------------------------------------*/
+    /*  Content Block
+    /*------------------------------------------*/ 
+    .content-block h2,
+    .content-block .h2,
+    .content-block .lead {
+        text-align: center;
+    }
+
+    /*------------------------------------------*/
+    /*  Content Dashboard
+    /*------------------------------------------*/    
+    .content-dashboard img {
+        width: 100%;
+        height: auto;
+    }
+
+    .content-dashboard .dash-left {
+        margin-left: 0;
+    }
+    
+    /*------------------------------------------*/
+    /*  Content Split
+    /*------------------------------------------*/ 
+    .content-split .container {
+        width: 100%;
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    .content-split .img-block {
+        position: static;
+        height: 450px;
+    }
+
+    .content-split .content-block {
+        height: 400px;
+        text-align: center;
+        padding-left: 80px;
+        padding-right: 80px;
+    }
+    
+
+
+    /*------------------------------------------*/
+    /*  Content Grid
+    /*------------------------------------------*/
+    .content-grid > div {
+        height: 450px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .content-grid > div:last-child {
+        margin-bottom: 0;
+        height: 600px;
+        padding-right: 15px;
+    }
+
+    .content-grid > div:first-child {
+        padding-right: 15px;
+    }
+
+    .content-grid .lead-block {
+        padding: 80px 40px;
+    }
+
+    .content-grid .img-block img {
+        width: 100%;
+        height: auto;
+    }
+
+    .content-align-md .y-middle {
+        display: block!important;
+    }
+
+    /*------------------------------------------*/
+    /*  Features Block
+    /*------------------------------------------*/
+    .features-block h4 {
+        margin-top: 10px;
+        margin-bottom: 5px;
+    }
+
+    .features-list-img {
+        padding-left: 200px;
+        padding-right: 200px;
+    }
+
+    /*------------------------------------------*/
+    /*  Features Dashboard4
+    /*------------------------------------------*/
+    .content-dashboard .features-block img {
+        padding-bottom: 20px;
+    }
+
+    /*------------------------------------------*/
+    /*  Features Tab
+    /*------------------------------------------*/
+    .features-tab .tab-title {
+        width: 100%;
+        border-top: 1px solid #fff;
+        padding: 30px 15px;
+    }
+
+    .features-tab .tab-content {
+        position: relative;
+        right: 0;
+        top: 0;
+        width: 100%;
+        opacity: 0;
+        margin-top: 0;
+        height: 0;
+        overflow: hidden;
+        -webkit-transform: translate3d(0,0,0);
+        -moz-transform: translate3d(0,0,0);
+        transform: translate3d(0,0,0);
+    }
+
+    .features-tab .tab-title.current + .tab-content {
+        height: auto;
+        opacity: 1;
+        padding: 20px 15px;
+    }
+
+    /*------------------------------------------*/
+    /*  Cta section
+    /*------------------------------------------*/
+    .cta .outline {
+        text-align: center;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .cta .outline .lead {
+        margin-bottom: 20px;
+    }
+
+    .cta .outline.no-border {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    /*------------------------------------------*/
+    /*  Testimonial Section
+    /*------------------------------------------*/
+    .testimonials .carousel-indicators {
+        bottom: -50px;
+    }
+
+    .testimonials .big-img-left blockquote {
+        text-align: center;
+    }
+
+    .testimonials .big-img-left blockquote p {
+        padding-top: 15px;
+    }
+
+    .testimonials-twitter .twitter-row {
+        margin-top: 30px;
+    }
+
+    /*------------------------------------------*/
+   
+    /*------------------------------------------*/
+    /*  Footer Section
+    /*------------------------------------------*/
+    .footer .aliados {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    width: 100%;
+    float: none;
+    padding-bottom: 25px;
+    border-right: 0;
+    }
+
+    .footer .contact {
+    width: 100%;
+    float: none;
+    padding: 12px 0px 0px 0px;
+    margin-top: 20px;
+    }
+
+    .footer .contact .ctn {
+    width: 33.33%;
+    float: left;
+    padding: 0px;}
+    
+    /*------------------------------------------*/
+    /*  Blog Page
+    /*------------------------------------------*/
+    .pagination {
+        margin-bottom: 120px;
+    }
+   
+
+}
+
+
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+@media only screen and (max-width : 800px) {
+    
+    /*------------------------------------------*/
+    /*  Footer Section
+    /*------------------------------------------*/
+    .footer .aliados {
+    text-align: center
+    }
+
+    .footer .aliados img {
+    width: 150px;
+    margin: 20px auto;
+    }
+
+
+    .footer .contact {
+    text-align: center;
+    }
+
+    .footer .contact .ctn {
+        width: 100%;
+        float: none;
+        padding: 20px;
+    }
+
+    .footer .contact .ctn img {
+        float: none;
+    }
+
+
+}
+
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+@media only screen and (max-width : 767px) {
+    
+    /*----------------------------------------------------------------------*/
+    /*    IMPORTANT!!! DISABLE WOW ANIMATION ON SMALL SCREENS (<768px)
+    /*-----------------------------------------------------------------------*/
+    .wow {
+      visibility: visible !important;
+      -webkit-animation: none !important;
+         -moz-animation: none !important;
+           -o-animation: none !important;
+          -ms-animation: none !important;
+              animation: none !important;
+    }
+
+    /*------------------------------------------*/
+    /*    Typography
+    /*------------------------------------------*/
+    h1, .h1 {
+    	font-size: 36px;
+    	line-height: 40px;
+    }
+
+    h2, .h2 {
+    	font-size: 26px;
+        line-height: 35px;
+        width: 75%;
+        margin: auto;
+    }
+
+    h3, .h3 {
+        font-size: 26px;
+        line-height: 30px;
+    }
+
+    h4, .h4 {
+        font-size: 24px;
+        line-height: 28px;
+    }
+
+    h5, .h5 {
+        font-size: 18px;
+        line-height: 22px;
+    }
+
+    p {
+        font-size: 16px;
+    }
+
+
+    p.big {
+    font-size: 16px;
+    }
+
+
+    .lead {
+        font-size: 18px;
+        line-height: 22px;
+    }
+
+
+     /*------------------------------------------*/
+    /*    Cols Spacing
+    /*------------------------------------------*/
+
+    .img-responsive {
+    height: auto;
+    width: 55%;
+    }
+
+
+    .how-work .img-responsive {
+    width: auto;
+    }
+
+    .owl-carousel .img-responsive{
+    width: auto;
+    }
+
+    /*------------------------------------------*/
+    /*    Cols Spacing
+    /*------------------------------------------*/
+    .c2 div[class^="col-sm"]:nth-child(1),
+    .c3 div[class^="col-sm"]:nth-child(1),
+    .c3 div[class^="col-sm"]:nth-child(2),
+    .c4 div[class^="col-sm"]:nth-child(1),
+    .c4 div[class^="col-sm"]:nth-child(2),
+    .c4 div[class^="col-sm"]:nth-child(3) {
+        margin-bottom: 30px;
+    }
+
+    .c2.text-center div[class^="col-"],
+    .c3.text-center div[class^="col-"],
+    .c4.text-center div[class^="col-"] {
+        padding-left: 70px !important;
+        padding-right: 70px !important;
+    }
+
+    .new-row-sm {
+        margin-top: 30px;
+    }
+
+    .center-sm {
+        text-align: center;
+    }
+
+    /*-----------------------------------------------------------*/
+    /*    Navbar 3cols
+    /*-----------------------------------------------------------*/
+    .nav-3cols span{
+        display: none;
+    }
+    
+    /*-----------------------------------------------------------*/
+    /*    Navbar Dropdown
+    /*-----------------------------------------------------------*/
+    .navbar-nav .open .dropdown-menu.multi-level {
+        height: auto;
+        overflow-y:auto;
+    }
+
+    /*-----------------------------------------------------------*/
+    /*    Navbar with Top Bar
+    /*-----------------------------------------------------------*/
+    .top-bar .schedule,
+    .top-bar .contact-info,
+    .top-bar .contact-info .phone{
+        display: block;
+        float: none;
+        text-align: right;
+        font-size: 13px;
+    }
+
+    .navbar-brand > img {
+    width: 80%;
+    }
+
+
+    .top-bar .schedule i,
+    .top-bar .contact-info i {
+        font-size: 18px;
+    }
+
+    .top-bar .contact-info .phone{
+        margin-top: 10px;
+    }
+
+    .top-bar .contact-info .email {
+        display: none;
+    }
+
+    .top-bar .contact-info .phone span {
+        display: inline-block;
+        font-size: 15px;
+        font-weight: 700;
+    }
+   
+
+    /*------------------------------------------*/
+    /*  Hero Devices
+    /*------------------------------------------*/
+    .hero.hero-devices .y-middle {
+        display: block!important;
+    }
+
+    .hero.hero-devices h1, 
+    .hero.hero-devices img {
+        padding-top: 30px;
+    }
+
+
+    /*-----------------------------------------------------------*/
+    /*    Section Header
+    /*-----------------------------------------------------------*/
+    .section-header {
+        margin-bottom: 40px;
+    }
+
+    /*-----------------------------------------------------------*/
+    /*    Header
+    /*-----------------------------------------------------------*/
+
+    .top-bg {
+        margin-top: 75px;
+        padding-top: 80px !important;
+    }
+
+
+    /*------------------------------------------*/
+    /*  Footer Section
+    /*------------------------------------------*/
+    .footer .aliados {
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    width: 100%;
+    float: none;
+    padding-bottom: 25px;
+    }
+
+    .footer .contact {
+    width: 100%;
+    float: none;
+    padding: 12px 0px 0px 0px;
+    }
+
+    .footer .contact .ctn img {
+        float: none;
+        margin-bottom: 10px;
+    }
+
+
+    .footer p, .footer a {
+        font-size: 16px;
+        font-weight: 300;
+        margin-bottom: 0;
+        line-height: 24px;
+    }
+
+
+
+    .col-xs-9 {
+        padding-top: 0;
+    }
+
+
+    .page-head{
+        height: 205px;
+    }
+
+
+
+}
+
+
+
+
+
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+@media only screen and (max-width : 720px) {
+
+.col-md-3 {
+    width: 100%;
+    float: none;
+}
+
+.col-xs-9 {
+    padding-top: 10px;
+}
+
+}
+
+
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+@media only screen and (max-width : 479px) {
+
+    .container {
+        max-width: 90% !important;
+    }
+
+    /*------------------------------------------*/
+    /*    Cols Spacing
+    /*------------------------------------------*/
+    .c2.text-center div[class^="col-"],
+    .c3.text-center div[class^="col-"],
+    .c4.text-center div[class^="col-"] {
+        padding-left: 15px !important;
+        padding-right: 15px !important; 
+    }
+    
+  
+
+    /*--------------------------------------------------------------*/
+    /*    Section Header
+    /*--------------------------------------------------------------*/
+    .section-header span {
+        display: block-inline;
+    }
+    
+    /*-----------------------------------------------------------*/
+    /*    Content Split - Grid
+    /*-----------------------------------------------------------*/
+    .content-split .content-block {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .content-grid .lead-block {
+        padding: 40px 15px;
+    }
+
+    /* ==========================================================================
+       CONTAINER LIST
+    ========================================================================== */
+
+    .container-list{    
+        text-align: center;
+    }
+
+    .container-list span{    
+        text-align: center;
+        display: block;
+        width: 100%;
+        margin-bottom: 20px
+    }
+   
+   .btn-ghost {
+        float: none;
+    }
+
+
+
+    /* ==========================================================================
+       Text
+    ========================================================================== */
+
+    .content-block h5, .content-block .h5 {
+        font-size: 16px;
+        line-height: 25px;
+    }
+
+    h2, .h2 {
+        font-size: 24px;
+    }
+
+    h3, .h3 {
+        font-size: 20px;
+        line-height: 25px;
+    }
+
+    h4, .h4 {
+    font-size: 20px;
+    line-height: 25px;
+    }
+
+
+    p {
+        font-size: 14px;
+        line-height: 24px;
+    }
+
+    p.small {
+        font-size: 14px;
+        line-height: 24px;
+    }
+
+    p.big {
+        font-size: 14px;
+    }
+
+
+    /* ==========================================================================
+       Footer and firma
+    ========================================================================== */
+
+
+    .firma-ctn {
+        width: 180px;
+    }
+
+    .firma-login{
+        width: 173px;
+    }
+
+    .firma img {
+    padding-top: 3px;
+    margin-left: 5px;
+    }
+
+
+}
+
+
+
+
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------ */
+@media only screen and (max-width : 360px) {
+
+    /* ==========================================================================
+       Text
+    ========================================================================== */
+    h3, .h3 {
+        font-size: 18px;
+    }
+
+    h2, .h2 {
+        font-size: 20px;
+        line-height: 27px;
+    }
+
+    .content-block h5, .content-block .h5 {
+        font-size: 14px;
+        line-height: 24px;
+    }
+
+
+
+
+
+}

@@ -1,0 +1,47 @@
+﻿.registerform .form-control{
+         padding-left: 12px;
+}
+textarea {
+    resize: none;
+}
+.pace {
+  -webkit-pointer-events: none;
+  pointer-events: none;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.pace-inactive {
+  display: none;
+}
+
+.pace .pace-progress {
+  background: $pacecolor;
+  position: fixed;
+  z-index: 2000;
+  top: 0;
+  right: 100%;
+  width: 100%;
+  height: 2px;
+}
+.side-bar .form-group {
+     margin-bottom: 0;
+}
+    .unfocused {
+        color: rgba(0,0,0,0.4);
+    }
+
+    .selected {
+        background-color: rgba(59, 175, 218, 0.74) !important;
+        color: white;
+    }
+    
+.dtinit tr, .decladetail, .orderdetail {
+    cursor: pointer;
+}
+
+.editable-container.popover{
+        padding: 1px 10px;
+}

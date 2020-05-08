@@ -1,0 +1,356 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Pagos";
+
+    List<InstaTransfer.DataAccess.AE_OperacionPago> OperacionPago = (List<InstaTransfer.DataAccess.AE_OperacionPago>)ViewBag.OperacionPago;
+    List<InstaTransfer.DataAccess.AE_OperacionPago> OperacionPagoReinversion = (List<InstaTransfer.DataAccess.AE_OperacionPago>)ViewBag.OperacionPagoReinversion;
+    List<InstaTransfer.DataAccess.AE_OperacionPago> OperacionPagoCapital = (List<InstaTransfer.DataAccess.AE_OperacionPago>)ViewBag.OperacionPagoCapital;
+    List<InstaTransfer.DataAccess.AE_AdministradorPago> AdministradorPago = (List<InstaTransfer.DataAccess.AE_AdministradorPago>)ViewBag.AdminPago;
+    decimal TotalAdmin = 0;
+
+}
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = ViewBag.Title }); }
+<style>
+    input {
+        font-size: 20px;
+        padding: 0;
+        border: 2px solid #ccc;
+        border-left: 0;
+        width: 100%;
+        color: #666;
+        border-radius: 0 7px 7px 0;
+        /*font-family: 'PT Sans', sans-serif;
+        font-weight: bold;*/
+    }
+
+    form input:focus {
+        outline: 0;
+    }
+
+    form input.error {
+        border-color: #ff0000;
+    }
+
+    form label.error {
+        background-color: #ff0000;
+        color: #fff;
+        padding: 10px;
+        font-size: 11px;
+    }
+
+    label {
+        color: #999;
+        display: block;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        font-size: 15px;
+        font-weight: bold;
+        letter-spacing: 0.05em;
+    }
+
+    .flex {
+        display: flex;
+        justify-content: flex-start;
+    }
+
+        .flex input {
+            max-width: 300px;
+            flex: 1 1 300px;
+        }
+
+        .flex .currency {
+            font-size: 20px;
+            padding: 0 10px 0 20px;
+            color: #999;
+            border: 2px solid #ccc;
+            border-right: 0;
+            line-height: 1.7;
+            border-radius: 7px 0 0 7px;
+            background: white;
+        }
+</style>
+<div class="row">
+    <div class="col-sm-12">
+
+
+        <ul class="nav nav-tabs tabs">
+            <li class="active tab">
+                <a href="#balance" data-toggle="tab" aria-expanded="true" data-action="">
+                    <span class="visible-xs"><i class="fa fa-database"></i></span>
+                    <span class="hidden-xs">Pagos Administrador Fondo</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="#tasa" idtable="avance-abono" data-toggle="tab" aria-expanded="false" data-action="">
+                    <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
+                    <span class="hidden-xs">Reinversión Utilidad Operaciones</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="#Accion" idtable="avance-table" data-toggle="tab" aria-expanded="false" data-action="">
+                    <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
+                    <span class="hidden-xs">Pago Utilidad Operaciones</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="#Liquidacion" idtable="avance-table" data-toggle="tab" aria-expanded="false" data-action="">
+                    <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
+                    <span class="hidden-xs">Liquidación de Operaciones</span>
+                </a>
+            </li>
+
+        </ul>
+        <div class="tab-pane active fade in" id="balance">
+            <div class="card-box table-responsive">
+                <h4 class="header-title"><b>PAGOS REALIZADOS AL ADMINISTRADOR DEL FONDO</b></h4>
+                <div class="clearfix"></div>
+                <table id="datatable-buttonsasd" class="dtinit table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Fecha Registro</th>
+                            <th>Operación</th>
+                            <th>Inversionista</th>
+                            <th>Fecha</th>
+                            <th>Monto $</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var _item in AdministradorPago.OrderByDescending(u => u.Id))
+                        {
+                            <tr>
+                                <td>@_item.FechaRegistro.ToShortDateString()</td>
+                                <td>(@_item.IdOperacion)  @_item.AE_Operacion.FechaInicioOperacion.ToShortDateString() - @_item.AE_Operacion.FechaFinOperacion.ToShortDateString()</td>
+                                <td>@_item.AE_Operacion.CUser.Name @_item.AE_Operacion.CUser.LastName</td>
+                                <td>@_item.FechaRegistro.ToShortDateString()</td>
+                                <td>@_item.Monto.ToString("N")</td>
+                            </tr>
+
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tab-pane active fade in" id="tasa">
+            <div class="card-box table-responsive">
+                <h4 class="header-title"><b>REINVERSIONES REALIZADAS </b></h4>
+                <div class="clearfix"></div>
+          
+               
+                  
+                            <table id="datatable-buttonsasd" class="dtinit table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha Registro</th>
+                                        <th>Operación</th>
+                                        <th>Inversionista</th>
+                                        <th>Fecha</th>
+                                        <th>Monto $</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach (var _item in OperacionPagoReinversion)
+                                    {
+                                    <tr>
+                                        <td>@_item.FechaPago.ToShortDateString()</td>
+                                        <td>@_item.IdOperacion @_item.AE_Operacion.FechaInicioOperacion.ToShortDateString() - @_item.AE_Operacion.FechaFinOperacion.ToShortDateString()</td>
+                                        <td>@_item.AE_Operacion.CUser.Name @_item.AE_Operacion.CUser.LastName</td>
+                                        <td>@_item.Date.ToShortDateString()</td>
+                                        <td>@_item.Monto.ToString("N")</td>
+                                    </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+
+                  
+                   
+             
+            </div>
+        </div>
+        <div class="tab-pane active fade in" id="Accion">
+            <div class="card-box table-responsive">
+                <h4 class="header-title"><b>PAGO DE UTILIDAD REALIZADOS </b></h4>
+                <div class="clearfix"></div>
+                <div class="col-lg-12" style="margin-top:3%;">
+                    <div class="col-lg-12">
+                        <div class="table-responsive">
+                            <table id="datatable-buttonsasd" class="dtinit table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha Registro</th>
+                                        <th>Operación</th>
+
+                                        <th>Inversionista</th>
+
+                                        <th>Fecha</th>
+                                        <th>Monto $</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach (var _item in OperacionPago)
+                                    {
+                                        <tr>
+                                            <td>@_item.FechaPago.ToShortDateString()</td>
+                                            <td>@_item.IdOperacion @_item.AE_Operacion.FechaInicioOperacion.ToShortDateString() - @_item.AE_Operacion.FechaFinOperacion.ToShortDateString()</td>
+                                            <td>@_item.AE_Operacion.CUser.Name @_item.AE_Operacion.CUser.LastName</td>
+                                            <td>@_item.Date.ToShortDateString()</td>
+                                            <td>@_item.Monto.ToString("N")</td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane active fade in" id="Liquidacion">
+            <div class="card-box table-responsive">
+                <h4 class="header-title"><b>LIQUIDACIONES REALIZADAS </b></h4>
+                <div class="clearfix"></div>
+                <div class="col-lg-12" style="margin-top:3%;">
+                    <div class="col-lg-12">
+                        <div class="table-responsive">
+                            <table id="datatable-buttonsasd" class="dtinit table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha Registro</th>
+                                        <th>Operación</th>
+                                        <th>Inversionista</th>
+                                        <th>Fecha</th>
+                                        <th>Monto $</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    @foreach (var _item in OperacionPagoCapital)
+                                    {
+                                        <tr>
+                                            <td>@_item.FechaPago.ToShortDateString()</td>
+                                            <td>@_item.IdOperacion @_item.AE_Operacion.FechaInicioOperacion.ToShortDateString() - @_item.AE_Operacion.FechaFinOperacion.ToShortDateString()</td>
+                                            <td>@_item.AE_Operacion.CUser.Name @_item.AE_Operacion.CUser.LastName</td>
+                                            <td>@_item.Date.ToShortDateString()</td>
+                                            <td>@_item.Monto.ToString("N")</td>
+                                        </tr>
+                                    }
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.16.0/localization/messages_es.js"></script>
+    <script src="@Url.Content("~/Scripts/bootstrap3-typeahead/bootstrap3-typeahead.min.js")"></script>
+    <script>
+
+
+        $(document).ready(function () {
+
+            var filename = "@InstaTransfer.ITResources.BackEnd.BackEndResources.FilenameTableAdvance";
+            var table = $('table.dtinit').DataTable({
+
+                order: [],
+                "pageLength": 25,
+                buttons: [{
+                    text: 'Copiar',
+                    extend: "copy",
+                    className: "btn-sm"
+                }, {
+                    extend: "csv",
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        //if ($('#filterRoles').val() != "") {
+                        //    config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");;
+                        //} else {
+                        config.filename = filename;
+                        //}
+
+                        $.fn.dataTable.ext.buttons.csvHtml5.action(e, dt, button, config);
+                    }
+                }, {
+                    extend: "excel",
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        //if ($('#filterRoles').val() != "") {
+                        //    config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                        //} else {
+                        config.filename = filename;
+                        //}
+
+                        $.fn.dataTable.ext.buttons.excelHtml5.action(e, dt, button, config);
+                    }
+                }, {
+                    extend: "pdf",
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        //if ($('#filterRoles').val() != "") {
+                        //    config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                        //} else {
+                        config.filename = filename;
+                        //}
+
+                        $.fn.dataTable.ext.buttons.pdfHtml5.action(e, dt, button, config);
+                    }
+                }, {
+                    extend: "print",
+                    text: '<i class="md md-lg md-print"></i>',
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        //if ($('#filterRoles').val() != "") {
+                        //    config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");;
+                        //} else {
+                        config.filename = filename;
+                        //}
+
+                        $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+                    }
+                }],
+                language: {
+                    url: "@Url.Content("~/Scripts/datatables/spanish.json")",
+                    buttons: {
+                        copyTitle: 'Tabla copiada al portapapeles',
+                        copySuccess: {
+                            _: 'Se han copiado %d filas.',
+                            1: 'Se ha copiado 1 fila.'
+                        }
+                    }
+                },
+                //responsive: true,
+                @*"ajax": '@Url.Action("GetData", "CUser")',*@
+                "dom": '<"row"<"col-md-6 col-sm-12"B><"col-md-6 col-sm-12  text-right"f>><"row"<"col-md-6 col-sm-12"l>><"row"<"col-md-6"r>><"row"<"col-sm-12"t>><"clearfix"><"col-md-6 col-sm-12"i><"col-md-6 col-sm-12 text-right"p>'
+            });
+
+            //var oTable;
+            //oTable = $('#datatable-buttons').dataTable();
+
+            //$('#filterRoles').change(function () {
+
+            //    oTable.fnFilter($(this).val(), 3);
+            //});
+
+
+
+        });
+    </script>
+}

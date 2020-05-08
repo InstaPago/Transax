@@ -1,0 +1,126 @@
+﻿@using Microsoft.AspNet.Identity.Owin;
+@using Microsoft.AspNet.Identity;
+@using InstaTransfer.DataAccess;
+@using InstaTransfer.BLL.Concrete;
+@{
+    URepository<CUser> CURepo = new URepository<CUser>();
+
+    var isTransaXUser = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.TransaXUser);
+    var isTransaXAdmin = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.TransaXAdmin);
+    var isCommerceAdmin = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.CommerceAdmin);
+    var isCommerceUser = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.CommerceUser);
+    var cUser = new CUser();
+
+    var userManager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+    var user = userManager.FindById(User.Identity.GetUserId());
+
+    if (user != null)
+    {
+        cUser = CURepo.GetCUser(user.Id);
+    }
+
+
+}
+<div class="left side-menu">
+    <div class="sidebar-inner slimscrollleft">
+        <div id="sidebar-menu">
+            <ul>
+                <li class="menu-title">Main</li>
+                <li>
+                    <a href="@Url.Action("Index", "Home")" class="waves-effect waves-primary">
+                        <i class="md md-dashboard"></i><span> Inicio </span>
+                    </a>
+                </li>
+
+                @if (isTransaXUser || isTransaXAdmin)
+                {
+                    <li>
+                        <a href="@Url.Action("Index", "Statement")" class="waves-effect waves-primary">
+                            <i class="md  md-settings-input-component"></i><span> Movimientos </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "Commerce")" class="waves-effect waves-primary">
+                            <i class="md  md-home"></i><span> Comercios </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="@Url.Action("Index", "TDeclaration")" class="waves-effect waves-primary">
+                            <i class="md  md-rate-review"></i><span> Declaraciones </span>
+                        </a>
+                    </li>
+                }
+                <li>
+                    <a href="@Url.Action("Index", "Order")" class="waves-effect waves-primary">
+                        <i class="md md-speaker-notes"></i><span> Órdenes de Compra </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="@Url.Action("Index", "CashOut")" class="waves-effect waves-primary">
+                        <i class="md  md-account-balance-wallet"></i><span> Retiros en Cuenta </span>
+                    </a>
+                </li>
+                @if (isCommerceAdmin || isCommerceUser)
+                {
+                    <li>
+                        <a href="@Url.Action("Index", "PaymentRequest")" class="waves-effect waves-primary">
+                            <i class="md  md-assignment"></i><span> Solicitudes de Pago </span>
+                        </a>
+                    </li>
+                }
+                <li>
+                    <a href="@Url.Action("Index", "CUser")" class="waves-effect waves-primary">
+                        <i class="md  md-contacts"></i><span> Usuarios </span>
+                    </a>
+                </li>
+                @if (isTransaXUser || isTransaXAdmin)
+                {
+                <li>
+                    <a href="@Url.Action("Index", "Avance")" class="waves-effect waves-primary">
+                        <i class="md  md-attach-money"></i><span> Avances </span>
+                    </a>
+                </li>
+                }
+
+
+                @*<li class="has_sub">
+                        <a href="javascript:void(0);" class="waves-effect waves-primary">
+                            <i class="md md-palette"></i> <span> Menu </span>
+                            <span class="menu-arrow"></span>
+                        </a>
+                        <ul class="list-unstyled">
+                            <li><a href="#">Submenu</a></li>
+                            <li><a href="#">Submenu</a></li>
+                        </ul>
+                    </li>*@
+            </ul>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="clearfix"></div>
+    </div>
+
+    @*<div class="user-detail">
+            <div class="dropup">
+                <a href="" class="dropdown-toggle profile" data-toggle="dropdown" aria-expanded="true">
+                    <img src="@Url.Content("~/Content/images/user-default.png")" alt="user-img" class="img-circle">
+                    <span class="user-info-span">
+                        <h5 class="m-t-0 m-b-0">@(cUser.Commerce.BusinessName != null ? cUser.Commerce.BusinessName : string.Empty)</h5>
+                        <p class="text-muted m-b-0">
+                            <small>
+                                <span class="loggeduser">@cUser.Name @cUser.LastName</span>
+                            </small>
+                        </p>
+                        <p class="text-muted m-b-0">
+                            <small><i class="fa fa-circle text-success"></i> <span>En línea</span></small>
+                        </p>
+                    </span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="@Url.Action("Index", "Profile")"><i class="md md-face-unlock"></i> Perfil</a></li>
+                    <li><a href="@Url.Action("LogOff", "Account")"><i class="md md-settings-power"></i> Cerrar sesión </a></li>
+                </ul>
+
+            </div>
+        </div>*@
+</div>

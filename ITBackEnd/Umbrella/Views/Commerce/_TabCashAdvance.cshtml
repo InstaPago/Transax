@@ -1,0 +1,609 @@
+﻿@model InstaTransfer.DataAccess.CUser
+@{
+    List<InstaTransfer.DataAccess.AE_MovimientosCuenta>
+    _Movimientos = (List<InstaTransfer.DataAccess.AE_MovimientosCuenta>
+        )ViewBag.Movimientos;
+    List<InstaTransfer.DataAccess.CommerceBankAccount>
+        _Cuentas = (List<InstaTransfer.DataAccess.CommerceBankAccount>
+            )ViewBag.Cuentas;
+    bool propuestaactiva = (bool)ViewBag.Propuesta;
+    bool avanceactiva = (bool)ViewBag.Avance;
+    string __rif = Model.Commerce.Rif.ToString();
+
+    bool proceso = (bool)ViewBag.Proceso;
+    string _proceso = proceso.ToString();
+
+}
+@section contents {
+    <link href="~/Content/css/select2.css" rel="stylesheet" />
+    <link href="~/Content/css/core.css" rel="stylesheet" />
+
+
+    @*<link href="~/Content/css/dropzone.css" rel="stylesheet" type="text/css" />*@
+}
+<style>
+    .select {
+        border: 2px solid green !important;
+        background-color: #e0f7e6 !important;
+    }
+</style>
+<input type="hidden" value="@propuestaactiva" id="_propuestaactiva" />
+<input type="hidden" value="@avanceactiva" id="_avanceactiva" />
+<input type="hidden" value="@__rif" id="__rif" />
+<input type="hidden" value="@_proceso" id="procesoactivo" />
+<div class="row">
+    <div class="col-sm-12">
+
+        <div class="card-box p-b-0">
+            <h4 class="text-dark  header-title m-t-0">Solicitud avances de efectivo</h4>
+            @*<p class="text-muted m-b-25 font-13">
+                    Same with basic wizard setup but with progress bar.
+                </p>*@
+
+            <div id="progressbarwizard" class="pull-in">
+                <ul>
+                    <li><a href="#account-2" id="tab-one" data-toggle="tab">Carga de Movimientos</a></li>
+                    <li><a href="#profile-tab-2" id="_profile-tab-2" data-toggle="tab">Propuesta</a></li>
+                    <li><a href="#finish-2" data-toggle="tab" id="_finish-2">Selección</a></li>
+                    @*@if (avanceactiva)
+                        {
+                        <li><a href="#avance-2" data-toggle="tab" id="_avance-2">Avance Activo</a></li>
+                        }*@
+                </ul>
+
+                <div class="tab-content bx-s-0 m-b-0">
+
+                    <div id="bar" class="progress progress-striped active">
+                        <div class="bar progress-bar progress-bar-primary"></div>
+                    </div>
+
+                    <div class="tab-pane p-t-10 fade" id="account-2">
+
+
+                        <div class="row">
+
+                            @if (avanceactiva)
+                            {
+                                int idavance = (int)ViewBag.Idavance;
+                                <div class="col-lg-12" style="margin-bottom:3%;">Este comercio tiene un avance activo.<a href="@Url.Action("Details","Avance", new { id=idavance })"> Detalle</a></div>
+                            }
+
+                            @if (_Movimientos.Count > 0 || proceso)
+                            {
+                                <div class="row" id="panelmovimientos">
+                                    <div class="@(proceso == true ? " col-lg-6" : "col-lg-12" )" id="proceso1">
+                                        <label>Resumen Movimientos Activos</label> (Valido hasta : <label id="validohasta">
+                                            @(_Movimientos.Count > 0 ? _Movimientos.First().Fecha.AddDays(7).ToString() : "-")
+                                        </label> )
+                                        <hr />
+                                        <label>Cantidad: </label> <label id="cantidad">
+                                            @_Movimientos.Count
+                                        </label><br />
+                                        <label>Desde:</label> <label id="desde">
+                                            @(_Movimientos.Count > 0 ? _Movimientos.Last().Fecha.ToString() : "-")
+                                        </label> <br />
+                                        <label>Hasta:</label> <label id="hasta">
+                                            @(_Movimientos.Count > 0 ? _Movimientos.First().Fecha.ToString() : "-")
+                                        </label>
+                                        <hr />
+                                        @if (_Movimientos.Sum(u => u.Monto) == 0)
+                                        {
+                                            <div class="col-lg-6 col-lg-offset-3" id="mensajenomovimientos">
+                                                <div class="alert alert-warning">
+                                                    <strong>Alerta!</strong> no encontramos movmientos validos para generar una propuesta.
+                                                </div>
+                                            </div>
+                                        }
+
+
+                                        <div class="col-lg-12 text-center">
+
+                                            @if (!propuestaactiva && _Movimientos.Sum(u => u.Monto) > 0)
+                                            {
+                                                <div class="checkbox checkbox-primary">
+                                                    <input id="checkbox-h17" type="checkbox" name="operacion">
+                                                    <label for="checkbox-h17">
+                                                        Operación Intereses Diario
+                                                    </label>
+                                                </div>
+                                                <input type="button" id="GenerarPropuesta" value="Generar Propuestas" class="btn btn-primary" />
+                                               
+                                                <input type="button" id="_EliminarMovimientos" value="Eliminar Movimientos" class="btn btn-danger" />
+                                            }
+                                            else
+                                            {
+                                                <div class="checkbox checkbox-primary" style="display:none;">
+                                                    <input id="checkbox-h17" type="checkbox" name="operacion">
+                                                    <label for="checkbox-h17">
+                                                        Operación Intereses Diario
+                                                    </label>
+                                                </div>
+                                                <input type="button" id="GenerarPropuesta" value="Generar Propuestas" class="btn btn-primary" style="display:none;" />
+                                            
+                                                <input type="button" id="_EliminarMovimientos" value="Eliminar Movimientos" class="btn btn-danger" style="display:none;" />
+                                            }
+
+
+                                        </div>
+
+                                    </div>
+                                    @if (proceso)
+                                    {
+                                        <div id="proceso2" class="col-lg-6">
+                                            @{
+                                                Html.RenderAction("_Progreso", new { rif = __rif });
+                                            }
+                                        </div>
+                                                }
+                                                else
+                                                {
+                                                    <div id="proceso2" class="col-lg-6" style="display:none;">
+
+                                                    </div>
+
+
+                                                }
+
+                                </div>
+                                <div class="col-lg-6 col-lg-offset-3" style="display:none;" id="nomovimientos">
+                                    <div class="alert alert-warning">
+                                        <strong>Alerta!</strong> no encontramos estados de cuenta asociados al comercio.
+                                    </div>
+                                </div>
+
+                                                }
+                                                else
+                                                {
+                                                    <div class="row" style="display:none;" id="panelmovimientos">
+                                                        <div class="col-lg-12" id="proceso1">
+                                                            <label>Resumen Movimientos Activos</label> (Valido hasta : <label id="validohasta"></label> )
+                                                            <hr />
+                                                            <label>Cantidad: </label> <label id="cantidad"></label> <br />
+                                                            <label>Desde:</label> <label id="desde"></label> <br />
+                                                            <label>Hasta:</label> <label id="hasta"></label>
+
+                                                            <hr />
+                                                            <div class="col-lg-6 col-lg-offset-3" id="mensajenomovimientos">
+                                                                <div class="alert alert-warning">
+                                                                    <strong>Alerta!</strong> no encontramos movimientos validos para generar una propuesta.
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="col-lg-12 text-center">
+
+                                                                @if (!propuestaactiva)
+                                                                {
+                                                                    <input type="button" id="GenerarPropuesta" value="Generar Propuestas" class="btn btn-primary" />
+                                                                    <input type="button" id="_EliminarMovimientos" value="Eliminar Movimientos" class="btn btn-danger" />
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                        <div id="proceso2" class="col-lg-6" style="display:none;">
+
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-6 col-lg-offset-3" id="nomovimientos">
+                                                        <div class="alert alert-warning">
+                                                            <strong>Alerta!</strong> no encontramos estados de cuenta asociados al comercio.
+                                                        </div>
+                                                    </div>
+                                                }
+                            <hr />
+                            <div class="clearfix"></div>
+                            @*@if (!avanceactiva)
+                                {*@
+                            <div class="col-lg-5" style="margin-top:1%;">
+                                <label>Cargar Estado de Cuenta</label>
+                                <input id="input-700" name="files" type="file" multiple class="file-loading">
+                            </div>
+
+                            <div class="col-lg-1" style="border-right:1px solid gray; height:350px; margin-top:1%;">
+
+                            </div>
+
+                            <div class="col-lg-5 col-lg-offset-1" style="margin-top:2%;">
+                                <form action="@Url.Action(" _AddBankInfo", "Commerce" )" typeof="post" id="iniciarsolicitud">
+                                    <input type="hidden" value="@__rif" name="rif" />
+                                    <div class="form-group clearfix">
+                                        <label class="col-lg-3 control-label" for="usuario"> Usuario *</label>
+                                        <div class="clearfix"></div>
+                                        <div class="col-lg-8">
+                                            <input id="Usuario" name="Usuario" type="text" class="required form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group clearfix">
+                                        <label class="col-lg-3 control-label " for="clave"> Contrasena *</label>
+                                        <div class="clearfix"></div>
+                                        <div class="col-lg-8">
+                                            <input id="Clave" name="Clave" type="password" class="required form-control" required>
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group clearfix">
+                                        <label class="col-lg-3 control-label " for="surname1"> Cuenta *</label>
+                                        <div class="clearfix"></div>
+                                        <div class="col-lg-8">
+                                            <select name="IdCuenta" class="form-control">
+                                                @foreach (var _item in _Cuentas)
+                                                {
+                                                    <option value="@_item.Id">@_item.Alias - @_item.AccountNumber.Substring((_item.AccountNumber.Length - 6), 6)</option>
+                                                }
+
+                                            </select>
+
+                                        </div>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="col-lg-6 col-lg-offset-3">
+                                        <input class="btn btn-primary" id="Iniciar" type="submit" value="Iniciar Proceso" />
+                                        @*<input class="btn btn-default" id="prueba" value="Prueba" type="button" />*@
+                                    </div>
+                                    <div class="col-lg-8" style="display:none; margin-top:3%;" id="_mensajeok">
+                                        <div class="alert alert-success">
+                                            <strong>Excelente!</strong> Aproximadamente en 8 minutos tendremos las información solicitada!
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane p-t-10 fade" id="profile-tab-2">
+                        <div class="row" id="_propuesta">
+                            @if (propuestaactiva)
+                            {
+                                int _id = (int)ViewBag.Idpropuesta;
+                                Html.RenderAction("_Propuesta", new { id = _id });
+                            }
+                            else
+                            {
+                                <div class="col-lg-6 col-lg-offset-3">
+                                    <div class="alert alert-warning">
+                                        <strong>Alerta!</strong> no encontramos propuesta activa para este comercio.
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="tab-pane p-t-10 fade" id="finish-2">
+                        <div class="row">
+                            <div class="col-lg-12 text-center" id="Confirmacion">
+                                @*@if (avanceactiva)
+                                    {
+
+                                    <div class="col-lg-12 text-center" style="margin-top:3%;">
+
+                                        @{
+                                        int _id = (int)ViewBag.Idavance;
+                                        Html.RenderAction("_Avance", new { id = _id });
+                                        }
+                                    </div>
+                                    }
+                                    else
+                                    {
+                                    <div class="col-lg-6 col-lg-offset-3">
+                                        <div class="alert alert-warning">
+                                            <strong>Alerta!</strong> no encontramos avance activo para este comercio.
+                                        </div>
+                                    </div>
+                                    }*@
+                                <div class="col-lg-6 col-lg-offset-3">
+                                    <div class="alert alert-warning">
+                                        <strong>Alerta!</strong> Debes seleccionar una opción de la propuesta.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    @*@if (avanceactiva)
+                        {
+                        <div class="tab-pane p-t-10 fade" id="avance-2">
+                            <div class="row">
+                                <div class="col-lg-12 text-center" style="margin-top:3%;">
+
+                                    @{
+                                    int _id = (int)ViewBag.Idavance;
+                                    Html.RenderAction("_Avance", new { id = _id });
+                                    }
+                                </div>
+
+                            </div>
+                        </div>
+                        }*@
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end col -->
+</div>
+
+<!-- Form wizard -->
+<script src="@Url.Content("~/Scripts/jquery.bootstrap.wizard.js")"></script>
+<script src="@Url.Content("~/Scripts/fileinput.js")"></script>
+
+<script type="text/javascript">
+    var intervalId;
+    $(document).ready(function () {
+        var proceso = $("#procesoactivo").val();
+        var progre = $("#porcentajeprogreso").val();
+        var progre2 = $("#porcentajeprogresoarchivos").val();
+        if (proceso == "True" && (progre != 4 && progre2 != 20)) {
+            intervalId = setInterval(ActualizacionAvance, 10000);
+        }
+    });
+
+    $(document).on('click', '#_EliminarMovimientos', function (e) {
+
+        Pace.start();
+        ShowLoader();
+        var _rif = $('#__rif').val();
+        var datos = { _rif: _rif };
+        //if (cuenta.length == 20 && cuenta.substring(0, 4) == "0134") {
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("_EliminarMovimientos", "Commerce")",
+            data: datos,
+        })
+        .done(function (r) {
+            HideLoader();
+            if (r.success) {
+
+                // $.Notification.notify('success', 'top right', 'Éxito!', r.message)
+                toastr.success("Movimientos Eliminados de forma correcta!", 'Éxito!');
+
+                //$("#panelmovimientos").fadeOut('600');
+                //$("#nomovimientos").fadeOut('600');
+                $("#validohasta").html("");
+                $("#desde").html("");
+                $("#hasta").html("");
+                $("#cantidad").html("");
+                //$("#panelmovimientos").fadeIn('600');
+                if (r.mostrar) {
+                    $("#GenerarPropuesta").show();
+                    $("#checkbox-h17").show();
+                    $("#_EliminarMovimientos").show();
+                    $("#nomovimientos").hide();
+                } else {
+                    $("#GenerarPropuesta").hide();
+                    $("#checkbox-h17").hide();
+                    $("#_EliminarMovimientos").hide();
+                    $("#panelmovimientos").hide();
+                    $("#nomovimientos").show();
+                }
+                //window.setTimeout(location.reload(), 4000);
+                //$("#_mensajeok").fadeIn('2000');
+
+            } else {
+                // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                toastr.error(r.message, 'Error!');
+            }
+        });
+
+        Pace.stop();
+        return false;
+    });
+    @*$(document).on('click', '#prueba', function () {
+        var rif = $('#__rif').val();
+        $("#proceso1").removeClass("col-lg-12");
+        $("#proceso1").addClass("col-lg-6");
+        var datos = { rif: rif };
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("_Progreso", "Commerce")",
+            data: datos,
+        }).done(function (r) {
+            $("#panelmovimientos").append(r);
+        });
+    });*@
+
+
+    $(document).on('submit', '#iniciarsolicitud', function (e) {
+        Pace.start();
+        //var cuenta = $('#numerocuenta').val();
+        //if (cuenta.length == 20 && cuenta.substring(0, 4) == "0134") {
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("_IniciarProcesoPropuesta", "Commerce")",
+            data: $("#iniciarsolicitud").serialize(),
+        })
+        .done(function (r) {
+            if (r.success) {
+                // $.Notification.notify('success', 'top right', 'Éxito!', r.message)
+                toastr.success("Solitiud Procesada!", 'Éxito!');
+                //window.setTimeout(location.reload(), 4000);
+                //$("#_mensajeok").fadeIn('2000');
+                var rif = $('#__rif').val();
+                $("#nomovimientos").hide();
+                $("#proceso1").removeClass("col-lg-12");
+                $("#proceso1").addClass("col-lg-6");
+                var datos = { rif: rif };
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("_Progreso", "Commerce")",
+                    data: datos,
+                }).done(function (r) {
+                    $("#panelmovimientos").show();
+                    $("#proceso2").show();
+                    $("#proceso2").append(r);
+                    intervalId = setInterval(ActualizacionAvance, 10000);
+                });
+            } else {
+                toastr.error(r.message, 'Error!');
+            }
+        });
+        Pace.stop();
+        return false;
+    });
+
+    $("#input-700").fileinput({
+        uploadUrl: "@Url.Action("UploadEstadoCuenta", "Commerce" , new { _rif = __rif })", // server upload action
+        uploadAsync: false,
+        maxFileCount: 4,
+        allowedFileExtensions: ['xls', 'xlsx']
+    }).on('filebatchpreupload', function (event, data, id, index) {
+
+        toastr.success('Iniciamos carga de data', 'Éxito!');
+        ShowLoader();
+    }).on('filebatchuploadsuccess', function (event, data) {
+        if (data.response.success) {
+
+            toastr.success('Archivo procesado de forma correcta', 'Éxito!');
+            $("#panelmovimientos").fadeOut('600');
+            $("#nomovimientos").fadeOut('600');
+            $("#validohasta").html(data.response.validohasta);
+            $("#desde").html(data.response.desde);
+            $("#hasta").html(data.response.hasta);
+            $("#cantidad").html(data.response.cantidad);
+            $("#panelmovimientos").fadeIn('600');
+            if (data.response.mostrar) {
+                $("#GenerarPropuesta").show();
+                $("#checkbox-h17").show();
+                $("#mensajenomovimientos").hide();
+                $("#_EliminarMovimientos").show();
+            } else {
+                $("#GenerarPropuesta").hide();
+                $("#checkbox-h17").hide();
+                $("#_EliminarMovimientos").hide();
+                $("#mensajenomovimientos").show();
+            }
+        } else {
+            toastr.error('No pudimos procesar el archivo de forma correcta', 'Error!');
+            //$("#panelmovimientos").fadeIn('600');
+
+        }
+        HideLoader();
+        $(".fileinput-remove").trigger("click");
+    });
+
+    $(document).on('click', '.seleccion', function () {
+        $(".propuesta").removeClass("select");
+        $(this).parent().parent().parent().addClass("select");
+    });
+
+
+    var win = $("#_propuestaactiva").val();
+    var _avancewin = $("#_avanceactiva").val();
+    //if (_avancewin) {
+    //    $("#_finish-2").trigger("click");
+    //}
+    if (win) {
+        $("#_profile-tab-2").trigger("click");
+    }
+
+    $(document).on('ready', function () {
+        $("#input-1").fileinput({
+            rtl: true,
+            allowedFileExtensions: ["xls"]
+        });
+
+    });
+
+    $('#basicwizard').bootstrapWizard({ 'tabClass': 'nav nav-tabs navtab-custom nav-justified bg-muted' });
+
+    $('#progressbarwizard').bootstrapWizard({
+        onTabShow: function (tab, navigation, index) {
+            var $total = navigation.find('li').length;
+            var $current = index + 1;
+            var $percent = ($current / $total) * 100;
+            $('#progressbarwizard').find('.bar').css({ width: $percent + '%' });
+        },
+        'tabClass': 'nav nav-tabs navtab-custom nav-justified bg-muted'
+    });
+
+    $('#btnwizard').bootstrapWizard({ 'tabClass': 'nav nav-tabs navtab-custom nav-justified bg-muted', 'nextSelector': '.button-next', 'previousSelector': '.button-previous', 'firstSelector': '.button-first', 'lastSelector': '.button-last' });
+
+
+
+    $('#rootwizard').bootstrapWizard({
+        'tabClass': 'nav nav-tabs navtab-custom nav-justified bg-muted',
+        'onNext': function (tab, navigation, index) {
+            var $valid = $("#commentForm").valid();
+            if (!$valid) {
+                $validator.focusInvalid();
+                return false;
+            }
+        }
+    });
+
+    $(document).on("click", "#GenerarPropuesta", function () {
+        Pace.start();
+        ShowLoader();
+        var $this = this;
+        var modo = false;
+        alert($("#checkbox-h17").is(':checked'));
+        if ($("#checkbox-h17").is(':checked')) {
+
+
+            modo = true;
+        }
+        var model = {
+            rif: $("#rif").val(), _modo: modo
+        };
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("_GenerarPropuesta", "Commerce")",
+            data: model,
+        })
+        .done(function (r) {
+
+            $("#_propuesta").html(r);
+            $("#_profile-tab-2").trigger("click");
+        });
+        HideLoader();
+        Pace.stop();
+    });
+
+    function ActualizacionAvance() {
+        var rif = $('#__rif').val();
+        //$("#nomovimientos").hide();
+        //$("#proceso1").removeClass("col-lg-12");
+        //$("#proceso1").addClass("col-lg-6");
+        var datos = { rif: rif };
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("_Progreso", "Commerce")",
+            data: datos,
+        }).done(function (r) {
+
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("_GetRegistros", "Commerce")",
+                data: datos,
+            }).done(function (response) {
+                if (response.success) {
+                    //toastr.success('Archivo procesado de forma correcta', 'Éxito!');
+                    //$("#panelmovimientos").fadeOut('600');
+                    $("#nomovimientos").fadeOut('600');
+                    $("#validohasta").html(response.validohasta);
+                    $("#desde").html(response.desde);
+                    $("#hasta").html(response.hasta);
+                    $("#cantidad").html(response.cantidad);
+                    //$("#panelmovimientos").fadeIn('600');
+                    if (response.mostrar) {
+                        $("#GenerarPropuesta").show();
+                        $("#mensajenomovimientos").hide();
+                        $("#_EliminarMovimientos").show();
+                    } else {
+                        $("#GenerarPropuesta").hide();
+                        $("#_EliminarMovimientos").hide();
+                        $("#mensajenomovimientos").show();
+                    }
+                }
+            });
+
+            //$("#proceso2").fadeOut(500);
+            $("#proceso2").html("");
+            //$("#proceso2").fadeIn(1500);
+            $("#proceso2").append(r);
+
+            var progre = $("#porcentajeprogreso").val();
+            var progre2 = $("#porcentajeprogresoarchivos").val();
+            if (progre == 4 && progre2 == 20) {
+                //setTimeout(ActualizacionAvance(), 100000);
+                clearInterval(intervalId);
+            }
+        });
+    }
+</script>

@@ -1,0 +1,379 @@
+﻿@model InstaTransfer.DataAccess.UDeclaration
+@{
+    InstaTransfer.DataAccess.CPurchaseOrder purchaseOrder = ViewBag.purchaseOrder;
+    var back = ViewBag.back;
+    var backId = ViewBag.backId != null ? ViewBag.backId : "";
+}
+@using InstaTransfer.ITResources.Enums
+@using InstaTransfer.ITResources.Constants
+
+
+<div class="nicescroll">
+    <div class="col-xs-12">
+        <h4 id="rightsidebar-title">
+            @if (back)
+            {
+                <a href="#" class="backdeclarationdetail hidden" guid="@Model.Id" crif="@Model.RifCommerce" backId="@backId">
+                    <i class="md md-chevron-left btnback"></i>
+                </a>
+            }
+            <span id="sidebarTitle">Detalle de la Declaración</span>
+        </h4>
+    </div>
+    <div id="rightsidebar-body" class="col-xs-12">
+        <div class="row">
+
+
+            <div class="col-md-12">
+                @if (Model.UDeclarationStatus.Id == (int)DeclarationStatus.ReconciliationPending)
+                {
+                    <div class="alert alert-warning">
+                        <strong><i class="md md-access-time"></i></strong>
+                        @Model.UDeclarationStatus.Description.ToString().Trim()
+                    </div>
+                }
+                @if (Model.UDeclarationStatus.Id == (int)DeclarationStatus.Reconciled)
+                {
+                    <div class="alert alert-success">
+                        <strong><i class="md md-check"></i></strong>
+                        @Model.UDeclarationStatus.Description.ToString().Trim()
+                    </div>
+                }
+                @if (Model.UDeclarationStatus.Id == (int)DeclarationStatus.Annulled)
+                {
+                    <div class="alert alert-danger">
+                        <strong><i class="md md-close"></i></strong>
+                        @Model.UDeclarationStatus.Description.ToString().Trim()
+                    </div>
+                }
+
+                <h3 class="text-center">Bs. @Model.Amount.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()</h3>
+                <hr />
+            </div>
+            <div class="col-md-12">
+
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label ">Monto</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static  text-muted">
+                                @Model.Amount.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label ">Comercio</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static  text-muted">
+                                @Model.Commerce.BusinessName.Trim()
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label ">Fecha de Transacción</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static  text-muted">
+                                @Model.TransactionDate.ToString("yyyy/MM/dd", new System.Globalization.CultureInfo("es-VE")).Trim()
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label ">Banco Receptor</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static  text-muted">
+                                @Model.UBank.Name.Trim()
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label ">Referencia</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static  text-muted">
+                                @Model.Reference.Trim()
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label ">Registro en Sistema</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static  text-muted">
+                                @(Model.CreateDate.ToString("yyyy/MM/dd h:mm tt", new System.Globalization.CultureInfo("es-VE")).Trim())
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-6 control-label ">Estado</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static ">
+
+                                @if (Model.UDeclarationStatus.Id == (int)DeclarationStatus.ReconciliationPending)
+                                {
+                                    <span class="badge badge-warning" data-toggle="tooltip" data-placement="top" title="" data-original-title="@Model.UDeclarationStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                                        <i class="md md-access-time"></i>
+                                    </span>
+                                }
+                                @if (Model.UDeclarationStatus.Id == (int)DeclarationStatus.Reconciled)
+                                {
+                                    <span class="badge badge-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="@Model.UDeclarationStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                                        <i class="md md-check"></i>
+                                    </span>
+                                }
+                                @if (Model.UDeclarationStatus.Id == (int)DeclarationStatus.Annulled)
+                                {
+                                    <span class="badge badge-danger" data-toggle="tooltip" data-placement="top" title="" data-original-title="@Model.UDeclarationStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                                        <i class="md md-close"></i>
+                                    </span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <label class="" style="color:#544c9f">Id: @Model.Id.ToString().Trim()</label>
+                    </div>
+                    @if (User.IsInRole(UserRoleConstant.TransaXAdmin) || User.IsInRole(UserRoleConstant.TransaXUser) && !back)
+                    {
+                        <div class="form-group text-center">
+                            @if (Model.UDeclarationStatus.Id == (int)DeclarationStatus.ReconciliationPending)
+                            {
+                                <button class="btn btn-icon btn-xs waves-effect waves-light btn-danger-alert m-b-5 btn-icon btn-anular" guid="@Model.Id" crif="@Model.RifCommerce">
+                                    <i class="md md-close"></i>
+                                    Anular
+                                </button>
+                            }
+                            @if (Model.CPurchaseOrder.IdCPurchaseOrderStatus == (int)PurchaseOrderStatus.Declared &&
+                                        Model.UDeclarationStatus.Id == (int)DeclarationStatus.ReconciliationPending &&
+                                        User.IsInRole(UserRoleConstant.TransaXAdmin) || User.IsInRole(UserRoleConstant.TransaXUser))
+                            {
+                                <button class="btn btn-icon btn-xs waves-effect waves-light btn-success-alert m-b-5 btn-icon btn-conciliar" guid="@Model.Id" crif="@Model.RifCommerce">
+                                    <i class="md md-check"></i>
+                                    Conciliar
+                                </button>
+                            }
+                        </div>
+                    }
+
+                </div>
+            </div>
+            @if (!back)
+            {
+                <div class="col-md-12">
+                    <hr />
+                    <h4>Orden Asociada</h4>
+                    @if (purchaseOrder != null)
+                {
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label ">Monto</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static  text-muted">
+                                        @purchaseOrder.Amount.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label ">Cedula del pagador</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static  text-muted">
+                                        @purchaseOrder.EndUserCI.ToString().Trim()
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label ">Correo del pagador</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static  text-muted">
+                                        @purchaseOrder.EndUserEmail.ToString().Trim()
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label ">Numero de orden</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static  text-muted">
+                                        @(purchaseOrder.OrderNumber != null ? purchaseOrder.OrderNumber.ToString().Trim() : "No Especificado")
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label ">Registro en sistema</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static  text-muted">
+                                        @purchaseOrder.CreateDate.ToString("yyyy/MM/dd h:mm tt", new System.Globalization.CultureInfo("es-VE")).Trim()
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-6 control-label ">Estado</label>
+                                <div class="col-sm-6">
+                                    <p class="form-control-static ">
+                                        @if (purchaseOrder.CPurchaseOrderStatus.Id == (int)PurchaseOrderStatus.DeclarationPending)
+                                        {
+                                            <span class="badge badge-warning" data-toggle="tooltip" data-placement="top" title="" data-original-title="@purchaseOrder.CPurchaseOrderStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                                                <i class="md  md-access-time"></i>
+                                            </span>
+                                        }
+                                        @if (purchaseOrder.CPurchaseOrderStatus.Id == (int)PurchaseOrderStatus.Declared)
+                                        {
+                                            <span class="badge badge-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="@purchaseOrder.CPurchaseOrderStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                                                <i class="md  md-check"></i>
+                                            </span>
+                                        }
+                                        @if (purchaseOrder.CPurchaseOrderStatus.Id == (int)PurchaseOrderStatus.Annulled)
+                                        {
+                                            <span class="badge badge-danger" data-toggle="tooltip" data-placement="top" title="" data-original-title="@purchaseOrder.CPurchaseOrderStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                                                <i class="md md-close"></i>
+                                            </span>
+                                        }
+                                        @if (purchaseOrder.CPurchaseOrderStatus.Id == (int)PurchaseOrderStatus.DeclaredReconciled)
+                                        {
+                                            <span class="badge badge-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="@purchaseOrder.CPurchaseOrderStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                                                <i class="md md-done-all"></i>
+                                            </span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group text-center">
+                                <label class="" style="color:#544c9f">Id: @purchaseOrder.Id.ToString().Trim()</label>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            No hay órdenes asociadas.
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    // Regresa al detalle de la orden asociada
+    function backOrder(guid, crif, backId) {
+        if (guid) {
+            ShowLoader();
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("SideOrder", "Order")",
+                data: { Id: guid, rif: crif, backId: backId, back: true },
+            })
+        .done(function (msg) {
+            $("#rsidebar").html(msg);
+            if (!$('#wrapper').hasClass('right-bar-enabled')) {
+                $('#wrapper').toggleClass('right-bar-enabled');
+            }
+            HideLoader();
+        });
+        }
+        HideLoader();
+    }
+
+    // Anulacion de la declaracion
+    function annulDeclaration(rif, declarationId) {
+        swal({
+            title: "¿Seguro que desea anular esta declaración?",
+            text: "No podrá revertir esta operación",
+            type: "info",
+            showCancelButton: true,
+            cancelButtonText: "No, cancelar",
+            confirmButtonClass: 'btn-info',
+            confirmButtonText: "Si, anular esta declaración",
+            closeOnConfirm: false
+        }, function () {
+            ShowLoader();
+            $.ajax({
+                method: "POST",
+                url: '@Url.Action("TryAnnulDeclaration", "Declaration")',
+                data: { rif: rif, declarationId: declarationId },
+            })
+            .done(function (r) {
+                HideLoader();
+                if (r.success) {
+                    swal({
+                        title: "Exito!",
+                        text: r.message,
+                        type: "success",
+                    }, function () {
+                        location.reload();
+                    });
+                } else {
+                    swal("Error!", r.message, "error");
+                }
+            });
+        });
+        HideLoader();
+    }
+
+    // Conciliacion de la declaracion
+    function reconcileDeclaration(declarationId) {
+        ShowLoader();
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("Reconcile", "Declaration")",
+            data: { id: declarationId },
+        })
+    .done(function (msg) {
+        $("#rsidebar").html(msg);
+        if (!$('#wrapper').hasClass('right-bar-enabled')) {
+            $('#wrapper').toggleClass('right-bar-enabled');
+        }
+
+        $('[data-toggle="tooltip"]').tooltip();
+        HideLoader();
+    });
+        e.stopPropagation();
+        HideLoader();
+    }
+
+    $(document).ready(function () {
+        // Variables
+        var back = @back.ToString().ToLower();
+
+        // Tooltip
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // -- Animate --
+        if (back)
+        {
+            $("#sidebarTitle").animate({ marginLeft: '+=20px' });
+            $("#sidebarTitle").animate({ marginLeft: '-=20px' });
+            $('.backdeclarationdetail').fadeIn(1000).removeClass('hidden');
+        }
+
+        // Back Declaration
+        $('.backdeclarationdetail').on('click', function () {
+            var guid = $(this).attr('guid');
+            var crif = $(this).attr('crif');
+            var backId = $(this).attr('backId');
+
+            checkSession(function () {
+                backOrder(guid, crif, backId);
+            })
+        });
+
+
+        // Anular Declaracion
+        $('.btn-anular').on('click', function (e) {
+            var declarationId = $(this).attr('guid');
+            var rif = $(this).attr('crif');
+
+            checkSession(function () {
+                annulDeclaration(rif, declarationId);
+            })
+
+        });
+
+        // Conciliar Declaracion
+        $('.btn-conciliar').on('click', function (e) {
+            var declarationId = $(this).attr("guid");
+
+            checkSession(function () {
+                reconcileDeclaration(declarationId);
+            })
+        });
+    });
+</script>

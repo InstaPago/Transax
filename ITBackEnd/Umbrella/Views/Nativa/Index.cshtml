@@ -1,0 +1,135 @@
+﻿@model InstaTransfer.DataAccess.CUser
+@{
+    string __rif = Model.Commerce.Rif.ToString();
+    List<InstaTransfer.DataAccess.AE_ArchivoUpload> Archivos = (List<InstaTransfer.DataAccess.AE_ArchivoUpload>)ViewBag.Archivos;
+    ViewBag.Title = "Carga de Documentación";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = ViewBag.Title }); }
+
+<div class="row">
+
+    <div class="col-sm-12">
+        <div class="card-box table-responsive">
+            <div class="col-lg-6" style="border-right:1px solid gray; margin-top:1%;  min-height:850px;">
+                <label>Cargar Documentos</label>
+                <input id="input-700" name="files" type="file" multiple class="file-loading">
+            </div>
+
+
+
+            <div class="col-lg-6" style=" min-height:850px;">
+
+                <div class="tab-pane active" id="abonolotepos">
+                    <div class="card-box table-responsive">
+                        <h4 class="header-title"><b>Documentos Cargados</b></h4>
+
+                        <p class="text-muted font-13 m-b-30">
+                            Detalles de los abonos de lotes.
+                        </p>
+                        <div class="clearfix"></div>
+
+                        @*<input onclick="switchTestMode(this)" type="checkbox" data-plugin="switchery" data-color="#00b19d">*@
+                        <div class="clearfix"></div>
+                        @*ojo con el width:100%*@
+                        <table id="datatable-buttonsasd" class="dtinit table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+                            <thead>
+
+                                <tr>
+                                    @*
+                                        <th>Rif</th>*@
+                                    <th>Fecha </th>
+                                    @*
+                                        <th>Saldo Inicial</th>*@
+                                    <th>Nombre Archivo</th>
+                                    <th>Acción</th>
+
+               
+
+                                    @*
+                                        <th>Tipo</th>*@
+                                    @*
+                                        <th>Acciones</th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (InstaTransfer.DataAccess.AE_ArchivoUpload item in Archivos)
+                                {
+                                    <tr dtaction="#">
+                                        <td>@item.Fecha</td>
+                                        <td>@item.FileName </td>
+                                        <td><input type="button"  class="btn btn-danger _delete" valor="@item.Id" value="Eliminar" /></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts{
+    <script src="@Url.Content("~/Scripts/jquery.bootstrap.wizard.js")"></script>
+    <script src="@Url.Content("~/Scripts/fileinput.js")"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+
+            
+            $("._delete").on("click", function () {
+   
+                var _id = $(this).attr("valor");
+                var datos = { _id:_id };
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("_EliminarArchivo", "Nativa")",
+                    data: datos,
+                    })
+                .done(function (r) {
+
+                    if (r.success) {
+
+                        toastr.success("Archivo eliminado de forma correcta!", 'Éxito!');
+                        window.setTimeout(location.reload(), 2000);
+                    } else {
+                        // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                        toastr.error(r.message, 'Error!');
+                    }
+                });
+            Pace.stop();
+        });
+
+            $("#input-700").fileinput({
+                uploadUrl: "@Url.Action("UploadFiles", "Nativa" , new { _rif = __rif })", // server upload action
+                uploadAsync: false,
+                maxFileCount: 4,
+                showUploadedThumbs: false,
+                allowedFileExtensions: ['xls', 'xlsx', 'pdf', 'jpg', 'jpeg' , 'png']
+            }).on('filebatchpreupload', function (event, data, id, index) {
+
+                toastr.success('Iniciamos carga de data', 'Éxito!');
+                ShowLoader();
+            }).on('filebatchuploadsuccess', function (event, data) {
+                if (data.response.success) {
+
+                    toastr.success('Archivo procesado de forma correcta', 'Éxito!');
+                    window.setTimeout(location.reload(), 2000);
+
+                } else {
+                    toastr.error('No pudimos procesar el archivo de forma correcta', 'Error!');
+                    //$("#panelmovimientos").fadeIn('600');
+
+                }
+                HideLoader();
+                $(".fileinput-remove").trigger("click");
+            });
+        });
+    </script>
+
+
+}

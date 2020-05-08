@@ -1,0 +1,1011 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BLL</name>
+    </assembly>
+    <members>
+        <member name="M:BLL.Concrete.CashOutTransactionBLL.CreateCashOutRequest(InstaTransfer.BLL.Models.CashOut.CashOutRequest,InstaTransfer.DataAccess.Commerce)">
+            <summary>
+            Metodo para crear una solicitud de retiro
+            </summary>
+            <param name="request">Modelo de la solicitud</param>
+            <param name="commerce">Comercio asociado</param>
+        </member>
+        <member name="M:BLL.Concrete.CashOutTransactionBLL.ApproveCashOutRequest(System.Guid,InstaTransfer.DataAccess.Commerce)">
+            <summary>
+            Metodo para aprobar una solicitud de retiro
+            </summary>
+            <param name="requestId">Id de la solicitud</param>
+            <param name="commerce">Comercio asociado</param>
+        </member>
+        <member name="M:BLL.Concrete.CashOutTransactionBLL.CompleteCashOutRequest(System.Guid,InstaTransfer.DataAccess.Commerce)">
+            <summary>
+            Metodo para completar una solicitud de retiro
+            </summary>
+            <param name="requestId">Id de la solicitud</param>
+            <param name="commerce">Comercio asociado</param>
+        </member>
+        <member name="M:BLL.Concrete.CashOutTransactionBLL.AnnullCashOutRequest(System.Guid,InstaTransfer.DataAccess.Commerce)">
+            <summary>
+            Metodo para anular una solicitud de retiro
+            </summary>
+            <param name="requestId">Id de la solicitud</param>
+            <param name="commerce">Comercio asociado</param>
+        </member>
+        <member name="M:BLL.Concrete.CashOutTransactionBLL.RejectCashOutRequest(System.Guid,InstaTransfer.DataAccess.Commerce)">
+            <summary>
+            Metodo para rechazar una solicitud de retiro
+            </summary>
+            <param name="requestId">Id de la solicitud</param>
+            <param name="commerce">Comercio asociado</param>
+        </member>
+        <member name="M:BLL.Concrete.CPurchaseOrderBLL.CreatePurchaseOrder(System.String,System.Decimal,InstaTransfer.DataAccess.CUser,System.String,System.String)">
+            <summary>
+            Crea una orden de compra
+            </summary>
+            <param name="description">Descripcion de la orden (Procedencia)</param>
+            <param name="amount">Monto de la orden</param>
+            <param name="cuser">Usuario del comercio</param>
+            <param name="userCI">Cedula del pagador</param>
+            <param name="userEmail">Correo del pagador</param>
+            <returns></returns>
+        </member>
+        <member name="M:BLL.Concrete.EndUserBLL.GetEndUser(System.String)">
+            <summary>
+            Retorna el usuario final asociado al aspnet user logeado actualmente
+            </summary>
+            <param name="userID">Id del usuario asociado al usuario final</param>
+            <returns>El usuario final</returns>
+        </member>
+        <member name="M:BLL.Concrete.EndUserBLL.GetEndUserByCI(System.String)">
+            <summary>
+            Retorna el usuario por la cedula asociada
+            </summary>
+            <param name="CI">Cedula del usuario</param>
+            <returns>Usuario pagador</returns>
+        </member>
+        <member name="M:BLL.Concrete.EndUserBLL.Register(System.String,System.String)">
+            <summary>
+            Asocia un usuario final a un usuario aspnet
+            </summary>
+            <param name="userID">id del usuario aspnet</param>
+            <returns></returns>
+        </member>
+        <member name="M:BLL.Concrete.CUserBLL.GetCUser(System.String)">
+            <summary>
+            Retorna el usuario del comercio asociado al aspnet user logeado actualmente
+            </summary>
+            <param name="userID">Id del usuario asociado al usuario del comercio</param>
+            <returns>El <see cref="T:InstaTransfer.DataAccess.CUser"/> del comercio asociado</returns>
+        </member>
+        <member name="M:BLL.Concrete.DeclarationBLL.GetDeclarations">
+            <summary>
+            Retorna todas las declaraciones del sistema
+            </summary>
+            <returns>Lista de declaraciones</returns>
+        </member>
+        <member name="M:BLL.Concrete.DeclarationBLL.GetDeclaration(System.Guid)">
+            <summary>
+            Retorna la declaracion por id especifico
+            </summary>
+            <param name="idDeclaration">Id de la declaracion</param>
+            <returns>Declaracion especifica</returns>
+        </member>
+        <member name="M:BLL.Concrete.DeclarationBLL.CreateDeclaration(InstaTransfer.BLL.Models.Declaration.DeclarationRequestModel,InstaTransfer.DataAccess.PaymentRequest)">
+            <summary>
+            Crea una declaracion a partir de una solicitud de pago
+            </summary>
+            <param name="requestModel">Modelo de datos de la declaracion</param>
+            <param name="paymentRequest">Solicitud de pago</param>
+        </member>
+        <member name="M:BLL.Concrete.DeclarationBLL.CreateExistingUserDeclaration(InstaTransfer.BLL.Models.Declaration.DeclarationRequestViewModel,InstaTransfer.DataAccess.PaymentRequest)">
+            <summary>
+            Crea una declaracion a partir de una solicitud de pago
+            </summary>
+            <param name="requestModel">Modelo de datos de la declaracion</param>
+            <param name="paymentRequest">Solicitud de pago</param>
+        </member>
+        <member name="M:BLL.Concrete.CommerceBLL.GetCommerce(System.Guid)">
+            <summary>
+            Retorna el comercio asociado a una declaracion especifica
+            </summary>
+            <param name="idDeclaration">Id de la declaracion</param>
+            <returns>Comercio asociado a la declaracion</returns>
+        </member>
+        <member name="M:BLL.Concrete.CommerceBLL.GetCommerce(System.String)">
+            <summary>
+            Retorna el comercio asociado a un rif especifico
+            </summary>
+            <param name="rif">Rif del comercio</param>
+            <returns>Comercio asociado al rif especificado</returns>
+        </member>
+        <member name="M:BLL.Concrete.CommerceBalanceBLL.AddBalance(System.String,System.String,System.Decimal,System.Guid,InstaTransfer.ITResources.Enums.CommerceBalanceType)">
+            <summary>
+            Agrega un registro al balance del comercio
+            </summary>
+            <param name="description">Descripcion de la transaccion</param>
+            <param name="rifCommerce">Rif del comercio</param>
+            <param name="amount">Monto de la transaccion</param>
+            <param name="idTransaction">Id de la transaccion</param>
+            <param name="type">Tipo de transaccion</param>
+        </member>
+        <member name="M:BLL.Concrete.CommerceBalanceBLL.GetLastBalance(System.String)">
+            <summary>
+            Obtiene el ultimo registro del balance de un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio especifico</param>
+            <returns>Ultimo balance del comercio</returns>
+        </member>
+        <member name="M:BLL.Concrete.CommerceBalanceBLL.GetRequestTotals(System.Decimal,InstaTransfer.DataAccess.Commerce)">
+            <summary>
+            Retorna la totalizacion de la solicitud de retiro
+            </summary>
+            <param name="amount"></param>
+            <param name="commerce"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BLL.Concrete.CommerceBalanceBLL.GetBalance(InstaTransfer.DataAccess.Commerce)">
+            <summary>
+            Retorna la totalizacion del balance del comercio
+            </summary>
+            <param name="commerce">Comercio especifico</param>
+            <returns>Totalizacion del balance</returns>
+        </member>
+        <member name="M:BLL.Concrete.CommerceBalanceBLL.GetTaxes(System.Decimal,InstaTransfer.DataAccess.Commerce)">
+            <summary>
+            Retorna las comisiones del comercio y monto a retirar asociado
+            </summary>
+            <param name="commerce">Comercio asociado</param>
+            <param name="amount">Monto a retirar</param>
+            <returns>Modelo de comisiones del retiro</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.Repository`1.GetAllRecords">
+            <summary>
+            obtiene todos los registros de la tabla T
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.Repository`1.GetAllRecords(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+            obtiene todos los registros de la tabla T que cumplan una condicion
+            </summary>
+            <param name="predicate">predicado a cumplir</param>
+            <returns></returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.Repository`1.GetEntity(System.Int32)">
+            <summary>
+            obtiene un registro de la tabla T
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.Repository`1.GetEntity(System.Guid)">
+            <summary>
+            obtiene un registro de la tabla T
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.Repository`1.DeleteGroup(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+            elimina los registros de la tabla T que cumplan una condicion
+            </summary>
+            <param name="predicate"></param>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.Repository`1.SaveChanges">
+            <summary>
+            Submit
+            </summary>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.Repository`1.AddEntity(`0)">
+            <summary>
+            agrega un registro a la tabla T
+            </summary>
+            <param name="entidad"></param>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.Repository`1.DeleteT(`0)">
+            <summary>
+            elimina un registro de la tabla T
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.#ctor(System.Boolean)">
+            <summary>
+            Constructor para configurar la conexion de la base de datos desde un archivo por parametro.
+            </summary>
+            <param name="isAppConfigFile">True - Lectura externa del archivo de configuracion.</param>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.#ctor">
+            <summary>
+            Constructor vacio para la configuracion de la conexion a la base de datos.
+            </summary>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.BulkInsertAll``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Inserta una lista de entidades a la base de datos usando el metodo <see cref="T:System.Data.SqlClient.SqlBulkCopy"/>
+            </summary>
+            <typeparam name="T">Entidad generica</typeparam>
+            <param name="entities">Lista de entidades a insertar</param>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.EventTypeFilter(System.Reflection.PropertyInfo)">
+            <summary>
+            Filtra las llaves foraneas para una propiedad especifica
+            </summary>
+            <param name="p">Propiedad a filtrar</param>
+            <returns>True - No es llave foranea. False - Es llave foranea.</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetPropertyValue(System.Object)">
+            <summary>
+            Verifica el valor de la propiedad. Si es null devuelve DBNull
+            </summary>
+            <param name="o">Valor de la propiedad</param>
+            <returns>Valor verificado.</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetCommerce(System.String)">
+            <summary>
+            Retorna el comercio desde un rif especifico
+            </summary>
+            <param name="rif">Rif del comercio especifico</param>
+            <returns><see cref="T:InstaTransfer.DataAccess.Commerce"/> especifico</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetCommerces">
+            <summary>
+            Retorna los comercios en la base de datos
+            </summary>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.Commerce"/></returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetCUser(System.String)">
+            <summary>
+            Retorna el usuario del comercio asociado al aspnet user logeado actualmente
+            </summary>
+            <param name="userID">Id del usuario asociado al usuario del comercio</param>
+            <returns>El <see cref="T:InstaTransfer.DataAccess.CUser"/> del comercio asociado</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetCUser(System.Guid)">
+            <summary>
+            Retorna el usuario del comercio asociado a un id especifico
+            </summary>
+            <param name="cUserID">Id del usuario especifico</param>
+            <returns>El <see cref="T:InstaTransfer.DataAccess.CUser"/> especifico</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetCUsers(System.String)">
+            <summary>
+            Retorna todos los <see cref="T:InstaTransfer.DataAccess.CUser"/> asociados a un comercio especifico        
+            </summary>
+            <param name="rif">Rif del comercio especificado</param>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.CUser"/> del comercio asociado</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetDeclarationsByDate(System.String,System.DateTime,InstaTransfer.ITResources.Enums.DateType)">
+            <summary>
+            Retorna las declaraciones por fecha de un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio</param>
+            <param name="date">Fecha de la declaracion</param>
+            <param name="dateType">Tipo de fecha entre dia y mes</param>
+            <returns>Declaraciones por la fecha y comercio especifico</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetDeclarationsByDate(System.DateTime,InstaTransfer.ITResources.Enums.DateType)">
+            <summary>
+            Retorna las declaraciones por fecha
+            </summary>
+            <param name="date">Fecha de la declaracion</param>
+            <param name="dateType">Tipo de fecha entre dia y mes</param>
+            <returns>Declaraciones por la fecha y comercio especifico</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetDeclarationsByStatus(System.String,InstaTransfer.ITResources.Enums.DeclarationStatus)">
+            <summary>
+            Retorna las declaraciones por status de un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio</param>
+            <param name="status">Status de la declaracion</param>
+            <returns>Declaraciones por status y comercio especifico</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetDeclarationsByStatus(InstaTransfer.ITResources.Enums.DeclarationStatus)">
+            <summary>
+            Retorna todas las declaraciones de un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio</param>
+            <param name="status">Status de la declaracion</param>
+            <returns>Declaraciones por status y comercio especifico</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetDeclarationsByDateAndStatus(System.String,System.DateTime,InstaTransfer.ITResources.Enums.DateType,InstaTransfer.ITResources.Enums.DeclarationStatus)">
+            <summary>
+            Retorna las declaraciones por fecha y status de un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio</param>
+            <param name="date">Fecha de la declaracion</param>
+            <param name="dateType">Tipo de fecha entre dia y mes</param>
+            <param name="status">Status de la declaracion</param>
+            <returns>Declaraciones por la fecha, status y comercio especifico</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetDeclarationsByDateRangeAndStatus(System.String,System.DateTime,System.DateTime,InstaTransfer.ITResources.Enums.DeclarationStatus)">
+            <summary>
+            Retorna las declaraciones creadas en un rango de fechas para un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio</param>
+            <param name="startDate">Fecha inicio</param>
+            <param name="endDate">Fecha fin</param>
+            <param name="status">Estado de la declaracion</param>
+            <returns>Lista de declaraciones para el rango de fechas y comercio especifico</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetDeclarationsByDateRangeAndStatus(System.DateTime,System.DateTime,InstaTransfer.ITResources.Enums.DeclarationStatus)">
+            <summary>
+            Retorna las declaraciones creadas en un rango de fechas especifico
+            </summary>
+            <param name="startDate">Fecha inicio</param>
+            <param name="endDate">Fecha fin</param>
+            <param name="status">Estado de la declaracion</param>
+            <returns>Lista de declaraciones para el rango de fechas especifico</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetDeclarationsByDateAndStatus(System.DateTime,InstaTransfer.ITResources.Enums.DateType,InstaTransfer.ITResources.Enums.DeclarationStatus)">
+            <summary>
+            Retorna todas las declaraciones por fecha y status
+            </summary>
+            <param name="date">Fecha de la declaracion</param>
+            <param name="dateType">Tipo de fecha entre dia y mes</param>
+            <param name="status">Status de la declaracion</param>
+            <returns>Declaraciones por la fecha, y status</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetDeclarations(System.String,System.String)">
+            <summary>
+            Encuentra la declaracion a partir de un banco y numero de referencia
+            </summary>
+            <param name="refNum">Numero de referencia de la declaracion a buscar</param>
+            <param name="idBank">Id del banco emisor para la declaracion</param>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.UDeclaration"/> encontradas</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetDeclarations(System.String)">
+            <summary>
+            Retorna todas las declaraciones asignadas a un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio especificado</param>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.UDeclaration"/> del comercio</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetDeclarations">
+            <summary>
+            Retorna todas las declaraciones registradas
+            </summary>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.UDeclaration"/></returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetDeclaration(System.String,System.Guid)">
+            <summary>
+            Retorna la declaracion con el id y el comercio asociado especifico.
+            </summary>
+            <param name="rif">Rif del comercio especificado</param>
+            <param name="id">Id de la declaracion</param>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.UDeclaration"/> del comercio</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetDeclarations(System.Guid,System.String)">
+            <summary>
+            Retorna las declaraciones asociadas a una orden de compra de un comercio especifico
+            </summary>
+            <param name="idPurchaseOrder">Id de la orden de compra asociada</param>
+            <param name="rif">Rif del comercio especificado</param>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.UDeclaration"/> del comercio</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetPurchaseOrdersByDateRangeAndStatus(System.DateTime,System.DateTime,InstaTransfer.ITResources.Enums.PurchaseOrderStatus)">
+            <summary>
+            Retorna las ordenes creadas en un rango de fechas
+            </summary>
+            <param name="startDate">Fecha inicio</param>
+            <param name="endDate">Fecha fin</param>
+            <param name="status">Estado de la declaracion</param>
+            <returns>Lista de ordenes para el rango de fechas</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetPurchaseOrdersByDateRangeAndStatus(System.String,System.DateTime,System.DateTime,InstaTransfer.ITResources.Enums.PurchaseOrderStatus)">
+            <summary>
+            Retorna las ordenes creadas en un rango de fechas para un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio</param>
+            <param name="startDate">Fecha inicio</param>
+            <param name="endDate">Fecha fin</param>
+            <param name="status">Estado de la declaracion</param>
+            <returns>Lista de ordenes para el rango de fechas y comercio especifico</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetPurchaseOrdersByStatus(System.String,InstaTransfer.ITResources.Enums.PurchaseOrderStatus)">
+            <summary>
+            Retorna las ordenes de compra por status de un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio</param>
+            <param name="status">Status de la orden</param>
+            <returns>Ordenes de compra por status y comercio especifico</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetPurchaseOrdersByDate(System.String,System.DateTime,InstaTransfer.ITResources.Enums.DateType)">
+            <summary>
+            Retorna las ordenes de compra por fecha de un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio</param>
+            <param name="date">Fecha de la orden de compra</param>
+            <param name="dateType">Tipo de fecha entre dia o mes</param>
+            <returns>Ordenes de compra del dia</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetPurchaseOrdersByDateAndStatus(System.String,System.DateTime,InstaTransfer.ITResources.Enums.DateType,InstaTransfer.ITResources.Enums.PurchaseOrderStatus)">
+            <summary>
+            Retorna las ordenes de compra por fecha y statusde un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio</param>
+            <param name="date">Fecha de la orden de compra</param>
+            <param name="dateType">Tipo de fecha entre dia o mes</param>
+            <param name="status">Status de la orden</param>
+            <returns>Ordenes de compra por fecha, status y comercio especifico</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetPurchaseOrdersByDateAndStatus(System.DateTime,InstaTransfer.ITResources.Enums.DateType,InstaTransfer.ITResources.Enums.PurchaseOrderStatus)">
+            <summary>
+            Retorna las ordenes de compra por fecha y statusde un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio</param>
+            <param name="date">Fecha de la orden de compra</param>
+            <param name="dateType">Tipo de fecha entre dia o mes</param>
+            <param name="status">Status de la orden</param>
+            <returns>Ordenes de compra por fecha, status y comercio especifico</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetPurchaseOrder(System.String,System.Guid)">
+            <summary>
+            Retorna la orden de compra segun el id asignada a un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio especificado</param>
+            <param name="id">Id de la orden de compra</param>
+            <returns><see cref="T:InstaTransfer.DataAccess.CPurchaseOrder"/> del comercio</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetPurchaseOrder(System.Guid)">
+            <summary>
+            Retorna la orden de compra segun el id de la declaracion especifica
+            </summary>
+            <param name="declarationId">Id de la orden de compra</param>
+            <returns><see cref="T:InstaTransfer.DataAccess.CPurchaseOrder"/></returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetPurchaseOrder(System.String,System.String)">
+            <summary>
+            Retorna la orden de compra segun el numero de orden asignada a un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio especificado</param>
+            <param ame="orderNumber">Numero de la orden de compra</param>
+            <returns><see cref="T:InstaTransfer.DataAccess.CPurchaseOrder"/> del comercio</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetPurchaseOrders(System.String)">
+            <summary>
+            Retorna todas las ordenes de compra asignadas a un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio especificado</param>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.CPurchaseOrder"/> del comercio</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetPurchaseOrder(System.Guid,System.String)">
+            <summary>
+            Retorna la orden de compra asociada a una declaracion de un comercio especifico
+            </summary>
+            <param name="idDeclaration">Id de la declaracion asociada</param>
+            <param name="rif">Rif del comercio especificado</param>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.CPurchaseOrder"/> del comercio</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetUniqueUmbrellaUsers">
+            <summary>
+            Retorna todos los usuarios activos del sistema
+            </summary>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.UUser"/> activos.</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.ChangeUmbrellaUserStatus(System.String,System.String,System.Int32)">
+            <summary>
+            Retorna los usuarios asociados a un banco y razon social especifico
+            </summary>
+            <param name="bankId">Id del banco asociado al usuario</param>
+            <param name="socialReasonId">Id de la razon social asociada al usuario</param>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.UUser"/> asociados a los parametros especificados.</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetAllActiveUmbrellaUsers(System.String,System.String)">
+            <summary>
+            Retorna los usuarios asociados a un banco y razon social especifico
+            </summary>
+            <param name="bankId">Id del banco asociado al usuario</param>
+            <param name="socialReasonId">Id de la razon social asociada al usuario</param>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.UUser"/> asociados a los parametros especificados.</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetAllActiveUmbrellaUsers">
+            <summary>
+            Retorna todos los usuarios activos del sistema
+            </summary>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.UUser"/> activos.</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetCredits">
+            <summary>
+            Retorna todos movimientos positivos
+            </summary>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.UBankStatementEntry"/> positivos.</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetCredits(System.String)">
+            <summary>
+            Retorna todos movimientos positivos de un comercio especifico
+            </summary>
+            <param name="rif">Rif del comercio</param>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.UBankStatementEntry"/> positivos.</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Concrete.URepository`1.GetDebits">
+            <summary>
+            Retorna todos los movimientos negativos
+            </summary>
+            <returns>Lista de <see cref="T:InstaTransfer.DataAccess.UBankStatementEntry"/> negativos.</returns>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.BaseModel">
+            <summary>
+            Modelo base
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.BaseModel.id">
+            <summary>
+            Identificador del modelo
+            </summary>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.BaseSuccessResponse.#ctor(System.String,System.Object)">
+            <summary>
+            Constructor de la respuesta base del api para resultado, mensaje y objeto
+            </summary>
+            <param name="success">Resultado de la respuesta</param>
+            <param name="message">Mensaje de la respuesta</param>
+            <param name="responseObject">Objeto a devolver</param>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.BaseSuccessResponse.#ctor(System.String)">
+            <summary>
+            Constructor de la respuesta base del api para resultado y mensaje
+            </summary>
+            <param name="success">Resultado de la respuesta</param>
+            <param name="message">Mensaje de la respuesta</param>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.BaseErrorResponse.#ctor(System.String,System.Object)">
+            <summary>
+            Constructor de la respuesta base del api para mensaje y objeto
+            </summary>
+            <param name="message">Mensaje de la respuesta</param>
+            <param name="responseObject">Objeto a devolver</param>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.BaseErrorResponse.#ctor(System.Collections.Generic.List{System.String},System.Object)">
+            <summary>
+            Constructor de la respuesta base del api para mensaje y objeto
+            </summary>
+            <param name="message">Lista de mesajes de errores</param>
+            <param name="errors">Objeto a devolver</param>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.BaseErrorResponse.#ctor(System.Collections.Generic.List{System.String},System.String)">
+            <summary>
+            Constructor de la respuesta base para lista de string y codigo de error
+            </summary>
+            <param name="messageList">Lista de mensajes tipo string</param>
+            <param name="errorCode">Codigo de error</param>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.BaseErrorResponse.#ctor(System.String,System.String,System.Object)">
+            <summary>
+            Constructor de la respuesta base del api para mensaje, codigo y objeto
+            </summary>
+            <param name="message">Mensaje de la respuesta</param>
+            <param name="errorCode">Codigo de error</param>
+            <param name="responseObject">Objeto a devolver</param>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.BaseErrorResponse.#ctor(System.String,System.String)">
+            <summary>
+            Constructor de la respuesta base del api para mensaje codigo de error
+            </summary>
+            <param name="message">Mensaje de la respuesta</param>
+            <param name="errorCode">Codigo de error</param>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.BaseTransactionModel">
+            <summary>
+            Modelo base para las transacciones (Ordenes y Declaraciones)
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.BaseTransactionModel.Count">
+            <summary>
+            Numero de transacciones (Ordenes y Declaraciones)
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.BaseTransactionModel.Result">
+            <summary>
+            Resultado de la operacion para obtener el numero de transacciones
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.BaseTransactionModel.TotalAmount">
+            <summary>
+            Monto total de la suma de las transacciones
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.CashOut.CashOutRequest">
+            <summary>
+            Modelo de la solicitud de retiro
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.CashOut.CashOutRequest.Description">
+            <summary>
+            Descripcion de retiro
+            </summary>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.CashOut.CashOutRequest.#ctor">
+            <summary>
+            Constructor de una solicitud de retiro
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.CashOut.CashOutTotals">
+            <summary>
+            Modelo de totalizacion de retiros
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.CashOut.CashOutTotals.Balance">
+            <summary>
+            Montos totales del balance
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.CashOut.CashOutTotals.Balance.CurrentBalance">
+            <summary>
+            Total Disponible
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.CashOut.CashOutTotals.Balance.PositiveBalance">
+            <summary>
+            Total Ingresos
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.CashOut.CashOutTotals.Balance.NegativeBalance">
+            <summary>
+            Total Retirado
+            </summary>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.CashOut.CashOutTotals.Balance.#ctor">
+            <summary>
+            Constructor de la clase
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.CashOut.CashOutTotals.Taxes">
+            <summary>
+            Comisiones de los retiros
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.CashOut.CashOutTotals.Taxes.Commission">
+            <summary>
+            Comision fija
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.CashOut.CashOutTotals.Taxes.CommissionPercentage">
+            <summary>
+            Porcentaje de comision
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.CashOut.CashOutTotals.Taxes.CommissionIVA">
+            <summary>
+            IVA sobre la comision
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.CashOut.CashOutTotals.Taxes.CommissionTotal">
+            <summary>
+            Total de las comisiones 
+            </summary>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.CashOut.CashOutTotals.Taxes.#ctor">
+            <summary>
+            Constructor de la clase
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.CashOut.CashOutTotals.BalanceTotals">
+            <summary>
+            Montos totales del balance
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.CashOut.CashOutTotals.BalanceTaxes">
+            <summary>
+            Comisiones de los retiros
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.CashOut.CashOutTotals.TotalCashOut">
+            <summary>
+            Total a Retirar. Monto - comisiones
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.CashOut.CashOutTotals.Amount">
+            <summary>
+            Monto a retirar
+            </summary>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.CashOut.CashOutTotals.#ctor">
+            <summary>
+            Constructor de la clase
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.Declaration.DeclarationGetResponse">
+            <summary>
+            Modelo de la respuesta de la declaracion
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Declaration.DeclarationGetResponse.success">
+            <summary>
+            Estado de la operacion
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Declaration.DeclarationGetResponse.message">
+            <summary>
+            Mensaje de la operacion
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Declaration.DeclarationGetResponse.idstatus">
+            <summary>
+            Id del status de la declaracion
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Declaration.DeclarationGetResponse.status">
+            <summary>
+            Descripcion del status de la declaracion
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.Declaration.DeclarationModel">
+            <summary>
+            Modelo de las declaraciones
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Declaration.DeclarationModel.idissuingbank">
+            <summary>
+            Identificador del banco emisor
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Declaration.DeclarationModel.transactiondate">
+            <summary>
+            Fecha en la que se realizó la transacción
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Declaration.DeclarationModel.idoperationtype">
+            <summary>
+            Identificador del tipo de operación
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Declaration.DeclarationModel.referencenumber">
+            <summary>
+            Número de referencia de la transacción
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Declaration.DeclarationModel.amount">
+            <summary>
+            Monto exacto de la transacción
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Declaration.DeclarationModel.idpurchaseorder">
+            <summary>
+            Identificador de la orden de compra asociada
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Declaration.DeclarationModel.paymentuser">
+            <summary>
+            Usuario pagador de la declaración
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.Declaration.DeclarationPostResponse">
+            <summary>
+            Modelo de la respuesta de la declaracion
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Declaration.DeclarationPostResponse.success">
+            <summary>
+            Estado de la operacion
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Declaration.DeclarationPostResponse.message">
+            <summary>
+            Mensaje de la operacion
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Declaration.DeclarationPostResponse.iddeclaration">
+            <summary>
+            Id de la declaracion
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.Email.EmailModels">
+            <summary>
+            Modelo de correo electrónico
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Email.EmailModels.From">
+            <summary>
+            Correo Remitente
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Email.EmailModels.To">
+            <summary>
+            Correo Receptores
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Email.EmailModels.Subject">
+            <summary>
+            Asunto
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Email.EmailModels.DisplayName">
+            <summary>
+            Nombre Remitente
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Email.EmailModels.Body">
+            <summary>
+            Cuerpo del correo
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.Email.EmailModels.PaymentRequestEmailModel">
+            <summary>
+            Modelo del correo de solicitud de pago
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.Email.EmailModels.PaymentRequestEmailModel.EndUserName">
+            <summary>
+            Nombre del usuario pagador
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.PaymentRequest.PaymentRequestModel">
+            <summary>
+            Modelo de la solicitud de pago
+            </summary>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.PaymentRequest.PaymentRequestModel.#ctor">
+            <summary>
+            Constructor de una solicitud de pago
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.PaymentUser.PaymentUserModel">
+            <summary>
+            Usuario pagador
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PaymentUser.PaymentUserModel.userci">
+            <summary>
+            Cédula de identidad del usuario pagador
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PaymentUser.PaymentUserModel.useremail">
+            <summary>
+            Correo electrónico del usuario pagador
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PaymentUser.DeclarationUserModel.userfirstname">
+            <summary>
+            Nombre del Pagador
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PaymentUser.DeclarationUserModel.userlastname">
+            <summary>
+            Apellido del Pagador
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PaymentUser.DeclarationUserModel.userphone">
+            <summary>
+            Apellido del Pagador
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PaymentUser.DeclarationUserModel.password">
+            <summary>
+            Contraseña de Pagador
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PaymentUser.DeclarationUserViewModel.userfirstname">
+            <summary>
+            Nombre del Pagador
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PaymentUser.DeclarationUserViewModel.userlastname">
+            <summary>
+            Apellido del Pagador
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PaymentUser.DeclarationUserViewModel.userphone">
+            <summary>
+            Apellido del Pagador
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.PurchaseOrder.PurchaseOrderModel">
+            <summary>
+            Modelo de creación de la orden de compra
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PurchaseOrder.PurchaseOrderModel.amount">
+            <summary>
+            Monto de la orden
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PurchaseOrder.PurchaseOrderModel.ordernumber">
+            <summary>
+            Número de la orden proporcionado por el comercio
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PurchaseOrder.PurchaseOrderModel.rif">
+            <summary>
+            Rif del comercio
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PurchaseOrder.PurchaseOrderModel.paymentuser">
+            <summary>
+            Usuario pagador de la orden
+            </summary>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.PurchaseOrder.PurchaseOrderModel.#ctor">
+            <summary>
+            Constructor del modelo de la orden de compra
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.PurchaseOrder.OrderNumberModel">
+            <summary>
+            Modelo del número de orden
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PurchaseOrder.OrderNumberModel.ordernumber">
+            <summary>
+            Número de orden proporcionado por el comercio
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.PurchaseOrder.PurchaseOrderViewModel">
+            <summary>
+            Modelo de consulta de órdenes de compra
+            </summary>
+        </member>
+        <member name="P:InstaTransfer.BLL.Models.PurchaseOrder.PurchaseOrderViewModel.creationdate">
+            <summary>
+            Fecha de creación de la orden de compra
+            </summary>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.Validation.CustomDateAttribute">
+            <summary>
+            Atributo de validacion del formato de la fecha
+            </summary>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.Validation.CustomDateAttribute.#ctor">
+            <summary>
+            Constructor del atributo
+            </summary>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.Validation.CustomDateAttribute.IsValid(System.Object,System.ComponentModel.DataAnnotations.ValidationContext)">
+            <summary>
+            Verifica si el atributo es valido
+            </summary>
+            <param name="value">Valor a validar</param>
+            <param name="validationContext">Contexto de validacion</param>
+            <returns>Resultado de la validacion</returns>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.Validation.NoWhiteSpaceAttribute">
+            <summary>
+            Atributo de validacion de strings sin espacios en blanco
+            </summary>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.Validation.NoWhiteSpaceAttribute.IsValid(System.Object,System.ComponentModel.DataAnnotations.ValidationContext)">
+            <summary>
+            Verifica si el atributo es valido
+            </summary>
+            <param name="value">Valor a validar</param>
+            <param name="validationContext">Contexto de validacion</param>
+            <returns>Resultado de la validacion</returns>
+        </member>
+        <member name="T:InstaTransfer.BLL.Models.Validation.ReferenceValidationAttribute">
+            <summary>
+            Atributo de validacion del numero de referencia
+            </summary>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.Validation.ReferenceValidationAttribute.IsValid(System.Object,System.ComponentModel.DataAnnotations.ValidationContext)">
+            <summary>
+            Verifica si el atributo es valido
+            </summary>
+            <param name="value">Valor a validar</param>
+            <param name="validationContext">Contexto de validacion</param>
+            <returns>Resultado de la validacion</returns>
+        </member>
+        <member name="M:InstaTransfer.BLL.Models.Validation.RequireNonDefaultAttribute.IsValid(System.Object)">
+            <summary>
+            Override of <see cref="M:System.ComponentModel.DataAnnotations.ValidationAttribute.IsValid(System.Object)"/>
+            </summary>
+            <param name="value">The value to test</param>
+            <returns><c>false</c> if the <paramref name="value"/> is equal the default value of an instance of its own type.</returns>
+            <remarks>Is meant for use with primitive types or structs like DateTime, Guid, etc. Specifically ignores null values so that it can be combined with RequiredAttribute. Should not be used with Strings.</remarks>
+            <example>
+            //Allows you to effectively mark the field as required with out having to resort to Guid? and [Required] and then having to deal with SomeId.GetValueOrDefault() everywhere (and then test for Guid.Empty)
+            [RequireNonDefault] 
+            public Guid SomeId { get; set;}
+            
+            //Enforces validation that requires the field beexplicitly provided, AND not be 0
+            //Similar to [RequireNonDefault] int, except that using [Required] will add the client side validation (JS) to ensure a value is provided. I don't have client side validation for [RequireNonDefault] yet
+            [Required][RequireNonDefault] 
+            public int? SomeId { get; set;}
+            
+            //Lets the field be optional, but if it IS provided, it can't be 0
+            [RequireNonDefault]
+            public decimal? Price { get; set;}
+            
+            </example>
+        </member>
+    </members>
+</doc>

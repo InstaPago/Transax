@@ -1,0 +1,207 @@
+﻿@model List<InstaTransfer.DataAccess.CashOutTransaction>
+@using InstaTransfer.ITResources.Enums
+
+<table id="cashouts-table" class="dtinit dtcashouts table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+    <thead>
+        <tr>
+            <th>Monto</th>
+            <th>Cuenta</th>
+            <th>Registro en Sistema</th>
+            <th>Estado</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr guid="@item.Id" crif="@item.CommerceBankAccount.RifCommerce">
+                <td>@item.Amount.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()</td>
+                <td>@item.CommerceBankAccount.Alias.ToString().Trim()</td>
+                <td>@item.CreateDate.ToString("yyyy/MM/dd h:mm tt", new System.Globalization.CultureInfo("es-VE")).Trim()</td>
+                <td class="text-center">
+                    @if (item.IdStatus == (int)CashOutStatus.Pending)
+                    {
+                        <span class="badge badge-warning" data-toggle="tooltip" data-placement="top" title="" data-original-title="@item.CashOutTransactionStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                            <i class="md md-access-time"></i>
+                        </span>
+                    }
+                    @if (item.IdStatus == (int)CashOutStatus.Completed)
+                    {
+                        <span class="badge badge-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="@item.CashOutTransactionStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                            <i class="md md-done-all"></i>
+                        </span>
+                    }
+                    @if (item.IdStatus == (int)CashOutStatus.Approved)
+                    {
+                        <span class="badge badge-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="@item.CashOutTransactionStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                            <i class="md md-check"></i>
+                        </span>
+                    }
+                    @if (item.IdStatus == (int)CashOutStatus.Annulled)
+                    {
+                        <span class="badge badge-danger" data-toggle="tooltip" data-placement="top" title="" data-original-title="@item.CashOutTransactionStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                            <i class="md md-close"></i>
+                        </span>
+                    }
+                    @if (item.IdStatus == (int)CashOutStatus.Rejected)
+                    {
+                        <span class="badge badge-danger" data-toggle="tooltip" data-placement="top" title="" data-original-title="@item.CashOutTransactionStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                            <i class="md md-block"></i>
+                        </span>
+                    }
+                </td>
+                <td class="text-center">
+                    @item.CashOutTransactionStatus.Description.ToString().Trim()
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+
+    // Detalle del retiro
+    function sideCashout(guid, crif) {
+        if (guid) {
+            ShowLoader();
+            Pace.start();
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("SideCashOut", "CashOut")",
+                data: { idCashOut: guid, rif: crif },
+            })
+        .done(function (msg) {
+            Pace.stop();
+            //$("#rightsidebar-title").html(sidetitle);
+            $("#rsidebar").html(msg);
+            if (!$('#wrapper').hasClass('right-bar-enabled')) {
+                $('#wrapper').toggleClass('right-bar-enabled');
+            }
+
+            $('[data-toggle="tooltip"]').tooltip();
+            HideLoader();
+        });
+        }
+    }
+
+
+
+    $(document).ready(function () {
+
+        // Detalle del retiro
+        $(document).on('click', '.dtcashouts td', function () {
+            var guid = $(this).closest('tr').attr('guid');
+            var crif = $(this).closest('tr').attr('crif');
+
+            checkSession(function () {
+                sideCashout(guid, crif);
+            })
+        });
+
+        // Tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+
+
+        var filename = "@InstaTransfer.ITResources.BackEnd.BackEndResources.FilenameTableCashouts";
+
+        var table = $('#cashouts-table').DataTable({
+            "columnDefs": [
+       {
+           "targets": [3],
+           "orderable": false,
+           "searchable": false
+       },
+       {
+           "targets": [4],
+           "searchable": true,
+           "visible": false
+
+       }
+            ],
+            order: [2, 'desc'],
+            buttons: [{
+                text: 'Copiar',
+                exportOptions: {
+                    columns: [0, 1, 2, 4]
+                },
+                extend: "copy",
+                className: "btn-sm"
+            }, {
+                extend: "csv",
+                exportOptions: {
+                    columns: [0, 1, 2, 4]
+                },
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    if ($('#filterRoles').val() != "" && $('#filterRoles').val() != undefined) {
+                        config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                    } else {
+                        config.filename = filename;
+                    }
+                    $.fn.dataTable.ext.buttons.csvHtml5.action(e, dt, button, config);
+                }
+            }, {
+                extend: "excel",
+                exportOptions: {
+                    columns: [0, 1, 2, 4]
+                },
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    if ($('#filterRoles').val() != "" && $('#filterRoles').val() != undefined) {
+                        config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                    } else {
+                        config.filename = filename;
+                    }
+
+                    $.fn.dataTable.ext.buttons.excelHtml5.action(e, dt, button, config);
+                }
+            }, {
+                extend: "pdf",
+                exportOptions: {
+                    columns: [0, 1, 2, 4]
+                },
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    if ($('#filterRoles').val() != "" && $('#filterRoles').val() != undefined) {
+                        config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                    } else {
+                        config.filename = filename;
+                    }
+
+                    $.fn.dataTable.ext.buttons.pdfHtml5.action(e, dt, button, config);
+                }
+            }, {
+                extend: "print",
+                exportOptions: {
+                    columns: [0, 1, 2, 4]
+                },
+                text: '<i class="md md-lg md-print"></i>',
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    if ($('#filterRoles').val() != "" && $('#filterRoles').val() != undefined) {
+                        config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                    } else {
+                        config.filename = filename;
+                    }
+
+                    $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+                }
+            }],
+            language: {
+                url: "@Url.Content("~/Scripts/datatables/spanish.json")",
+                buttons: {
+                    copyTitle: 'Tabla copiada al portapapeles',
+                    copySuccess: {
+                        _: 'Se han copiado %d filas.',
+                        1: 'Se ha copiado 1 fila.'
+                    }
+                }
+            },
+            //responsive: true,
+            "dom": '<"row"<"col-md-6 col-xs-12"B><"col-md-6 col-xs-12 text-right"f>><"row"<"col-md-6 col-xs-12"l>><"row"<"col-md-6"r>><"row"<"col-xs-12"t>><"clearfix"><"col-md-6 col-xs-12"i><"col-md-6 col-xs-12"p>'
+        });
+        var loadermsg = ' <div class="row"><div class="col-md-12">Cargando Información... <i class="fa fa-spinner fa-spin"></i></div></div>';
+    });
+</script>

@@ -1,0 +1,14 @@
+﻿@model PaymentRequest.Models.PageTitle
+@if (Model != null)
+{
+
+    <!-- Page-Title -->
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="page-title-box">               
+                <h4 class="page-title">@(Model.header != null ? Model.header : Model.title) </h4>
+            </div>
+        </div>
+    </div>
+}
+

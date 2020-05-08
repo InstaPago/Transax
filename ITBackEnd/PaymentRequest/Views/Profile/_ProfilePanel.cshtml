@@ -1,0 +1,55 @@
+﻿@model InstaTransfer.DataAccess.EndUser
+@{
+    InstaTransfer.DataAccess.AspNetRole role = ViewBag.role;
+}
+@if (Model != null)
+{
+    <div class="text-center card-box">
+        <div class="member-card">
+            <div class="thumb-xl member-thumb m-b-10 center-block">
+                <div class="bnwstyle">
+                    @*<span class="fa-stack fa-lg profileedit">
+                            <a href="#">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                            </a>
+                        </span>*@
+                    <img src="@Url.Content("~/Content/images/user-default.png")" class="img-circle img-thumbnail" alt="">
+                </div>
+            </div>
+            <div class="">
+                <h4 class="m-b-5 loggeduser">@Model.Name @Model.LastName</h4>
+                <p class="text-muted">CI: @Model.CI</p>
+            </div>
+            <br />
+            <div class="text-left m-t-20">
+                @Html.AntiForgeryToken()
+                <p class="text-muted font-13">
+                    <strong>Nombre :</strong>
+                    <span class="m-l-15">
+                        @Model.Name
+                    </span>
+                </p>
+                <p class="text-muted font-13">
+                    <strong>Apellido :</strong>
+                    <span class="m-l-15">
+                        @Model.LastName
+                    </span>
+                </p>
+                <p class="text-muted font-13">
+                    <strong>Correo :</strong>
+                    <span class="m-l-15">
+                        @Model.AspNetUser.Email
+                    </span>
+                </p>
+                <p class="text-muted font-13">
+                    <strong>Teléfono :</strong>
+                    <span class="m-l-15">
+                        @Model.Phone
+                    </span>
+                </p>
+            </div>
+        </div>
+
+    </div> <!-- end card-box -->
+}

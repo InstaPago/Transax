@@ -1,0 +1,219 @@
+﻿@model List<InstaTransfer.DataAccess.CommerceBankAccount>
+@{
+    Layout = null;
+    string rif = (string)ViewBag.rif;
+    InstaTransfer.BLL.Concrete.URepository<InstaTransfer.DataAccess.UBank> BancoREPO = new InstaTransfer.BLL.Concrete.URepository<InstaTransfer.DataAccess.UBank>();
+    List<InstaTransfer.DataAccess.UBank> Bancos = BancoREPO.GetAllRecords().ToList();
+}
+
+
+<div class="row">
+
+    <div class="col-sm-12">
+        <div class="">
+            <h4 class="header-title"><b>Listado de Cuentas</b></h4>
+            <p class="text-muted font-13 m-b-30">
+                Detalle de las Cuentas Bancarias.
+            </p>
+            <div class="clearfix"></div>
+            <table id="account-table" class="dtinit dtorders table table-striped table-hover table-bordered dt-responsive text-nowrap" @*cellspacing="0" style="width:100%"*@ sidetitle="Detalle de la Cuenta">
+                <thead>
+                    <tr>
+                        <th>Banco</th>
+                        <th>Numero Cuenta</th>
+                        <th>Alias</th>
+                        <th>
+                            Estado
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr guid="@item.Id" crif="@item.RifCommerce">
+                            <td>@item.UBank.Name</td>
+                            <td>@item.AccountNumber</td>
+                            <td>@item.Alias</td>
+                            <td style="text-align:center;">
+                                @if (item.IdStatus == 1)
+                                {
+                                        <div class="form-group">
+                               
+                                            <input type="checkbox" id="@item.Id" _target="@item.Id" name="cstatus" class="changeStatus" @("checked") data-color="#00b19d" data-size="small" />
+                                        </div>
+                                }
+                                else
+                                {
+                                    <div class="form-group">
+
+                                        <input type="checkbox" id="@item.Id" name="cstatus" _target="@item.Id" class="changeStatus"  data-color="#00b19d" data-size="small" />
+                                    </div>
+
+                                }
+                            </td>
+                            @*<td style="text-align:center;">
+                                <input type="text" value="eliminar" class="btn btn-danger eliminarbank" _target="@item.Id" id="@item.Id" style="width:120px;" />
+
+                            </td>*@
+
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="col-xs-12 text-center">
+            <button id="add-commerce-bankinfo" class="btn btn-primary waves-effect waves-light w-md" type="button" data-toggle="modal" data-target="#myModal">
+                Agregar Cuenta
+                <i class="md md-add"></i>
+            </button>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Datos Cuenta</h4>
+                </div>
+                <form action="@Url.Action("_AddBankInfo", "Commerce")" typeof="post" id="addbank">
+                    <div class="modal-body">
+                        <input type="hidden" value="@rif" name="rif" />
+                        <label>Banesco</label>
+                        <select name="idbanco" class="form-control">
+                            @foreach (var _item in Bancos)
+                            {
+                                <option value="@_item.Id">@_item.Name </option>
+                            }
+
+                        </select>
+                        <label>Numero Cuenta</label>
+                        <input type="number" class="form-control" name="numerocuenta" id="numerocuenta" required="required" />
+                        <label>Alias</label>
+                        <input type="text" class="form-control" name="alias" id="alias" required="required" />
+                        <label>Permisos</label>
+                        <div class="checkbox checkbox-primary">
+                            <input id="IsCashOut" class="checkbox " type="checkbox" value="true" name="IsCashOut">
+                            <label for="checkbox-h1">
+                                Retiros Cuenta
+                            </label>
+
+                        </div>
+                        <div class="checkbox checkbox-primary">
+                            <input id="IsAvanceEfectivo" class="checkbox " type="checkbox" value="true" name="IsAvanceEfectivo">
+                            <label for="checkbox-h1">
+                                Avance de Efectivo
+                            </label>
+
+                        </div>
+                        <div class="checkbox checkbox-primary">
+                            <input id="IsScraper" class="checkbox " type="checkbox" value="true" name="IsScraper">
+                            <label for="checkbox-h1">
+                                Scraper
+                            </label>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" id="addbankinfo" class="btn btn-primary" value="Guardar" />
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).on('click', ".changeStatus", function () {
+        Pace.start();
+        var IdBankAccount = $(this).attr('_target');
+        var datos = { IdBankAccount: IdBankAccount };
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("ChangeStatusBank", "Commerce")",
+            data: datos,
+            })
+            .done(function (r) {
+
+                if (r.success) {
+                    // $.Notification.notify('success', 'top right', 'Éxito!', r.message)
+                    toastr.success("Cuenta actualizada de forma correcta!", 'Éxito!');
+                    //window.setTimeout(location.reload(), 4000);
+                    //var _parent = $(this).parent();
+                    //_parent.hide();
+
+                } else {
+                    // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                    toastr.error(r.message, 'Error!');
+                }
+            });
+    Pace.stop();
+    });
+
+    $(document).on('click', ".eliminarbank", function () {
+        Pace.start();
+        var id = $(this).attr('_target');
+        var datos = { id: id };
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("_DeleteBankInfo", "Commerce")",
+            data: datos,
+        })
+            .done(function (r) {
+
+                if (r.success) {
+                    // $.Notification.notify('success', 'top right', 'Éxito!', r.message)
+                    toastr.success("Cuenta bancaria eliminada de forma correcta!", 'Éxito!');
+                    //window.setTimeout(location.reload(), 4000);
+                    var _parent = $(this).parent();
+                    _parent.hide();
+
+                } else {
+                    // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                    toastr.error(r.message, 'Error!');
+                }
+            });
+        Pace.stop();
+    });
+
+    $(document).on('submit', '#addbank', function (e) {
+
+        Pace.start();
+        var cuenta = $('#numerocuenta').val();
+
+
+        if (cuenta.length == 20 && cuenta.substring(0, 4) == "0134") {
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("_AddBankInfo", "Commerce")",
+                data: $("#addbank").serialize(),
+            })
+            .done(function (r) {
+
+                if (r.success) {
+                    // $.Notification.notify('success', 'top right', 'Éxito!', r.message)
+                    toastr.success("Cuenta bancaria creada de forma correcta!", 'Éxito!');
+                    window.setTimeout(location.reload(), 4000);
+
+
+                } else {
+                    // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                    toastr.error(r.message, 'Error!');
+                }
+            });
+        }
+        else {
+            toastr.error("Número de cuenta incorrecto", 'Error!');
+
+        }
+
+        Pace.stop();
+        return false;
+    });
+</script>

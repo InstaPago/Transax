@@ -1,0 +1,104 @@
+﻿
+@model List<InstaTransfer.DataAccess.CashOutTransaction>
+@using InstaTransfer.ITResources.Enums
+@using InstaTransfer.ITResources.Constants
+@{
+    ViewBag.Title = "Retiros en Cuenta";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<InstaTransfer.DataAccess.CashOutTransactionStatus> statusList = ViewBag.statusList;
+}
+<!-- #region Page Title -->
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = ViewBag.Title }); }
+<!-- #endregion -->
+<div class="row">
+
+    <div class="col-sm-12">
+        <div class="card-box table-responsive">
+            <div class="row">
+                <div class="col-xs-10">
+                    <h4 class="header-title"><b>Listado de Retiros en Cuenta</b></h4>
+                </div>
+                @if (User.IsInRole(UserRoleConstant.CommerceAdmin) || (User.IsInRole(UserRoleConstant.CommerceUser)))
+                {
+                    <div class="col-xs-2 text-right">
+                        <a href="#" class="btn waves-effect waves-light btn-primary m-b-5 requestCashOut">
+                            Solicitar Retiro &nbsp; <span><i class="md md-attach-money"></i></span>
+                        </a>
+                    </div>
+                }
+            </div>
+            <p class="text-muted font-13 m-b-30">
+                Detalle de los Retiros registrados en el sistema.
+            </p>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="toolbar">
+                        <select id="filterRoles" class="form-control">
+                            <option value="">Todas</option>
+                            @if (statusList.Count > 0)
+                            {
+                                foreach (var status in statusList)
+                                {
+                                    <text>
+                                        <option value="@status.Description.ToString().Trim()">@status.Description.ToString().Trim()</option>
+                                    </text>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            @{Html.RenderPartial("_CashOutsTable", Model); }
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <!--Garlic JS-->
+    <script src="~/plugins/garlicjs/garlic.min.js"></script>
+
+    <script src="@Url.Content("~/plugins/bootstrap-toushspin/dist/jquery.bootstrap-touchspin.min.js")"></script>
+
+    <script type="text/javascript">
+
+        // Solicitar Retiro
+        function requestCashout() {
+            ShowLoader();
+            e.preventDefault();
+            Pace.start();
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("RequestCashOut", "CashOut")"
+            }).done(function (response) {
+                Pace.stop();
+                $("#rightsidebar-title").html("Solicitar Retiro");
+                $("#rsidebar").html(response);
+                $('#wrapper').toggleClass('right-bar-enabled');
+                HideLoader();
+            }).fail(function (response) {
+                HideLoader();
+            });
+        }
+
+        $(document).ready(function () {
+            
+            // Filtro por estado
+            var oTable = $('#cashouts-table').DataTable();
+            $('#filterRoles').change(function () {
+                var val = $(this).val();
+                oTable.search('');
+                oTable.column(4).search(val).draw();
+            });
+
+            // Solicitar Retiro
+            $(".requestCashOut").on("click", function (e) {
+                checkSession(function () {
+                    requestCashout(guid, crif);
+                })
+            });
+
+        });
+    </script>
+
+}

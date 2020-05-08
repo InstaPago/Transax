@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CommerceStatusClaim" xml:space="preserve">
+    <value>commercestatus</value>
+    <comment>String para el claim tipo commerce status del jwt</comment>
+  </data>
+  <data name="CUserClaim" xml:space="preserve">
+    <value>cuser</value>
+    <comment>String para el claim tipo cuser del jwt</comment>
+  </data>
+  <data name="CUserTestModeClaim" xml:space="preserve">
+    <value>cusertestmode</value>
+    <comment>String para el claim tipo cuser test mode del jwt</comment>
+  </data>
+  <data name="DeclarationSuccessMessage" xml:space="preserve">
+    <value>Declaracion exitosa</value>
+    <comment>Mensaje para declaracion exitosa</comment>
+  </data>
+  <data name="OperationSuccessMessage" xml:space="preserve">
+    <value>Operacion exitosa</value>
+    <comment>Mensaje para operacion exitosa</comment>
+  </data>
+  <data name="PurchaseOrderSuccessMessage" xml:space="preserve">
+    <value>Registro de orden de compra exitosa</value>
+    <comment>Mensaje para creacion de orden de compra exitosa</comment>
+  </data>
+  <data name="RifClaim" xml:space="preserve">
+    <value>rif</value>
+    <comment>String para el claim tipo rif del jwt</comment>
+  </data>
+  <data name="AppSettingsKeyJWTExpiration" xml:space="preserve">
+    <value>JWTExpirationMinutes</value>
+    <comment>Key del web.config para el tiempo de expiracion del token</comment>
+  </data>
+  <data name="BackEndSuccessMessage" xml:space="preserve">
+    <value>Operacion exitosa</value>
+    <comment>Mensaje de exito en operaciones del backend</comment>
+  </data>
+  <data name="CreateCUserSuccessMessage" xml:space="preserve">
+    <value>Usuario creado exitosamente</value>
+    <comment>Mensaje para creacion de usuario del comercio exitosa</comment>
+  </data>
+  <data name="AnnulDeclarationFail" xml:space="preserve">
+    <value>La declaración no pudo ser anulada</value>
+    <comment>Mensaje de fallo para la anulacion de la declaracion</comment>
+  </data>
+  <data name="AnnulDeclarationSuccess" xml:space="preserve">
+    <value>La declaración ha sido anulada</value>
+    <comment>Mensaje exito para la anulacion de la declaracion</comment>
+  </data>
+  <data name="AnnulOrderFail" xml:space="preserve">
+    <value>La orden no pudo ser anulada</value>
+    <comment>Mensaje de fallo para la anulacion de la orden</comment>
+  </data>
+  <data name="AnnulOrderSuccess" xml:space="preserve">
+    <value>La orden ha sido anulada</value>
+    <comment>Mensaje de exito para la anulacion de la orden</comment>
+  </data>
+  <data name="ReconcileDeclarationFail" xml:space="preserve">
+    <value>La declaración no pudo ser conciliada</value>
+    <comment>Mensaje de fallo para la conciliacion de la declaracion</comment>
+  </data>
+  <data name="ReconcileDeclarationSuccess" xml:space="preserve">
+    <value>La declaración ha sido conciliada</value>
+    <comment>Mensaje de exito para la conciliacion de la declaracion</comment>
+  </data>
+  <data name="AppSettingsKeyIVA" xml:space="preserve">
+    <value>IVA</value>
+    <comment>Key del web.config para el iva</comment>
+  </data>
+  <data name="CashOutRequestFail" xml:space="preserve">
+    <value>La solicitud de retiro no pudo ser procesada</value>
+    <comment>Mensaje de exito para la solicitud de retiro</comment>
+  </data>
+  <data name="CashOutRequestSuccess" xml:space="preserve">
+    <value>La solicitud de retiro ha sido procesada</value>
+    <comment>Mensaje de fallo para la solicitud de retiro</comment>
+  </data>
+  <data name="AppSettingsKeyMinCashOut" xml:space="preserve">
+    <value>MinCashOut</value>
+    <comment>Key del web.config para el retiro minimo</comment>
+  </data>
+  <data name="CashOutRequestAnnullSuccessMessage" xml:space="preserve">
+    <value>La solicitud de retiro ha sido anulada</value>
+    <comment>Mensaje para anulacion de la solicitud</comment>
+  </data>
+  <data name="CashOutRequestRejectSuccessMessage" xml:space="preserve">
+    <value>La solicitud de retiro ha sido rechazada</value>
+    <comment>Mensaje para rechazo de la solicitud</comment>
+  </data>
+  <data name="CashOutRequestApproveSuccessMessage" xml:space="preserve">
+    <value>La solicitud de retiro ha sido aprobada</value>
+    <comment>Mensaje de exito para solicitud aprobada</comment>
+  </data>
+  <data name="CashOutRequestCompleteSuccessMessage" xml:space="preserve">
+    <value>La solicitud de retiro ha sido aprobada</value>
+    <comment>Mensaje de exito para solicitud aprobada</comment>
+  </data>
+  <data name="PaymentRequestSuccess" xml:space="preserve">
+    <value>La solicitud ha sido enviada</value>
+    <comment>MEnsaje de exito para el envio de la solicitud</comment>
+  </data>
+  <data name="AppSettingsKeyPaymentRequestUrl" xml:space="preserve">
+    <value>PaymentRequestUrl</value>
+    <comment>Key del config para el url de solicitud de pagos</comment>
+  </data>
+  <data name="AppSettingsKeyTransaxNoReplyMail" xml:space="preserve">
+    <value>NoReplyTransax</value>
+    <comment>Key del config para el correo de no reply de transax</comment>
+  </data>
+  <data name="AppSettingsKeyTransaxSupportMail" xml:space="preserve">
+    <value>SupportTransax</value>
+    <comment>Key del config para el correo de soporte de transax</comment>
+  </data>
+  <data name="AppSettingsKeyTransaxUrl" xml:space="preserve">
+    <value>TransaxUrl</value>
+    <comment>Key del config para el url del backend de transax</comment>
+  </data>
+  <data name="LoginSuccess" xml:space="preserve">
+    <value>Inicio de Sesión exitoso</value>
+    <comment>Mensaje de inicio de sesión exitoso</comment>
+  </data>
+  <data name="EndUserDeclarationReconciledSuccess" xml:space="preserve">
+    <value>Pago procesado</value>
+    <comment>Mensaje para declaracion conciliada del usuario final</comment>
+  </data>
+  <data name="EndUserDeclarationSuccess" xml:space="preserve">
+    <value>Pago pendiente por procesar</value>
+    <comment>Mensaje para declaracion exitosa del usuario final</comment>
+  </data>
+  <data name="AnnulPaymentRequestFail" xml:space="preserve">
+    <value>La solicitud de pago no pudo ser anulada</value>
+    <comment>Mensaje de fallo para solicitud de pago anulada</comment>
+  </data>
+  <data name="AnnulPaymentRequestSuccess" xml:space="preserve">
+    <value>La solicitud de pago ha sido anulada</value>
+    <comment>Mensaje de exito para solicitud de pago anulada</comment>
+  </data>
+  <data name="AppSettingsKeyTransaxInfoMail" xml:space="preserve">
+    <value>InfoTransax</value>
+    <comment>Key del config para el correo de info de transax</comment>
+  </data>
+  <data name="FilenameTableCashouts" xml:space="preserve">
+    <value>Transax Retiros en Cuenta</value>
+    <comment>Nombre de archivo para exportacion de tabla de retiros</comment>
+  </data>
+  <data name="FilenameTableDeclarations" xml:space="preserve">
+    <value>Transax Declaraciones</value>
+    <comment>Nombre de archivo para exportacion de tabla de declaraciones</comment>
+  </data>
+  <data name="FilenameTableOrders" xml:space="preserve">
+    <value>Transax Ordenes de Compra</value>
+    <comment>Nombre de archivo para exportacion de tabla de ordenes</comment>
+  </data>
+  <data name="FilenameTableRequests" xml:space="preserve">
+    <value>Transax Solicitudes de Pago</value>
+    <comment>Nombre de archivo para exportacion de tabla de solicitudes</comment>
+  </data>
+  <data name="FilenameTableStatement" xml:space="preserve">
+    <value>Transax Movimientos Bancarios</value>
+    <comment>Nombre de archivo para exportacion de tabla de movimientos</comment>
+  </data>
+  <data name="FilenameTableUsers" xml:space="preserve">
+    <value>Transax Usuarios</value>
+    <comment>Nombre de archivo para exportacion de tabla de usuarios</comment>
+  </data>
+  <data name="FilenameTableAdvance" xml:space="preserve">
+    <value>Transax Listado de Avances</value>
+    <comment>Nombre de archivo para exportacion de tabla de avances</comment>
+  </data>
+</root>

@@ -1,0 +1,224 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppConfigPath" xml:space="preserve">
+    <value>C:\UmbrellaServices\app.config</value>
+    <comment>Ruta del app config global</comment>
+  </data>
+  <data name="AppSettingsKeyBackupPath" xml:space="preserve">
+    <value>BackupPath</value>
+    <comment>Key del app.config para el BackupPath</comment>
+  </data>
+  <data name="AppSettingsKeyBasePath" xml:space="preserve">
+    <value>BasePath</value>
+    <comment>Key del app.config para el BasePath</comment>
+  </data>
+  <data name="AppSettingsKeyDefaultCulture" xml:space="preserve">
+    <value>DefaultCulture</value>
+    <comment>Key del app.config para el DefaultCulture</comment>
+  </data>
+  <data name="AppSettingsKeyScraperFileName" xml:space="preserve">
+    <value>ScraperFileName</value>
+    <comment>Key del app.config para el ScraperFileName</comment>
+  </data>
+  <data name="AppSettingsKeyScraperTime" xml:space="preserve">
+    <value>ScraperTime</value>
+    <comment>Key del app.config para el tiempo entre corridas del scraper</comment>
+  </data>
+  <data name="AppSettingsKeyUpdaterFileName" xml:space="preserve">
+    <value>UpdaterFileName</value>
+    <comment>Key del app.config para el UpdaterFileName</comment>
+  </data>
+  <data name="AppSettingsKeyUpdaterTime" xml:space="preserve">
+    <value>UpdaterTime</value>
+    <comment>Key del app.config para el tiempo entre corridas del updater</comment>
+  </data>
+  <data name="ConnectionStringKey" xml:space="preserve">
+    <value>ITConnectionString</value>
+    <comment>Key del app.config para el conection string</comment>
+  </data>
+  <data name="DictionaryKeyBank" xml:space="preserve">
+    <value>bank</value>
+    <comment>Key del diccionario para el banco receptor</comment>
+  </data>
+  <data name="DictionaryKeyFilePath" xml:space="preserve">
+    <value>FilePath</value>
+    <comment>Key del diccionario para la ruta del archivo</comment>
+  </data>
+  <data name="DictionaryKeySocialReason" xml:space="preserve">
+    <value>socialReason</value>
+    <comment>Key del diccionario para la razon social</comment>
+  </data>
+  <data name="DictionaryKeyUsername" xml:space="preserve">
+    <value>Username</value>
+    <comment>Key del diccionario para el nombre de usuario</comment>
+  </data>
+  <data name="DictionaryKeyUserStatus" xml:space="preserve">
+    <value>userStatus</value>
+    <comment>Key del diccionario para el estado del usuario</comment>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="JobUnlockUser" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\DataAccess\JobUnlockUser.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="LogNameUmbrella" xml:space="preserve">
+    <value>Umbrella Log</value>
+    <comment>Nombre del log de Umbrella</comment>
+  </data>
+  <data name="SemiColon" xml:space="preserve">
+    <value>;</value>
+    <comment>Representacion del ;</comment>
+  </data>
+  <data name="SourceNameUmbrella" xml:space="preserve">
+    <value>Umbrella Program</value>
+    <comment>Nombre del source de Umbrella</comment>
+  </data>
+  <data name="AppSettingsKeyScraperTimeout" xml:space="preserve">
+    <value>ScraperTimeout</value>
+    <comment>Key del app.config para el tiempo de timeout del scraper</comment>
+  </data>
+  <data name="ShortDateFormat" xml:space="preserve">
+    <value>dd/MM/yy</value>
+    <comment>Formato de fecha corta</comment>
+  </data>
+  <data name="AppSettingsKeyReconciliatorTime" xml:space="preserve">
+    <value>ReconciliatorTime</value>
+    <comment>Key del app.config para el tiempo entre corridas del conciliador</comment>
+  </data>
+  <data name="SourceNameUmbrellaScraper" xml:space="preserve">
+    <value>Umbrella Scraper</value>
+    <comment>Nombre del source del Scraper</comment>
+  </data>
+  <data name="SourceNameUmbrellaUpdater" xml:space="preserve">
+    <value>Umbrella Updater</value>
+    <comment>Nombre del source del Updater</comment>
+  </data>
+  <data name="SourceNameUmbrellaReconciliator" xml:space="preserve">
+    <value>Umbrella Reconciliator</value>
+    <comment>Nombre del source del Reconciliator</comment>
+  </data>
+  <data name="AppSettingsKeyNoReplyTransax" xml:space="preserve">
+    <value>NoReplyTransax</value>
+    <comment>Key del config para NoReplyTransax</comment>
+  </data>
+  <data name="AppSettingsKeySupportTransax" xml:space="preserve">
+    <value>SupportTransax</value>
+    <comment>Key del config para SupportTransax</comment>
+  </data>
+</root>

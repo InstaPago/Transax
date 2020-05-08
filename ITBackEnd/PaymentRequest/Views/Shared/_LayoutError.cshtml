@@ -1,0 +1,97 @@
+﻿@{
+    //keys definidas en el webconfig
+    var AppSettings = System.Configuration.ConfigurationManager.AppSettings;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="descripcion">
+    <meta name="author" content="legendsoft">
+
+
+    <link rel="shortcut icon" href="@Url.Content("~/Content/images/favicon.ico")">
+
+    <title>@ViewBag.Title</title>
+
+    <!-- Plugins  -->
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/datatablesjs")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundle/common")
+    @Scripts.Render("~/bundles/scripts")
+    @*<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">*@
+    @Styles.Render("~/Content/custombox")
+    @Styles.Render("~/Content/datatablescss")
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+    @RenderSection("contents", false)
+
+</head>
+
+
+<body class="widescreen @*pace-done*@ fixed-left-void">
+    <style>
+    </style>
+    <!-- Begin page -->
+    <div id="wrapper" class="enlarged forced">
+
+        <!-- Top Bar Start -->
+        <div class="topbar">
+            <!-- Navbar -->
+            <div class="navbar navbar-default" role="navigation">
+                <div class="container">
+                    <div class="text-center logo">
+                        <span><img src="@Url.Content("~/Content/images/transax-logo.png")" height="40" style="margin-top:15px;vertical-align:top !important" /></span>
+                    </div>
+                    <!--/.nav-collapse -->
+                </div>
+            </div>
+        </div>
+        <!-- Top Bar End -->
+        <!-- ========== Left Sidebar Start ========== -->
+        @*@Html.Partial("_LeftSideBar")*@
+        <!-- Left Sidebar End -->
+        <!-- ============================================================== -->
+        <!-- Content -->
+        <!-- ============================================================== -->
+        <div class="content-page">
+            <!-- Start content -->
+            <div class="content">
+                <div class="container">
+                    @RenderBody()
+                    <div id="loading" style="display:none;">
+
+                    </div>
+                    <div id="loader" style="display:none;">
+
+                    </div>
+                </div>
+                <!-- end container -->
+            </div>
+            <!-- end content -->
+
+            <footer class="footer text-right">
+                @DateTime.Now.ToString("yyyy") © @AppSettings["projectName"].
+            </footer>
+
+        </div>
+        <!-- End Content -->
+
+
+    </div>
+    <!-- END wrapper -->
+    <script>
+        var resizefunc = [];
+    </script>
+
+    @RenderSection("scripts", false)
+</body>
+</html>

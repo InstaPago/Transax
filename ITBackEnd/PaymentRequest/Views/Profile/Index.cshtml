@@ -1,0 +1,120 @@
+﻿@model InstaTransfer.DataAccess.EndUser
+@{
+    ViewBag.Title = "Perfil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new PaymentRequest.Models.PageTitle { title = ViewBag.Title }); }
+
+<style>
+    /* Blur + Gray Scale */
+
+    img:hover + span {
+        bottom: 75px;
+        opacity: 1;
+        z-index: 999;
+        margin: 0 auto;
+    }
+
+    .bnwstyle img {
+        margin: 0px;
+        /*float: left;*/
+        z-index: 4;
+        -webkit-filter: grayscale(0) blur(0);
+        filter: grayscale(0) blur(0);
+        -webkit-transition: .3s ease-in-out;
+        transition: .3s ease-in-out;
+    }
+
+    .profileedit:hover + img {
+        -webkit-filter: grayscale(100%) blur(2px);
+        filter: grayscale(100%) blur(2px);
+    }
+
+    .profileedit {
+        position: absolute;
+        z-index: 5;
+    }
+</style>
+<div class="row">
+    <div id="profile-panel" class="col-xs-12 col-md-4 col-lg-4">
+        <div class="text-center card-box">
+            <div class="member-card">
+                Cargando Información... <i class="fa fa-spinner fa-spin"></i>
+            </div>
+        </div>
+    </div>
+    <!-- end col -->
+    <div class="col-xs-12 col-md-8 col-lg-8">
+        <ul class="nav nav-tabs tabs">
+            <li class="active tab">
+                <a href="#datos" data-toggle="tab" aria-expanded="true">
+                    <span class="visible-xs"><i class="fa fa-database"></i></span>
+                    <span class="hidden-xs">Datos del Usuario</span>
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active fade in" id="datos">
+                <div class="row">
+                    <div class="col-md-12">
+                        Cargando Información... <i class="fa fa-spinner fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+@section scripts{
+    <script type="text/javascript">
+
+
+
+        $(document).ready(function () {
+
+            @*llama el contenido de TabUserData y lo inicializa*@
+            function profilePanelInit() {
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("ProfilePanel", "Profile")"
+                })
+             .success(function (data) {
+                 $("#profile-panel").hide().html(data).fadeIn('slow');
+                 var switches = Array.prototype.slice.call(document.querySelectorAll('input[data-plugin="profilepanelswitch"]'));
+
+                 switches.forEach(function (html) {
+                     var switchery = new Switchery(html, { size: 'small', color: '#00b19d' });
+                 });
+                 $.fn.editable.defaults.send = 'never';
+                 $.fn.editable.defaults.mode = 'inline';
+
+                 //modify buttons style
+                 $.fn.editableform.buttons =
+                 '<button type="submit" class="btn btn-primary editable-submit btn-sm waves-effect waves-light"><i class="md md-done"></i></button>' +
+                 '<button type="button" class="btn editable-cancel btn-sm waves-effect waves-light"><i class="md md-clear"></i></button>';
+             });
+            }
+
+            function TabUserDataInit() {
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("TabUserData", "Profile")"
+                })
+            .success(function (data) {
+                $("#datos").hide().html(data).fadeIn('slow');
+                Pace.stop();
+            })
+                .error(function (data) {
+                    $("#datos").hide().html(data).fadeIn('slow');
+                    Pace.stop();
+                });
+            }
+            profilePanelInit();
+            TabUserDataInit();
+
+
+        });
+    </script>
+}

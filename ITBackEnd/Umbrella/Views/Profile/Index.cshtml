@@ -1,0 +1,293 @@
+﻿@model InstaTransfer.DataAccess.CUser
+@{
+    ViewBag.Title = "Perfil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = ViewBag.Title }); }
+
+<style>
+    /* Blur + Gray Scale */
+
+    img:hover + span {
+        bottom: 75px;
+        opacity: 1;
+        z-index: 999;
+        margin: 0 auto;
+    }
+
+    .bnwstyle img {
+        margin: 0px;
+        /*float: left;*/
+        z-index: 4;
+        -webkit-filter: grayscale(0) blur(0);
+        filter: grayscale(0) blur(0);
+        -webkit-transition: .3s ease-in-out;
+        transition: .3s ease-in-out;
+    }
+
+    .profileedit:hover + img {
+        -webkit-filter: grayscale(100%) blur(2px);
+        filter: grayscale(100%) blur(2px);
+    }
+
+    .profileedit {
+        position: absolute;
+        z-index: 5;
+    }
+</style>
+<div class="row">
+    <div id="profile-panel" class="col-xs-12 col-md-4 col-lg-4">
+        <div class="text-center card-box">
+            <div class="member-card">
+                Cargando Información... <i class="fa fa-spinner fa-spin"></i>
+            </div>
+        </div>
+    </div>
+    <!-- end col -->
+    <div class="col-xs-12 col-md-8 col-lg-8">
+        <ul class="nav nav-tabs tabs">
+            <li class="active tab">
+                <a href="#datos_comercio" data-toggle="tab" aria-expanded="true" data-action="@Url.Action("TabCommerceData", "Commerce", new { rif = Model.RifCommerce })">
+                    <span class="visible-xs"><i class="fa fa-database"></i></span>
+                    <span class="hidden-xs">Datos del Comercio</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="#datos_usuario" data-toggle="tab" aria-expanded="true" data-action="@Url.Action("TabUserData", "Profile", new { userId = Model.Id })">
+                    <span class="visible-xs"><i class="fa fa-user"></i></span>
+                    <span class="hidden-xs">Datos del Usuario</span>
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active fade in" id="datos_comercio">
+                <div class="row">
+                    <div class="col-md-12">
+                        Cargando Información... <i class="fa fa-spinner fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane active fade in" id="datos_usuario">
+                <div class="row">
+                    <div class="col-md-12">
+                        Cargando Información... <i class="fa fa-spinner fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+@section scripts{
+    <!-- Parsley JS -->
+    <script src="~/plugins/parsleyjs/dist/parsley.min.js"></script>
+    <script src="~/plugins/parsleyjs/dist/i18n/es.js"></script>
+
+    <!--International Telephone Input-->
+    <link href="~/Content/css/intlTelInput.css" rel="stylesheet" />
+    <script src="@Url.Content("~/Content/js/intlTelInput.js")"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            function switcheryInit() {
+                var elem = document.querySelector('.js-switch');
+                var init = new Switchery(elem);
+                @*$('input[name="cstatus"]').on('switchChange.bootstrapSwitch', function (event, state) {
+                    Pace.start();
+                    $(this).bootstrapSwitch('toggleState', true, true);
+                    var $this = this;
+                    $.ajax({
+                        method: "POST",
+                        url: "@Url.Action("ToggleCommerceStatus", "Commerce")",
+                        data: { rif: $(this).attr("crif") },
+                    })
+                  .done(function (r) {
+                      if (r.Success) {
+                          // $.Notification.notify('success', 'top right', 'Éxito!', r.Msg)
+                          toastr.success(r.Msg, 'Éxito!');
+                          $($this).bootstrapSwitch('toggleState', true, true);
+                      } else {
+                          // $.Notification.notify('error', 'top right', 'Error!', r.Msg)
+                          toastr.error(r.Msg, 'Error!');
+                      }
+
+                  });
+                    Pace.stop();
+                });*@
+            };
+            @*llama el contenido de tabcommerce y lo inicializa*@
+            function profilePanelInit() {
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("ProfilePanel", "Profile")"
+                })
+             .success(function (data) {
+                 $("#profile-panel").hide().html(data).fadeIn('slow');
+                 var switches = Array.prototype.slice.call(document.querySelectorAll('input[data-plugin="profilepanelswitch"]'));
+
+                 switches.forEach(function (html) {
+                     var switchery = new Switchery(html, { size: 'small', color: '#00b19d' });
+                 });
+                 $.fn.editable.defaults.send = 'never';
+                 $.fn.editable.defaults.mode = 'inline';
+                 //modify buttons style
+                 $.fn.editableform.buttons =
+                 '<button type="submit" class="btn btn-primary editable-submit btn-sm waves-effect waves-light"><i class="md md-done"></i></button>' +
+                 '<button type="button" class="btn editable-cancel btn-sm waves-effect waves-light"><i class="md md-clear"></i></button>';
+
+                 $('.xeditable').editable({
+                     send: 'never'
+                 }).on('save', function (e, params) {
+                     $("#update-profile").prop("disabled", false);
+                 });
+
+                 $('#firstname').editable({
+                     validate: function (value) {
+                         if ($.trim(value) == '') return 'This field is required';
+                     }
+                 });
+
+                 $('#update-profile').click(function () {
+                     $('.xeditable').editable('submit', {
+                         url: '@Url.Action("ModifyCUser", "CUser")',
+                         data: {
+                             __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').attr('value'),
+                             id: "@ViewBag.userid",
+                             Name: $(".profilename").text(),
+                             LastName: $('.profilelastname').text(),
+                             TestMode: $("#testmodeswitch").prop("checked"),
+                             IsContact: $("#iscontactswitch").prop("checked"),
+                             //rol: $("#roleselect").text(),
+                         },
+                         ajaxOptions: {
+                             dataType: 'json',
+                         },
+                         success: function (response) {
+                             if (response.success) {
+                                 $('.loggeduser').each(function () {
+                                     $(this).html($(".profilename").text() + " " + $(".profilelastname").text())
+                                 });
+                                 toastr.success(response.message, 'Éxito!');
+                                 TabCommerceDataInit();
+
+                             } else {
+                                 toastr.error(response.message, 'Error!');
+                             }
+                         },
+                         error: function (errors) {
+                             toastr.error(errors.message, 'Error!');
+                         }
+                     });
+                 });
+                 Pace.stop();
+             })
+                 .error(function (data) {
+                     $("#datos_comercio").hide().html(data).fadeIn('slow');
+                     Pace.stop();
+                 });
+            }
+
+            function TabCommerceDataInit() {
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("TabCommerceData", "Commerce")",
+                    data: { rif: '@Model.RifCommerce' }
+                })
+            .success(function (data) {
+                $("#datos_comercio").hide().html(data).fadeIn('slow');
+                switcheryInit();
+                Pace.stop();
+            })
+                .error(function (data) {
+                    $("#datos_comercio").hide().html(data).fadeIn('slow');
+                    Pace.stop();
+                });
+            }
+            profilePanelInit();
+            TabCommerceDataInit();
+
+            var loadermsg = ' <div class="row"><div class="col-md-12">Cargando Información... <i class="fa fa-spinner fa-spin"></i></div></div>'
+
+            @*llama el contenido de cada tab y reajusta el responsive cada vez que se inicializa un tab*@
+            $("a[data-toggle=\"tab\"]").on("shown.bs.tab", function (e) {
+                var current_tab = e.target // activated tab
+                // get the div's id
+                var divid = $(current_tab).attr('href').substr(1);
+
+                $("#" + divid).html(loadermsg);
+
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: $(this).attr("data-action"),
+                    data: { data: 1 }
+                })
+             .success(function (data) {
+                 $("#" + divid).html(data);
+                 switcheryInit();
+             });
+            });
+
+
+            $(document).on("click", "#modify-commerce-data", function () {
+                Pace.start();
+                var $this = this;
+                var model = {
+                    Rif: $("#rif").val(),
+                    SocialReasonName: $("#socialreason").val(),
+                    Phone: $("#phone").val(),
+                    BusinessName: $("#commercename").val(),
+                    Address: $("#address").val(),
+                    WithdrawalFee: $("#comision").val(),
+                    Trust: $("#trust").val()
+                };
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("ModifyCommerce", "Commerce")",
+                    data: { __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').attr('value'), model: model },
+                })
+                  .done(function (r) {
+                      if (r.success) {
+                          //$.Notification.notify('success', 'top right', 'Éxito!', r.message)
+                          toastr.success(r.message, 'Éxito!');
+                          profilePanelInit();
+                      } else {
+                          //$.Notification.notify('error', 'top right', 'Error!', r.message)
+                          toastr.error(r.message, 'Error!');
+                      }
+
+                  });
+                Pace.stop();
+            });
+
+            $(document).on("click", "#modify-user-data", function () {
+                ShowLoader();
+                var $this = this;
+                var model = {
+                    id: $("#id").val(),
+                    Name: $("#name").val(),
+                    LastName: $("#lastname").val(),
+                };
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("ModifyCUser", "Profile")",
+                    data: { __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').attr('value'), model: model },
+                })
+                .done(function (r) {
+                    HideLoader();
+                    if (r.success) {
+                        toastr.success(r.message, 'Éxito!');
+                        profilePanelInit();
+                    } else {
+                        toastr.error(r.message, 'Error!');
+                    }
+                });
+                HideLoader();
+            });
+
+        });
+    </script>
+  
+}

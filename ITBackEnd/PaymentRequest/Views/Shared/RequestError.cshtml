@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Solicitud de Pago";
+    Layout = "~/Views/Shared/_LayoutError.cshtml";
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="page-title-box">
+            <h4 class="page-title">Solicitud de Pago</h4>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="panel panel-border panel-danger">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="md md-error"></i> Ha ocurrido un error.</h3>
+        </div>
+        <div class="panel-body">
+            <p>
+                Lo sentimos, los administradores del sitio
+                han sido notificados.
+            </p>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundle/core-app")
+}

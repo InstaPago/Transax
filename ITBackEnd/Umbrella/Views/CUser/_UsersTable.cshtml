@@ -1,0 +1,270 @@
+﻿@model List<InstaTransfer.DataAccess.CUser>
+@{
+    Umbrella.Controllers.CommerceController controller = new Umbrella.Controllers.CommerceController();
+}
+<table id="users-table" class="dtinit dtusers table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%" dtaction="@Url.Action("SideUsers", "Commerce")" sidetitle="Datos del Usuario">
+    <thead>
+        <tr>
+            <th>Correo</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Registro en Sistema</th>
+            <th>Rol</th>
+            <th>Usuario de Contacto</th>
+            <th>Usuario de Prueba</th>
+            <th>Estado</th>
+            <th>Usuario de Contacto</th>
+            <th>Usuario de Prueba</th>
+            <th>Estado</th>
+            <th>Cambio Clave</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            var role = controller.GetCUserRole(item.Id).DisplayName;
+
+            <tr userid="@item.IdAspNetUser">
+                <td>@item.AspNetUser.Email</td>
+                <td>@item.Name.ToString().Trim()</td>
+                <td>@item.LastName.Trim()</td>
+                <td>@item.CreateDate.ToString("yyyy/MM/dd h:mm tt", new System.Globalization.CultureInfo("es-VE")).Trim()</td>
+                <td>@(role != null ? role.ToString().Trim() : "No Especificado")</td>
+                <td class="text-center">
+                    <input type="checkbox" class="js-switch" @(item.IsContact.ToString().Trim() == "True" ? "checked" : "") />
+                </td>
+                <td class="text-center">
+                    <input type="checkbox" class="js-switch" @(item.TestMode ? "checked" : "") />
+                </td>
+                <td class="text-center">
+                    @if (item.CUserStatus.Id == 1)
+                    {
+                        <span class="badge badge-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="@item.CUserStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                            <i class="fa  fa-check"></i>
+                        </span>
+                    }
+                    else if (item.CUserStatus.Id == 2)
+                    {
+                        <span class="badge badge-danger" data-toggle="tooltip" data-placement="top" title="" data-original-title="@item.CUserStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                            <i class="fa  fa-close"></i>
+                        </span>
+                    }
+                </td>
+                <td class="text-center">
+                    @(item.IsContact.ToString().Trim() == "True" ? "Si" : "No")
+                </td>
+                <td class="text-center">
+                    @(item.TestMode ? "Si" : "No")
+                </td>
+                <td class="text-center">
+                    @if (item.CUserStatus.Id == 1)
+                    {
+                        @item.CUserStatus.Description.ToString().Trim()
+                    }
+                    else if (item.CUserStatus.Id == 2)
+                    {
+                        @item.CUserStatus.Description.ToString().Trim()
+                    }
+                </td>
+                <td class="text-center">
+
+                    <input type="button" value="Cambiar" id="_cambiarClave" class="btn btn-success" data-toggle="modal" data-target="#modelacontraseña" />
+
+                    <div id="modelacontraseña" class="modal fade" role="dialog">
+                        <div class="modal-dialog">
+
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Cambiar Contraseña</h4>
+                                </div>
+                                <form typeof="post" id="FormCambioClave">
+                                    <div class="modal-body">
+                                        <input type="hidden" name="idusuario" value="@item.IdAspNetUser" />
+                                        <input type="hidden" name="correo" value="@item.AspNetUser.Email" />
+                                        <label>Nueva Contraseña</label>
+                                        <input type="text" class="form-control" name="clave" autocomplete="off" value="" required="required" />
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <input type="submit" id="add_pass" class="btn btn-primary" value="Editar" />
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+
+    
+    $("#FormCambioClave").on("submit", function () {
+        //alert('test');
+        Pace.start();
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("ChangePass", "Account")",
+            data: $("#FormCambioClave").serialize(),
+        })
+        .done(function (r) {
+
+            if (r.success) {
+
+                toastr.success("Clave modificada de manera correcta!", 'Éxito!');
+                window.setTimeout(location.reload(), 2000);
+            } else {
+                // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                toastr.error(r.message, 'Error!');
+            }
+        });
+        Pace.stop();
+        return false;
+    });
+
+    function addUser() {
+        ShowLoader();
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("AddCUser", "CUser")"
+        }).done(function (response) {
+            $("#rightsidebar-title").html("Agregar Usuario");
+            $("#rsidebar").html(response);
+            $('#wrapper').toggleClass('right-bar-enabled');
+            HideLoader();
+
+            // Switchery
+            var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch-side'));
+
+            elems.forEach(function (html) {
+                var switchery = new Switchery(html, { size: 'small', color: '#3DDCF7', disabled: true });
+            });
+        }).fail(function (response) {
+            HideLoader();
+        });
+    }
+    $(".addcuser").on("click", function (e) {
+        e.preventDefault();
+        checkSession(addUser);
+    });
+    // Detalle del usuario
+    function sideUser(userId) {
+        ShowLoader();
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("SideUsers", "CUser")",
+            data: { userID: userId }
+        })
+    .done(function (msg) {
+        HideLoader();
+        $("#rsidebar").html(msg);
+        $('#wrapper').toggleClass('right-bar-enabled');
+    });
+        HideLoader();
+    }
+
+    $(document).ready(function () {
+        var filename = "@InstaTransfer.ITResources.BackEnd.BackEndResources.FilenameTableUsers";
+
+        // Switchery
+        var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
+
+        elems.forEach(function (html) {
+            var switchery = new Switchery(html, { size: 'small', color: '#3DDCF7', disabled: true });
+            switchery.disable();
+        });
+
+        // User Table click
+        //$('.dtinit td').click(function () {
+        //    var userId = $(this).closest('tr').attr('userId');
+
+        //    checkSession(function () {
+        //        sideUser(userId);
+        //    });
+
+
+        //});
+
+        // Tooltips
+        $('[data-toggle="tooltip"]').tooltip();
+
+        // DataTable
+        var table = $('#users-table').DataTable({
+            "columnDefs": [
+              {
+                  "targets": [7, 8, 9],
+                  "searchable": false,
+                  "visible": false
+              },
+                {
+                    "targets": [4, 5, 6],
+                    "orderable": false
+                }
+            ],
+            order: [0, 'asc'],
+            buttons: [{
+                text: 'Copiar',
+                extend: "copy",
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 7, 8, 9]
+                },
+                className: "btn-sm"
+            }, {
+                extend: "csv",
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    config.filename = filename;
+                    $.fn.dataTable.ext.buttons.csvHtml5.action(e, dt, button, config);
+                }
+            }, {
+                extend: "excel",
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 7, 8, 9]
+                },
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    config.filename = filename;
+                    $.fn.dataTable.ext.buttons.excelHtml5.action(e, dt, button, config);
+                }
+            }, {
+                extend: "pdf",
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 7, 8, 9]
+                },
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    config.filename = filename;
+                    $.fn.dataTable.ext.buttons.pdfHtml5.action(e, dt, button, config);
+                }
+            }, {
+                extend: "print",
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 7, 8, 9]
+                },
+                text: '<i class="md md-lg md-print"></i>',
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    config.filename = filename;
+                    $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+                }
+            }],
+            language: {
+                url: "@Url.Content("~/Scripts/datatables/spanish.json")",
+                buttons: {
+                    copyTitle: 'Tabla copiada al portapapeles',
+                    copySuccess: {
+                        _: 'Se han copiado %d filas.',
+                        1: 'Se ha copiado 1 fila.'
+                    }
+                }
+            },
+            "dom": '<"row"<"col-md-6 col-sm-12"B><"col-md-6 col-sm-12  text-right"f>><"row"<"col-md-6 col-sm-12"l>><"row"<"col-md-6"r>><"row"<"col-sm-12"t>><"clearfix"><"col-md-6 col-sm-12"i><"col-md-6 col-sm-12 text-right"p>'
+        });
+    });
+</script>

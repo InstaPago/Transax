@@ -1,0 +1,208 @@
+﻿@model InstaTransfer.DataAccess.UDeclaration
+@using InstaTransfer.ITResources.Enums
+@{
+    List<InstaTransfer.DataAccess.UBankStatementEntry> entries = ViewBag.posibleentries;
+
+    var backId = ViewBag.backId != null ? ViewBag.backId : "";
+}
+<form id="formApprove" action="@Url.Action("ReconcileDeclaration", "Declaration")">
+    <div class="nicescroll">
+        <div class="col-xs-12">
+            <h4 id="rightsidebar-title">
+                <a href="#" class="backdeclarationdetail hidden" guid="@Model.Id" crif="@Model.RifCommerce" backId="@backId">
+                    <i class="md md-chevron-left btnback"></i>
+                </a>
+
+                <span id="sidebarTitle">Conciliación de la Declaración</span>
+            </h4>
+        </div>
+        <div id="rightsidebar-body" class="col-xs-12">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-6 control-label ">Monto</label>
+                            <div class="col-sm-6">
+                                <p class="form-control-static  text-muted">
+                                    @Model.Amount.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-6 control-label ">Comercio</label>
+                            <div class="col-sm-6">
+                                <p class="form-control-static  text-muted">
+                                    @Model.Commerce.BusinessName.Trim()
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-6 control-label ">Fecha de Transacción</label>
+                            <div class="col-sm-6">
+                                <p class="form-control-static  text-muted">
+                                    @Model.TransactionDate.ToString("yyyy/MM/dd", new System.Globalization.CultureInfo("es-VE")).Trim()
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-6 control-label ">Banco Receptor</label>
+                            <div class="col-sm-6">
+                                <p class="form-control-static  text-muted">
+                                    @Model.UBank.Name.Trim()
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-6 control-label ">Referencia</label>
+                            <div class="col-sm-6">
+                                <p class="form-control-static  text-muted">
+                                    @Model.Reference.Trim()
+                                </p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-6 control-label ">Registro en Sistema</label>
+                            <div class="col-sm-6">
+                                <p class="form-control-static  text-muted">
+                                    @(Model.CreateDate.ToString("yyyy/MM/dd h:mm tt", new System.Globalization.CultureInfo("es-VE")).Trim())
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+
+                <div class="col-md-12">
+
+                    <hr />
+                    <h4>Movimientos Posibles</h4>
+                    @if (entries.Count() == 0)
+                    {
+                        <div class="alert alert-info">
+                            No hay movimientos posibles.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="list-group ">
+                            @foreach (var item in entries)
+                            {
+                                <a entryId=@item.Id.Value
+                                   declarationId=@Model.Id
+                                   class="list-group-item entryReconcile">
+                                    <span class="badge badge-primary">
+                                        <i class="fa fa-chevron-right"></i>
+                                    </span>
+
+                                    @item.Date.ToString("yyyy/MM/dd", new System.Globalization.CultureInfo("es-VE")).Trim() - @item.Description @(item.UBank != null ? "- " + item.UBank.Name : string.Empty)
+                                </a>
+                            }
+                        </div>
+                    }
+                </div>
+
+
+
+                @*<input type="hidden" id="declarationId" value="@Model.Id" />
+                    <input type="hidden" id="entryid" value="" />
+                    <div class="form-group m-b-0">
+                        <button id="approveformsubmit" class="btn btn-primary waves-effect waves-light " type="submit" disabled="disabled">
+                            Aceptar
+                        </button>
+                        <button type="button" class="btn btn-default waves-effect waves-light m-l-5" onclick="Custombox.close();">
+                            Cancelar
+                        </button>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+
+    // Regresa al detalle de la declaracion asociada
+    function backDeclaration(guid, crif, backId) {
+        if (guid) {
+            ShowLoader();
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("SideDeclaration", "Declaration")",
+                data: { Id: guid, rif: crif, backId: backId, back: true },
+            })
+        .done(function (msg) {
+            $("#rsidebar").html(msg);
+            if (!$('#wrapper').hasClass('right-bar-enabled')) {
+                $('#wrapper').toggleClass('right-bar-enabled');
+            }
+            HideLoader();
+        });
+        }
+        HideLoader();
+    }
+
+    // Concilia la declaracion con el movimiento seleccionado
+    function reconcileDeclaration(declarationId, entryId) {
+        swal({
+            title: "¿Seguro desea conciliar esta declaración?",
+            text: "No podrá revertir esta operación",
+            type: "info",
+            showCancelButton: true,
+            cancelButtonText: "Cancelar",
+            confirmButtonText: "Si, conciliar esta declaración",
+            closeOnConfirm: false
+        }, function () {
+            ShowLoader();
+            $.ajax({
+                method: "POST",
+                url: '@Url.Action("ReconcileDeclaration", "Declaration")',
+                data: { declarationId: declarationId, entryId: entryId },
+            })
+            .done(function (r) {
+                HideLoader();
+                if (r.success) {
+                    swal({
+                        title: "Exito!",
+                        text: r.message,
+                        type: "success",
+                    }, function () {
+                        location.reload();
+                    });
+                } else {
+                    swal("Error!", r.message, "error");
+                }
+            });
+            HideLoader();
+        });
+        e.stopPropagation();
+    }
+
+    $(document).ready(function () {
+
+        // -- Animate --
+        $("#sidebarTitle").animate({ marginLeft: '+=20px' });
+        $("#sidebarTitle").animate({ marginLeft: '-=20px' });
+        $('.backdeclarationdetail').fadeIn(1000).removeClass('hidden');
+
+        // Back Declaration
+        $('.backdeclarationdetail').on('click', function () {
+            var guid = $(this).attr('guid');
+            var crif = $(this).attr('crif');
+            var backId = $(this).attr('backId');
+
+            checkSession(function () {
+                backDeclaration(guid, crif, backId);
+            })
+        });
+
+        // Conciliar Declaracion - Click Entry
+        $('.entryReconcile').on('click', function (e) {
+            var declarationId = $(this).attr('declarationId');
+            var entryId = $(this).attr('entryId');
+
+            checkSession(function () {
+                reconcileDeclaration(declarationId, entryId);
+            })
+        });
+    });
+</script>

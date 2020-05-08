@@ -1,0 +1,182 @@
+﻿@*@using Microsoft.AspNet.Identity.Owin;
+@using Microsoft.AspNet.Identity;
+@using InstaTransfer.DataAccess;
+@using InstaTransfer.BLL.Concrete;*@
+@{
+//keys definidas en el webconfig
+//var AppSettings = System.Configuration.ConfigurationManager.AppSettings;
+// Obtenemos los uduarios
+//var cUser = InstaTransfer.ITLogic.Helpers.SessionHelper.MySession.Current.CommerceUser;
+//var userManager = Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+//var user = userManager.FindById(User.Identity.GetUserId());
+}
+<div class="topbar">
+
+    <!-- LOGO -->
+    @*<div class="topbar-left" style="width:70px !important">*@
+    @*<div class="text-center">
+            <a href="index.html" class="logo"><i class="md md-equalizer"></i> <span>@AppSettings["projectName"]</span> </a>
+        </div>*@
+    @*<div class="pull-left">
+                <button class="button-menu-mobile open-left waves-effect" style="width: 70px;">
+                    <i class="md md-menu"></i>
+                </button>
+                <span class="clearfix"></span>
+            </div>
+        </div>*@
+    @*<div class="topbar-left" style="width:70px !important">
+        <div class="text-center">
+            <button class="button-menu-mobile open-left waves-effect" style="width:100%">
+                <i class="md md-menu"></i>
+            </button>
+            <span class="clearfix"></span>
+        </div>
+
+    </div>*@
+
+    <!-- Navbar -->
+    <div class="navbar navbar-default" role="navigation">
+        <div class="container">
+            <div class="">
+                <div class="pull-left">
+                        <button class="button-menu-mobile open-left waves-effect visible-xs">
+                            <i class="md md-menu"></i>
+                        </button>
+                        <span class="clearfix"></span>
+                    </div>
+
+                @*<ul class="nav navbar-nav hidden-xs">
+                        <li><a href="#" class="waves-effect">Files</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle waves-effect" data-toggle="dropdown"
+                               role="button" aria-haspopup="true" aria-expanded="false">
+                                Projects <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Web design</a></li>
+                                <li><a href="#">Projects two</a></li>
+                                <li><a href="#">Graphic design</a></li>
+                                <li><a href="#">Projects four</a></li>
+                            </ul>
+                        </li>
+                    </ul>*@
+
+                @*<form role="search" class="navbar-left app-search pull-left hidden-xs">
+                        <input type="text" placeholder="Search..." class="form-control app-search-input">
+                        <a href=""><i class="fa fa-search"></i></a>
+                    </form>*@
+
+                <ul class="nav navbar-nav navbar-right pull-right">
+
+                    @*<li class="dropdown hidden-xs">
+                        <a href="#" data-target="#" class="dropdown-toggle waves-effect waves-light"
+                           data-toggle="dropdown" aria-expanded="true">
+                            <i class="md md-notifications"></i> <span class="badge badge-xs badge-transax">3</span>
+                        </a>*@
+                        @*<ul class="dropdown-menu dropdown-menu-lg">
+                            <li class="text-center notifi-title">Notification</li>
+                            <li class="list-group nicescroll notification-list">
+                                <!-- list item-->
+                                <a href="javascript:void(0);" class="list-group-item">
+                                    <div class="media">
+                                        <div class="pull-left p-r-10">
+                                            <em class="fa fa-diamond noti-primary"></em>
+                                        </div>
+                                        <div class="media-body">
+                                            <h5 class="media-heading">
+                                                A new order has been placed A new
+                                                order has been placed
+                                            </h5>
+                                            <p class="m-0">
+                                                <small>There are new settings available</small>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <!-- list item-->
+                                <a href="javascript:void(0);" class="list-group-item">
+                                    <div class="media">
+                                        <div class="pull-left p-r-10">
+                                            <em class="fa fa-cog noti-warning"></em>
+                                        </div>
+                                        <div class="media-body">
+                                            <h5 class="media-heading">New settings</h5>
+                                            <p class="m-0">
+                                                <small>There are new settings available</small>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+
+                                <!-- list item-->
+                                <a href="javascript:void(0);" class="list-group-item">
+                                    <div class="media">
+                                        <div class="pull-left p-r-10">
+                                            <em class="fa fa-bell-o noti-success"></em>
+                                        </div>
+                                        <div class="media-body">
+                                            <h5 class="media-heading">Updates</h5>
+                                            <p class="m-0">
+                                                <small>
+                                                    There are <span class="text-primary">2</span> new
+                                                    updates available
+                                                </small>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+
+                            </li>
+
+                            <li>
+                                <a href="javascript:void(0);" class="text-right">
+                                    <small><b>See all notifications</b></small>
+                                </a>
+                            </li>
+
+                        </ul>*@
+                    @*</li>*@
+                    <li class="dropdown">
+                        <div class="user-detail">
+                            <div class="dropdown" style="float: right;">
+                                <a href="" class="dropdown-toggle profile" data-toggle="dropdown" aria-expanded="true">
+                                    <img src="/Content/images/user-default.png" alt="user-img" class="img-circle">
+                                    <span class="user-info-span">
+                                        @*<h5 class="m-t-0 m-b-0">@(cUser.Commerce.BusinessName != null ? cUser.Commerce.BusinessName : string.Empty)</h5>*@
+                                        @*<p class="text-muted m-b-0">
+                                            <small>
+                                                <span class="loggeduser">@cUser.Name @cUser.LastName</span>
+                                            </small>
+                                        </p>*@
+                                        <p class="text-muted m-b-0">
+                                            <small><i class="fa fa-circle text-success"></i> <span>En línea</span></small>
+                                        </p>
+                                    </span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/Profile/Index"><i class="md md-face-unlock"></i> Perfil</a></li>
+                                    <li id="start-tour" hidden><a href=""><i class="md md-help"></i> Ver Tour</a></li>
+                                    <li><a href="/Account/LogOff"><i class="md md-settings-power"></i> Cerrar sesión </a></li>
+                                </ul>
+
+                            </div>
+                        </div>
+                    </li>
+                    @*<li class="hidden-xs">
+
+                            <a href="#" class=" waves-effect waves-light">
+                                <i class="md md-settings"></i>
+                            </a>
+                        </li>*@
+
+                </ul>
+            </div>
+            <div class="text-center col-md-offset-1">
+                <a href="@Url.Action("Index","Home")" class="logo"><span><img src="@Url.Content("~/Content/images/transax-logo.png")" height="40" style="margin-top:15px;vertical-align:top !important"  /></span> </a>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+

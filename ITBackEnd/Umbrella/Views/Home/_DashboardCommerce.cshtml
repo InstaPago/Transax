@@ -1,0 +1,422 @@
+﻿@{
+    Umbrella.Models.DashboardViewModels.DaySummaryModel daySummary = ViewBag.daySummary;
+    Umbrella.Models.ChartModels.TimeScaleChartModel chartData = ViewBag.chartData;
+    int currentDayPendingDeclarationsCount = ViewBag.currentDayPendingDeclarationsCount;
+    int currentDayDeclarationsCount = ViewBag.currentDayDeclarationsCount;
+    int currentMonthDeclarationsCount = ViewBag.currentMonthDeclarationsCount;
+    int reconciledDeclarationsCount = ViewBag.reconciledDeclarationsCount;
+    decimal currentMonthDeclarationsTotalAmount = ViewBag.currentMonthDeclarationsTotalAmount;
+    decimal currentDayDeclarationsTotalAmount = ViewBag.currentDayDeclarationsTotalAmount;
+    decimal reconciledDeclarationsTotalAmount = ViewBag.reconciledDeclarationsTotalAmount;
+    decimal currentBalanceTotalAmount = ViewBag.currentBalanceTotalAmount;
+    var currency = System.Globalization.RegionInfo.CurrentRegion.CurrencySymbol;
+}
+
+<!-- Numero de declaraciones por fecha y estado-->
+<div class="row">
+    <div class="col-sm-6 col-lg-3">
+        <div class="card-box widget-icon">
+            <div>
+                <i class="md md-schedule" style="color: #22bdd6;"></i>
+                <div class="wid-icon-info text-right">
+                    <p class="text-muted m-b-5 font-13 text-uppercase">Hoy</p>
+                    <h4 class="m-t-0 m-b-5 counter font-bold" data-count="@currentDayPendingDeclarationsCount"></h4>
+                    <small style="color: #544c9f;"><b>Declaraciones Por Conciliar</b></small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="card-box widget-icon">
+            <div>
+                <i class="md md-today" style="color: #22bdd6;"></i>
+                <div class="wid-icon-info text-right">
+                    <p class="text-muted m-b-5 font-13 text-uppercase">Hoy</p>
+                    <h4 class="m-t-0 m-b-5 counter font-bold" data-count="@currentDayDeclarationsCount"></h4>
+                    <small style="color: #544c9f;"><b>Declaraciones Conciliadas</b></small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="card-box widget-icon">
+            <div>
+                <i class="md md-filter-frames" style="color: #22bdd6;"></i>
+                <div class="wid-icon-info text-right">
+                    <p class="text-muted m-b-5 font-13 text-uppercase">Mes</p>
+                    <h4 class="m-t-0 m-b-5 counter font-bold" data-count="@currentMonthDeclarationsCount"></h4>
+                    <small style="color: #544c9f;"><b>Declaraciones Conciliadas</b></small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="card-box widget-icon">
+            <div>
+                <i class="md md-archive" style="color: #22bdd6;"></i>
+                <div class="wid-icon-info text-right">
+                    <p class="text-muted m-b-5 font-13 text-uppercase">De Por Vida</p>
+                    <h4 class="m-t-0 m-b-5 counter font-bold" data-count="@reconciledDeclarationsCount"></h4>
+                    <small style="color: #544c9f;"><b>Declaraciones Conciliadas</b></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+<!-- Monto Total de Declaraciones -->
+<div class="row">
+    <div class="col-sm-6 col-lg-3">
+        <div class="widget-simple text-left card-box">
+            <p class="text-muted">Balance</p>
+            <small style="color: #544c9f;"><b>Saldo Disponible</b></small>
+            <h3 class="text-right font-bold text-success">@currency<span class="counter-totals" id="counter0" data-count="@currentBalanceTotalAmount.ToString("0.00#", new System.Globalization.CultureInfo("en-US"))"></span></h3>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="widget-simple text-left card-box">
+            <p class="text-muted">Total del Día</p>
+            <small style="color: #544c9f;"><b>Declaraciones Conciliadas</b></small>
+            <h3 class="text-right font-bold">@currency<span class="counter-totals" id="counter1" data-count="@currentDayDeclarationsTotalAmount.ToString("0.00#", new System.Globalization.CultureInfo("en-US"))"></span></h3>
+        </div>
+    </div>
+
+    <div class="col-sm-6 col-lg-3">
+        <div class="widget-simple text-left card-box">
+            <p class="text-muted">Total del Mes</p>
+            <small style="color: #544c9f;"><b>Declaraciones Conciliadas</b></small>
+            <h3 class="text-right font-bold">@currency<span class="counter-totals" id="counter2" data-count="@currentMonthDeclarationsTotalAmount.ToString("0.00#", new System.Globalization.CultureInfo("en-US"))"></span></h3>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="widget-simple text-left card-box">
+            <p class="text-muted">Total de Por Vida</p>
+            <small style="color: #544c9f;"><b>Declaraciones Conciliadas</b></small>
+            <h3 class="text-right font-bold">@currency<span class="counter-totals" id="counter3" data-count="@reconciledDeclarationsTotalAmount.ToString("0.00#", new System.Globalization.CultureInfo("en-US"))"></span></h3>
+        </div>
+    </div>
+</div>
+
+<!-- Combo Bar Line Chart-->
+<div class="row">
+    <div class="col-lg-12 hidden-xs">
+        <div class="portlet">
+            <!-- /primary heading -->
+            <div class="portlet-heading">
+                <h3 class="portlet-title text-dark">
+                    <span class="header-title">Historial de Transacciones</span>
+                </h3>
+                <div class="portlet-widgets">
+                    <span class="divider"></span>
+                    <a data-toggle="collapse" data-parent="#accordion1" href="#portlet4"><i class="ion-minus-round"></i></a>
+                    <span class="divider"></span>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div id="portlet4" class="panel-collapse collapse in">
+                <div class="portlet-body">
+                    <canvas id="mixed-chart" width="800" height="200"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+
+<div class="card-box text-center"><h2>Resumen del Día</h2></div>
+
+<!-- Totalización de Transacciones por Tipo -->
+<div class="row">
+    <div class="col-sm-4 col-lg-4">
+        <div class="widget-simple-chart text-right card-box">
+            <div class="circliful-chart" data-dimension="90" data-text="@daySummary.PendingDeclarations.Percentage%" data-width="5" data-fontsize="14" data-percent="@daySummary.PendingDeclarations.Percentage" data-fgcolor="#FFAA00" data-bgcolor="#ebeff2"></div>
+            <h3 class="text-pending counter" data-count="@daySummary.PendingDeclarations.Count"></h3>
+            <p class="text-dark">Declaraciones Por Conciliar</p>
+        </div>
+    </div>
+
+    <div class="col-sm-4 col-lg-4">
+        <div class="widget-simple-chart text-right card-box">
+            <div class="circliful-chart" data-dimension="90" data-text="@daySummary.ReconciledDeclarations.Percentage%" data-width="5" data-fontsize="14" data-percent="@daySummary.ReconciledDeclarations.Percentage" data-fgcolor="#00B19D" data-bgcolor="#ebeff2"></div>
+            <h3 class="text-confirmed counter" data-count="@daySummary.ReconciledDeclarations.Count"></h3>
+            <p class="text-dark">Declaraciones Conciliadas</p>
+        </div>
+    </div>
+
+    <div class="col-sm-4 col-lg-4">
+        <div class="widget-simple-chart text-right card-box">
+            <div class="circliful-chart" data-dimension="90" data-text="@daySummary.AnnuledDeclarations.Percentage%" data-width="5" data-fontsize="14" data-percent="@daySummary.AnnuledDeclarations.Percentage" data-fgcolor="#EF5350" data-bgcolor="#ebeff2"></div>
+            <h3 class="text-annuled counter" data-count="@daySummary.AnnuledDeclarations.Count"></h3>
+            <p class="text-dark">Declaraciones Anuladas</p>
+        </div>
+    </div>
+</div>
+
+<!-- end row -->
+<div class="row">
+    <div class="col-sm-4 col-lg-4">
+        <div class="widget-simple-chart text-right card-box">
+            <div class="circliful-chart" data-dimension="90" data-text="@daySummary.PendingPurchaseOrders.Percentage%" data-width="5" data-fontsize="14" data-percent="@daySummary.PendingPurchaseOrders.Percentage" data-fgcolor="#FFAA00" data-bgcolor="#ebeff2"></div>
+            <h3 class="text-pending counter" data-count="@daySummary.PendingPurchaseOrders.Count"></h3>
+            <p class="text-dark">Órdenes Por Declarar</p>
+        </div>
+    </div>
+
+    <div class="col-sm-4 col-lg-4">
+        <div class="widget-simple-chart text-right card-box">
+            <div class="circliful-chart" data-dimension="90" data-text="@daySummary.DeclaredPurchaseOrders.Percentage%" data-width="5" data-fontsize="14" data-percent="@daySummary.DeclaredPurchaseOrders.Percentage" data-fgcolor="#00B19D" data-bgcolor="#ebeff2"></div>
+            <h3 class="text-confirmed counter" data-count="@daySummary.DeclaredPurchaseOrders.Count"></h3>
+            <p class="text-dark">Órdenes Declaradas</p>
+        </div>
+    </div>
+
+    <div class="col-sm-4 col-lg-4">
+        <div class="widget-simple-chart text-right card-box">
+            <div class="circliful-chart" data-dimension="90" data-text="@daySummary.AnnuledPurchaseOrders.Percentage%" data-width="5" data-fontsize="14" data-percent="@daySummary.AnnuledPurchaseOrders.Percentage" data-fgcolor="#EF5350" data-bgcolor="#ebeff2"></div>
+            <h3 class="text-annuled counter" data-count="@daySummary.AnnuledPurchaseOrders.Count"></h3>
+            <p class="text-dark">Órdenes Anuladas</p>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+<!-- Moment JS -->
+@*<script src="@Url.Content("~/Scripts/moment-with-locales.min.js")"></script>*@
+<!-- Chart JS -->
+<script src="@Url.Content("~/Scripts/Chart.min.js")"></script>
+<!-- Count Up -->
+<script src="@Url.Content("~/plugins/countUp/countUp.js")"></script>
+<script src="@Url.Content("~/plugins/countUp/countUp-jquery.js")"></script>
+<!-- Circliful -->
+<link href="@Url.Content("~/plugins/jquery-circliful/css/jquery.circliful.css")" rel="stylesheet" />
+<script src="@Url.Content("~/plugins/jquery-circliful/js/jquery.circliful.min.js")"></script>
+
+
+<script>
+    // Variables
+    var currency = @Html.Raw(Json.Encode(currency));
+
+    // Mixed Chart Transaction History Data
+
+    function hoursEarlier(hours) {
+        return moment().subtract(hours, 'h').toDate();
+    };
+
+    function daysEarlier(days) {
+        return moment().subtract(days, 'days').toDate();
+    };
+
+    function monthsEarlier(months) {
+        return moment().subtract(months, 'months').toDate();
+    };
+
+    function parseDateString(date, format) {
+        return moment(date, format);
+    }
+
+    // Recorremos el arreglo de fechas para convertirlas a moment.js
+    var dataArray = @Html.Raw(Json.Encode(chartData.labels));
+    var chartLabels = [];
+    var format = 'YYYY-MM-DD';
+    for(i=0;i<dataArray.length;i++){
+        var momentDate = moment(dataArray[i]);
+        chartLabels[i]=parseDateString(dataArray[i], format).toString();
+    }
+
+    // Construimos el formato de los graficos
+    var barChartData = {
+
+        labels: chartLabels,
+        datasets: [
+            {
+                label: "Declaraciones Conciliadas",
+                type: 'line',
+                data: @Html.Raw(Json.Encode(chartData.declarationsDataset.data)),
+                fill: false,
+                borderColor: 'rgba(84, 76, 159, 1)',
+                backgroundColor: 'rgba(84, 76, 159, 0.6)',
+                pointBorderColor: 'rgba(84, 76, 159, 1)',
+                pointBackgroundColor: 'rgba(84, 76, 159, 0.6)',
+                borderWidth: 0,
+                hoverBorderWidth: 2,
+                yAxisID: 'y-axis-1',
+                lineTension: 0
+            }, {
+                type: 'bar',
+                label: "Órdenes Declaradas",
+                data: @Html.Raw(Json.Encode(chartData.purchaseOrdersDataset.data)),
+                fill: false,
+                backgroundColor: 'rgba(34, 189, 214, 0.6)',
+                borderColor: 'rgba(34, 189, 214, 1)',
+                borderWidth: 0,
+                hoverBorderWidth: 2,
+                yAxisID: 'y-axis-1'
+            }]
+
+    };
+
+
+    $(document).on('ready', function () {
+
+
+
+        // Mixed Chart Transaction History
+
+        var ctx = document.getElementById("mixed-chart").getContext("2d");
+        window.myBar = new Chart(ctx, {
+            type: 'bar',
+            data: barChartData,
+            options: {
+                responsive: true,
+                tooltips: {
+                    mode: 'label',
+                    callbacks: {
+                        label:
+                            function(tooltipItems, data) {
+                                return data.datasets[tooltipItems.datasetIndex].label +
+                                    ': ' + currency + 
+                                    Number(tooltipItems.yLabel).toLocaleString("es-VE", {minimumFractionDigits: 2});
+                            }
+                    }
+                },
+                elements: {
+                    line: {
+                        fill: false
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                        type: "time",
+                        time: {
+                            unit: 'day',
+                            unitStepSize: 1,
+                            round: 'day',
+                            tooltipFormat: "LL",
+                            displayFormats: {
+                                day: 'MMM DD, YY'
+                            }
+                        },
+                        display: true,
+                        gridLines: {
+                            display: true
+                        },
+                        labels: {
+                            show: true,
+                        }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            callback: function(value, index, values) {
+                                if(parseInt(value) >= 1000){
+                                    return currency + value.toString()
+                                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                                        .replace(/[,.]/g, function (m) {
+                                            return m === ',' ? '.' : ',';
+                                        });
+                                } else {
+                                    return currency + (value.toFixed(2))
+                                        .replace(/[,.]/g, function (m) {
+                                            return m === ',' ? '.' : ',';
+                                        });
+                                }
+                            }
+                        },
+                        type: "linear",
+                        display: true,
+                        position: "left",
+                        id: "y-axis-1",
+                        gridLines: {
+                            display: false
+                        },
+                        labels: {
+                            show: true,
+                        }
+                    }, {
+                        ticks: {
+                            beginAtZero: true,
+                            callback: function(value, index, values) {
+                                if(parseInt(value) >= 1000){
+                                    return currency + value.toString()
+                                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                                        .replace(/[,.]/g, function (m) {
+                                            return m === ',' ? '.' : ',';
+                                        });
+                                } else {
+                                    return currency + (value.toFixed(2))
+                                        .replace(/[,.]/g, function (m) {
+                                            return m === ',' ? '.' : ',';
+                                        });
+                                }
+                            }
+                        },
+                        type: "linear",
+                        display: false,
+                        position: "right",
+                        id: "y-axis-2",
+                        gridLines: {
+                            display: false
+                        },
+                        labels: {
+                            show: true,
+
+                        }
+                    }]
+                }
+            }
+        });
+
+        // Count Up Monto Total
+        var options = {
+            useEasing: true,
+            useGrouping: true,
+            separator: '.',
+            decimal: ',',
+        };
+
+        $('.counter-totals').each(function () {
+
+            var $this = $(this),
+                countTo = $this.attr('data-count'),
+                id = $this.attr('id');
+
+            var demo = new CountUp(id, 0, countTo, 2, 3, options);
+            demo.start();
+
+        });
+
+        // Count Up Cuenta Declaraciones
+        $('.counter').each(function () {
+
+            var $this = $(this),
+                countTo = $this.attr('data-count');
+
+            $({ countNum: $this.text() }).animate({
+                countNum: countTo
+            },
+
+            {
+                useGrouping: true,
+                decimal: ',',
+                separator: '.',
+                decimals: 2,
+                duration: 1000,
+                easing: 'linear',
+                step: function () {
+                    $this.text(Math.floor(this.countNum));
+                },
+                complete: function () {
+                    $this.text(this.countNum);
+                    //alert('finished');
+                }
+
+            });
+        });
+
+        // Circliful Resumen del Dia
+        $('.circliful-chart').circliful();
+    });
+
+</script>

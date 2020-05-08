@@ -1,0 +1,280 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CharDash" xml:space="preserve">
+    <value>-</value>
+    <comment>Simbolo -</comment>
+  </data>
+  <data name="CharSlash" xml:space="preserve">
+    <value>/</value>
+    <comment>Simbolo /</comment>
+  </data>
+  <data name="CMNBack" xml:space="preserve">
+    <value>Back</value>
+    <comment>Opcion de ir a pagina anterior del metodo ControlManualNavigation</comment>
+  </data>
+  <data name="CMNForward" xml:space="preserve">
+    <value>Forward</value>
+    <comment>Opcion de ir a pagina siguiente ControlManualNavigation</comment>
+  </data>
+  <data name="CMNReload" xml:space="preserve">
+    <value>Reload</value>
+    <comment>Opcion de refrescar la pagina ControlManualNavigation</comment>
+  </data>
+  <data name="EmptyString" xml:space="preserve">
+    <value>""</value>
+    <comment>String vacio</comment>
+  </data>
+  <data name="HtmlAttributeValue" xml:space="preserve">
+    <value>value</value>
+    <comment>Atributo value</comment>
+  </data>
+  <data name="HtmlIDContentRight" xml:space="preserve">
+    <value>content-right</value>
+    <comment>ID de content-right</comment>
+  </data>
+  <data name="HtmlIDLoginEntrar" xml:space="preserve">
+    <value>ingresarLogin</value>
+    <comment>ID del boton de aceptar login</comment>
+  </data>
+  <data name="HtmlIDLoginClave" xml:space="preserve">
+    <value>cod_cvepass</value>
+    <comment>ID del textbox de la contraseña del usuario</comment>
+  </data>
+  <data name="HtmlIDLoginUsuario" xml:space="preserve">
+    <value>COD_USU</value>
+    <comment>ID del textbox del nombre de usuario</comment>
+  </data>
+  <data name="HtmlMemberClick" xml:space="preserve">
+    <value>Click</value>
+    <comment>String para invocacion del miembro click</comment>
+  </data>
+  <data name="HtmlNameDescargar" xml:space="preserve">
+    <value>btnDescargar</value>
+    <comment>Nombre para el elemento input del boton exportar</comment>
+  </data>
+  <data name="HtmlTagInput" xml:space="preserve">
+    <value>input</value>
+    <comment>Eiqueta html de input</comment>
+  </data>
+  <data name="HtmlTagLink" xml:space="preserve">
+    <value>a</value>
+    <comment>Etiqueta html del link "a"</comment>
+  </data>
+  <data name="NavigateAccount" xml:space="preserve">
+    <value>Accounts</value>
+    <comment>Parametro del metodo NavigateWebPage</comment>
+  </data>
+  <data name="PageTitleDefault" xml:space="preserve">
+    <value>Umbrella Explorer</value>
+    <comment>Titulo de la pagina por defecto</comment>
+  </data>
+  <data name="SettingsLoginPasswordProvincial" xml:space="preserve">
+    <value>LoginPasswordProvincial</value>
+    <comment>Texto para obtener el password desde App.config</comment>
+  </data>
+  <data name="SettingsLoginUserProvincial" xml:space="preserve">
+    <value>LoginUserProvincial</value>
+    <comment>Texto para obtener el usuario desde App.config</comment>
+  </data>
+  <data name="ShortDateFormat" xml:space="preserve">
+    <value>dd/MM/yyyy</value>
+    <comment>Fecha corta compatible con el formato de fechas por rango</comment>
+  </data>
+  <data name="ToggleDateOptionDay" xml:space="preserve">
+    <value>Day</value>
+    <comment>Opcion de fecha del dia</comment>
+  </data>
+  <data name="ToggleDateOptionRange" xml:space="preserve">
+    <value>Range</value>
+    <comment>Opcion de rango de fechas</comment>
+  </data>
+  <data name="URLLogin2" xml:space="preserve">
+    <value>https://ve1.provinet.net/shvp_ve_web/atpn_es_web_jsp/portal.jsp</value>
+    <comment>Direccion web de la pagina de login redireccionada</comment>
+  </data>
+  <data name="URLSalir" xml:space="preserve">
+    <value>https://ve1.provinet.net/shvp_ve_web/atpn_es_web_jsp/desconectar.jsp</value>
+    <comment>Direccion web de la pagina de salir</comment>
+  </data>
+  <data name="HtmlIDRifID" xml:space="preserve">
+    <value>NUMIDER</value>
+    <comment>ID del textbox del Identificador del Rif</comment>
+  </data>
+  <data name="HtmlIDRifNum" xml:space="preserve">
+    <value>NUMDOCR</value>
+    <comment>ID del textbox del numero de Rif</comment>
+  </data>
+  <data name="HtmlIDTipoRif" xml:space="preserve">
+    <value>NACIDOC</value>
+    <comment>ID del textbox del tipo de Rif</comment>
+  </data>
+  <data name="HtmlIDCuentas" xml:space="preserve">
+    <value>cuentasPersonales</value>
+    <comment>ID de la tabla de cuentas personales</comment>
+  </data>
+  <data name="HtmlIDListado" xml:space="preserve">
+    <value>regresarListado</value>
+    <comment>ID de la seccion del listado</comment>
+  </data>
+  <data name="HtmlIDTipoDoc" xml:space="preserve">
+    <value>DOCTARJ</value>
+    <comment>ID del select de tipo de documento</comment>
+  </data>
+  <data name="HtmlOnchangeEvent" xml:space="preserve">
+    <value>onchange</value>
+    <comment>Nombre del evento onchange</comment>
+  </data>
+  <data name="HtmlSelectedValue" xml:space="preserve">
+    <value>selected</value>
+    <comment>String selected</comment>
+  </data>
+  <data name="URLAbsolutePath" xml:space="preserve">
+    <value>/vhxp_ve_web/servlet/ServletOperacionWeb</value>
+    <comment>Ruta Absoluta de la pagina de operaciones con el EDC</comment>
+  </data>
+  <data name="HtmlIDFechaFin" xml:space="preserve">
+    <value>tfLISBUSCADORFECFIN</value>
+    <comment>ID del text box de la fecha fin del EDC</comment>
+  </data>
+  <data name="HtmlIDFechaInicio" xml:space="preserve">
+    <value>tfLISBUSCADORFECINCIO</value>
+    <comment>ID del text box de la fecha de inicio del EDC</comment>
+  </data>
+  <data name="HtmlIDFiltros" xml:space="preserve">
+    <value>filtros</value>
+    <comment>ID de la seccion de filtros de la pagina</comment>
+  </data>
+  <data name="HtmlNameFrameCabecera" xml:space="preserve">
+    <value>FCabecera</value>
+    <comment>Nombre del frame de cabecera de la pagina</comment>
+  </data>
+  <data name="HtmlNameFramePrincipal" xml:space="preserve">
+    <value>Fprincipal</value>
+    <comment>Nombre del frame principal de la pagina</comment>
+  </data>
+  <data name="URLLogin" xml:space="preserve">
+    <value>https://ve1.provinet.net/nhvp_ve_web/atpn_es_web_jsp/login.jsp?it=2</value>
+    <comment>Direccion web de la pagina de login</comment>
+  </data>
+  <data name="HtmlNameCuentas" xml:space="preserve">
+    <value>CuentasNav</value>
+    <comment>String cuentas</comment>
+  </data>
+</root>

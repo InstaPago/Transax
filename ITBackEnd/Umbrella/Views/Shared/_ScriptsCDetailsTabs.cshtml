@@ -1,0 +1,209 @@
+﻿@model Umbrella.Models.cDetailsTabs
+@if (Model != null)
+{
+
+    <script type="text/javascript">
+
+        function loadTab(idtable, divid, action) {
+            Pace.start();
+            $.ajax({
+                method: "POST",
+                url: action,
+                data: { data: 1 }
+            })
+         .success(function (data) {
+             $("#" + divid).html(data);
+             var projectname = "Transax";
+             if (idtable) {
+                 if (idtable == "users-table") {
+                     @Html.Partial("_InitUserTable")
+                 }
+                 if (idtable == "ocompra-table") {
+                     @*@Html.Partial("_InitOrdersTable")*@
+                     }
+                 if (idtable == "declarations-table") {
+                     @*@Html.Partial("_IniDeclarationsTable")*@
+                     }
+             } else {
+                 switcheryInit();
+             }
+             $('[data-toggle="tooltip"]').tooltip();
+             var userswitchery = Array.prototype.slice.call(document.querySelectorAll('input[data-plugin="userswitchery"]'));
+
+             userswitchery.forEach(function (html) {
+                 var switchery = new Switchery(html, { size: 'small', color: '#00b19d', disabled: true });
+             });
+             Pace.stop();
+         });
+        }
+
+        $(document).ready(function () {
+
+
+           
+
+
+            function switcheryInit() {
+                $("[name='cstatus']").bootstrapSwitch();
+                $('input[name="cstatus"]').on('switchChange.bootstrapSwitch', function (event, state) {
+                    Pace.start();
+                    $(this).bootstrapSwitch('toggleState', true, true);
+                    var $this = this;
+                    $.ajax({
+                        method: "POST",
+                        url: "@Url.Action("ToggleCommerceStatus", "Commerce")",
+                        data: { rif: $(this).attr("crif") },
+                    })
+                  .done(function (r) {
+                      if (r.Success) {
+                          // $.Notification.notify('success', 'top right', 'Éxito!', r.Msg)
+                          toastr.success(r.Msg, 'Éxito!');
+                          $($this).bootstrapSwitch('toggleState', true, true);
+                      } else {
+                          // $.Notification.notify('error', 'top right', 'Error!', r.Msg)
+                          toastr.error(r.Msg, 'Error!');
+                      }
+
+                  });
+                    Pace.stop();
+                });
+            };
+            function InitPage() {
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("TabCommerceData", "Commerce", new { rif = Model.RifCommerce })"
+                })
+            .success(function (data) {
+                $("#datos").html(data);
+                switcheryInit();
+                Pace.stop();
+            });
+            };
+
+
+      
+
+            @*Se ejecuta al clickear un registro(row) en las tabUsers. Muestra el detalle del usuario seleccionado en el sidebar*@
+            $(document).on('click', '.dtusers td', function () {
+                var userid = $(this).closest('tr').attr('userid');
+                // var sidetitle = $(this).closest('table').attr('sidetitle');
+                var dtaction = $(this).closest('table').attr('dtaction');
+
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: dtaction,
+                    data: { userid: userid },
+                })
+        .done(function (msg) {
+            Pace.stop();
+            // $("#rightsidebar-title").html(sidetitle);
+            $("#rsidebar").html(msg);
+            if (!$('#wrapper').hasClass('right-bar-enabled')) {
+                $('#wrapper').toggleClass('right-bar-enabled');
+            }
+            $.fn.editable.defaults.send = 'never';
+            //$.fn.editable.defaults.mode = 'inline';
+            //modify buttons style
+            $.fn.editableform.buttons =
+            '<button type="submit" class="btn btn-primary editable-submit btn-sm waves-effect waves-light"><i class="md md-done"></i></button>' +
+            '<button type="button" class="btn editable-cancel btn-sm waves-effect waves-light"><i class="md md-clear"></i></button>';
+
+            $('.xeditable').editable({
+                send: 'never'
+            }).on('save', function (e, params) {
+                $("#update-profile").prop("disabled", false);
+            });
+            $('#roleselect').editable({
+                emptytext: 'Seleccione un rol',
+                mode: 'inline',
+                //cargar a partir de una lista de roles
+                source: [
+                { value: 1, text: 'rol 1' },
+                { value: 2, text: 'rol 2' }
+                ],
+                //valor seleccionado
+                value: 2
+            });
+            //$('#firstname').editable({
+            //    validate: function (value) {
+            //        if ($.trim(value) == '') return 'This field is required';
+            //    }
+            //});
+            $('#update-profile').click(function () {
+                $('.xeditable').editable('submit', {
+                    url: '@Url.Action("ModifyCUser", "CUser")',
+                    data: {
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').attr('value'),
+                        id: "@ViewBag.userid",
+                        TestMode: $("#testmodeswitch").prop("checked"),
+                        IsContact: $("#iscontactswitch").prop("checked"),
+                        //rol: $("#roleselect").text(),
+                    },
+                    ajaxOptions: {
+                        dataType: 'json',
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $('.loggeduser').each(function () {
+                                $(this).html($(".profilename").text() + " " + $(".profilelastname").text())
+                            });
+                            toastr.success(response.message, 'Éxito!');
+                            // TabCommerceDataInit();
+
+                        } else {
+                            toastr.error(response.message, 'Error!');
+                        }
+                    },
+                    error: function (errors) {
+                        toastr.error(errors.message, 'Error!');
+                    }
+                });
+            });
+            $('[data-toggle="tooltip"]').tooltip();
+            var sideuserswitchery = Array.prototype.slice.call(document.querySelectorAll('input[data-plugin="sideuserswitchery"]'));
+
+            sideuserswitchery.forEach(function (html) {
+                var switchery = new Switchery(html, { size: 'small', color: '#00b19d' });
+            });
+        });
+            });
+            //var clickCheckbox = document.querySelector('.cstatus'), clickButton = document.querySelector('.commercestatus > .switchery');
+
+            //clickButton.addEventListener('click', function (e) {
+            //    e.preventDefault();
+            //    alert(clickCheckbox.checked);
+            //});
+
+            var loadermsg = ' <div class="row"><div class="col-md-12">Cargando Información... <i class="fa fa-spinner fa-spin"></i></div></div>'
+
+            InitPage();
+
+
+            @*llama el contenido de cada tab y reajusta el responsive cada vez que se inicializa un tab*@
+            $("a[data-toggle=\"tab\"]").on("shown.bs.tab", function (e) {
+
+                if ($('#wrapper').hasClass('right-bar-enabled')) {
+                    $('#wrapper').toggleClass('right-bar-enabled');
+                }
+                var idtable = $(this).attr('idtable');
+                var tables = $.fn.dataTable.fnTables(true);
+                $(tables).each(function () {
+                    $(this).dataTable().fnDestroy();
+                });
+
+                var now_tab = e.target // activated tab
+                // get the div's id
+                var divid = $(now_tab).attr('href').substr(1);
+                var action = $(this).attr("data-action");
+                $("#" + divid).html(loadermsg);
+
+                checkSession(function () {
+                    loadTab(idtable, divid, action);
+                })
+            });
+
+        });
+    </script>
+}

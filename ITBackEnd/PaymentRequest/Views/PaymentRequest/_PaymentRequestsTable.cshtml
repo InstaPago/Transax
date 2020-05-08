@@ -1,0 +1,217 @@
+﻿@model List<InstaTransfer.DataAccess.PaymentRequest>
+@using InstaTransfer.ITResources.Enums
+
+<table id="paymentRequests-table" class="dtinit dtcashouts table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%" dtaction="@Url.Action("SideCashOut", "CashOut")" sidetitle="Detalle del Retiro">
+    <thead>
+        <tr>
+            <th>Monto</th>
+            <th>Cédula</th>
+            <th>Comercio</th>
+            <th>Correo de la Solicitud</th>
+            <th>Descripción</th>
+            <th>Registro en Sistema</th>
+            <th>Estado</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Amount.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()</td>
+                <td>@item.EndUser.CI.ToString().Trim()</td>
+                <td>@item.Commerce.BusinessName.Trim()</td>
+                <td>@item.RequestEmail.ToString().Trim()</td>
+                <td>@item.Description.ToString().Trim()</td>
+                <td>@item.CreateDate.ToString("yyyy/MM/dd h:mm tt", new System.Globalization.CultureInfo("es-VE")).Trim()</td>
+                <td class="text-center">
+                    @if (item.IdPaymentRequestStatus == (int)PaymentRequestStatus.Pending)
+                    {
+                        <span class="badge badge-warning" data-toggle="tooltip" data-placement="top" title="" data-original-title="@item.PaymentRequestStatus.PRDescription.ToString().Trim()" aria-describedby="tooltip508029">
+                            <i class="md md-access-time"></i>
+                        </span>
+                    }
+                    @if (item.IdPaymentRequestStatus == (int)PaymentRequestStatus.Declared)
+                    {
+                        <span class="badge badge-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="@item.PaymentRequestStatus.PRDescription.ToString().Trim()" aria-describedby="tooltip508029">
+                            <i class="md md-access-time"></i>
+                        </span>
+                    }
+                    @if (item.IdPaymentRequestStatus == (int)PaymentRequestStatus.Annulled)
+                    {
+                        <span class="badge badge-danger" data-toggle="tooltip" data-placement="top" title="" data-original-title="@item.PaymentRequestStatus.PRDescription.ToString().Trim()" aria-describedby="tooltip508029">
+                            <i class="md md-close"></i>
+                        </span>
+                    }
+                    @if (item.IdPaymentRequestStatus == (int)PaymentRequestStatus.DeclaredReconciled)
+                    {
+                        <span class="badge badge-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="@item.PaymentRequestStatus.PRDescription.ToString().Trim()" aria-describedby="tooltip508029">
+                            <i class="md md-check"></i>
+                        </span>
+                    }
+                </td>
+                <td class="text-center">
+                    @item.PaymentRequestStatus.PRDescription.ToString().Trim()
+                </td>
+                <td class="text-center">
+                    @if (item.IdPaymentRequestStatus != (int)PaymentRequestStatus.Pending)
+                    {
+                        <span class="btn btn-primary btn-xs disabled"
+                              data-toggle="tooltip"
+                              data-placement="top"
+                              title=""
+                              data-original-title="Declarar"
+                              aria-describedby="tooltip508029"
+                              guid="">
+                            <i class="md md-rate-review"></i>
+                        </span>
+                    }
+                    else if (item.IdPaymentRequestStatus == (int)PaymentRequestStatus.Pending)
+                    {
+                        <span class="btn btn-primary btn-xs declarerequest"
+                              data-toggle="tooltip"
+                              data-placement="top"
+                              title=""
+                              data-original-title="Declarar"
+                              aria-describedby="tooltip508029"
+                              guid="@item.Id">
+                            <i class="md md-rate-review"></i>
+                        </span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var projectname = "Transax";
+        var table = $('#paymentRequests-table').DataTable({
+            "columnDefs": [
+       {
+           "targets": [6],
+           "searchable": false
+       },
+       {
+           "targets": [8],
+           "searchable": false
+       },
+       {
+           "targets": [7],
+           "searchable": true,
+           "visible": false
+
+       }
+            ],
+            order: [5, 'desc'],
+            buttons: [{
+                text: 'Copiar',
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5, 7]
+                },
+                extend: "copy",
+                className: "btn-sm"
+            }, {
+                extend: "csv",
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5, 7]
+                },
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    if ($('#filterRoles').val() != "" && $('#filterRoles').val() != undefined) {
+                        config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                    } else {
+                        config.filename = projectname;
+                    }
+
+                    $.fn.dataTable.ext.buttons.csvHtml5.action(e, dt, button, config);
+                }
+            }, {
+                extend: "excel",
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5, 7]
+                },
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    if ($('#filterRoles').val() != "" && $('#filterRoles').val() != undefined) {
+                        config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                    } else {
+                        config.filename = projectname;
+                    }
+
+                    $.fn.dataTable.ext.buttons.excelHtml5.action(e, dt, button, config);
+                }
+            }, {
+                extend: "pdf",
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5, 7]
+                },
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    if ($('#filterRoles').val() != "" && $('#filterRoles').val() != undefined) {
+                        config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                    } else {
+                        config.filename = projectname;
+                    }
+
+                    $.fn.dataTable.ext.buttons.pdfHtml5.action(e, dt, button, config);
+                }
+            }, {
+                extend: "print",
+                exportOptions: {
+                    columns: [0, 1, 2, 3, 4, 5, 7]
+                },
+                text: 'Imprimir',
+                className: "btn-sm",
+                action: function (e, dt, button, config) {
+                    if ($('#filterRoles').val() != "" && $('#filterRoles').val() != undefined) {
+                        config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                    } else {
+                        config.filename = projectname;
+                    }
+
+                    $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+                }
+            }],
+            language: {
+                url: "@Url.Content("~/Scripts/datatables/spanish.json")",
+                buttons: {
+                    copyTitle: 'Tabla copiada al portapapeles',
+                    copySuccess: {
+                        _: 'Se han copiado %d filas.',
+                        1: 'Se ha copiado 1 fila.'
+                    }
+                }
+            },
+            //responsive: true,
+            "dom": '<"row"<"col-md-6 col-xs-12"B><"col-md-6 col-xs-12 text-right"f>><"row"<"col-md-6 col-xs-12"l>><"row"<"col-md-6"r>><"row"<"col-xs-12"t>><"clearfix"><"col-md-6 col-xs-12"i><"col-md-6 col-xs-12"p>'
+        });
+        var loadermsg = ' <div class="row"><div class="col-md-12">Cargando Información... <i class="fa fa-spinner fa-spin"></i></div></div>';
+
+        // Reenviar Solicitud
+        $(".declarerequest").on('click', function () {
+            var idRequest = $(this).attr('guid');
+            window.top.location = '@Url.Action("Declare", "PaymentRequest")?id=' + idRequest;
+        });
+
+        // Filtro por estado
+        var Table = $('#paymentRequests-table').DataTable();
+        $('#filterRoles').change(function () {
+            var val = $(this).val();
+            if (val != "") {
+                regex = "^" + val + "$";
+                Table.column(7).search(regex, true, false).draw();
+            }
+            else {
+                Table.search('');
+                Table.column(7).search(val).draw();
+            }
+
+        });
+
+    });
+
+</script>

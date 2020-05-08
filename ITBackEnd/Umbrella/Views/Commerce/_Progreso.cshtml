@@ -1,0 +1,123 @@
+﻿@{
+    Layout = null;
+    List<InstaTransfer.DataAccess.AE_SolicitudApi> _Registros = (List<InstaTransfer.DataAccess.AE_SolicitudApi>)ViewBag.Registros;
+    int total;
+    int avancearchivos = (int)ViewBag.AvanceArchivos;
+    List<string> archivosListos = (List<string>)ViewBag.ListaArchivosListos;
+    if (_Registros == null)
+    {
+        total = 0;
+    }
+    else
+    {
+        total = _Registros.Where(u => u.UltimoEstatus == 2).Count();
+    }
+
+}
+<script src="@Url.Content("~/Scripts/jquery.peity.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.peity.init.js")"></script>
+<label>
+    Estatus analisis movimientos comercio.
+</label>
+
+<hr />
+<div class="col-lg-3 text-center" style="padding-left:1%;">
+    <p class="data-attributes">
+        <span data-peity='{ "fill": ["#22bdd6", "#cdf4f9"],    "innerRadius":30, "radius": 50 }'>@((total * 2) + (avancearchivos / 5))/12</span>
+    </p>
+    <text dy="-.1em" class="c3-gauge-value" transform="" style="margin-left:9%; opacity: 1; text-anchor: middle; pointer-events: none; font-size: 27px;">@(((total * 20) + avancearchivos)) %</text>
+</div>
+<div class="col-lg-9">
+    @if (_Registros.Any())
+    {
+        foreach (var item in _Registros.ToList())
+        {
+            <div class="col-lg-12">
+                @if (item.UltimoEstatus == 2)
+                {
+                    <span class="pie" style="display: none; margin-top:1%;">1</span><label style="margin-left:2%;">Información desde </label> @item.FechaInicio.ToString("dd MMMM yyyy ")<label>al</label> @item.FechaFin.ToString("dd MMMM yyyy")
+                    <br />
+                    if (archivosListos.Contains(item.Id))
+                    {
+                        <label style="color:green;">Procesado</label>
+                    }
+                    else
+                    {
+                        <label style="color:indianred;">Procesando</label>
+                    }
+                }
+                else if (item.UltimoEstatus == 1)
+                {
+                    <span class="pie" style="display: none; margin-top:1%;">2/4</span><label style="margin-left:2%;">Información desde </label> @item.FechaInicio.ToString("dd MMMM yyyy ")<label>al</label> @item.FechaFin.ToString("dd MMMM yyyy")
+                    <br />
+                    if (archivosListos.Contains(item.Id))
+                    {
+                        <label style="color:green;">Procesado</label>
+                    }
+                    else
+                    {
+                        <label style="color:indianred;">Procesando</label>
+                    }
+                }
+                else if (item.UltimoEstatus == 4)
+                {
+                    <span class="pie" style="display: none; margin-top:1%;">3/4</span><label style="margin-left:2%;">Información desde </label> @item.FechaInicio.ToString("dd MMMM yyyy ")<label>al</label> @item.FechaFin.ToString("dd MMMM yyyy")
+                    <br />
+                    if (archivosListos.Contains(item.Id))
+                    {
+                        <label style="color:green;">Procesado</label>
+                    }
+                    else
+                    {
+                        <label style="color:indianred;">Procesando</label>
+                    }
+                }
+                else if (item.UltimoEstatus == 10)
+                {
+                    <span class="pie" style="display: none; margin-top:1%;">0/4</span><label style="margin-left:2%;">Información desde </label> @item.FechaInicio.ToString("dd MMMM yyyy ")<label>al</label> @item.FechaFin.ToString("dd MMMM yyyy")
+                    <br />
+
+                    <label style="color:indianred;">Error</label>
+
+                }
+                else
+                {
+                    <span class="pie" style="display: none; margin-top:1%;">1/4</span><label style="margin-left:2%;">Información desde </label> @item.FechaInicio.ToString("dd MMMM yyyy ")<label>al</label> @item.FechaFin.ToString("dd MMMM yyyy")
+
+                }
+
+
+            </div>
+        }
+    }
+    <input type="hidden" value="@total" id="porcentajeprogreso" />
+    <input type="hidden" value="@avancearchivos" id="porcentajeprogresoarchivos" />
+
+</div>
+@if (total != 4 || avancearchivos != 20)
+            {
+    <div class="col-lg-12 text-center" style="padding:1%;">
+        <span class="updating-chart" style="width:100% !important; height:40px; margin-top:1%;">5,3,9,6,5,9,7,3,5,2,5,3,9,6,5,9,7,3,5,2</span>
+    </div>
+}
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("span.pie").peity("pie");
+        $(".data-attributes span").peity("donut");
+        var updatingChart = $(".updating-chart").peity("line", { width: "90%", height: "40px" })
+
+        setInterval(function () {
+            var random = Math.round(Math.random() * 10)
+            var values = updatingChart.text().split(",")
+            values.shift()
+            values.push(random)
+
+            updatingChart
+              .text(values.join(","))
+              .change()
+        }, 1000)
+    });
+
+</script>

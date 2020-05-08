@@ -1,0 +1,248 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HtmlIDAceptarExportar" xml:space="preserve">
+    <value>ctl00_cp_btnOk</value>
+    <comment>ID del boton de aceptar exportar el EDC</comment>
+  </data>
+  <data name="HtmlIDContentRight" xml:space="preserve">
+    <value>content-right</value>
+    <comment>ID de content-right</comment>
+  </data>
+  <data name="HtmlIDDelimitador" xml:space="preserve">
+    <value>ctl00_cp_optDelimitador</value>
+    <comment>ID del radio delimitadores</comment>
+  </data>
+  <data name="HtmlIDDelimitadores" xml:space="preserve">
+    <value>ctl00_cp_ddlDelimitadores</value>
+    <comment>ID del select de delimitadores</comment>
+  </data>
+  <data name="HtmlIDEncabezadoSi" xml:space="preserve">
+    <value>ctl00_cp_optEncabezadoSi</value>
+    <comment>ID del radio de EncabezadoSi</comment>
+  </data>
+  <data name="HtmlIDErrorCode" xml:space="preserve">
+    <value>lblCodigoError</value>
+    <comment>ID de lblCodigoError</comment>
+  </data>
+  <data name="HtmlIDErrorMessage" xml:space="preserve">
+    <value>lblMensaje</value>
+    <comment>ID de lblMensaje</comment>
+  </data>
+  <data name="HtmlIDFechaDesde" xml:space="preserve">
+    <value>ctl00_cp_dtFechaDesde</value>
+    <comment>ID del campo de fecha desde</comment>
+  </data>
+  <data name="HtmlIDFechaHasta" xml:space="preserve">
+    <value>ctl00_cp_dtFechaHasta</value>
+    <comment>ID del campo de fecha hasta</comment>
+  </data>
+  <data name="HtmlIDFrameLogin" xml:space="preserve">
+    <value>ctl00_cp_frmAplicacion</value>
+    <comment>ID del frame de la pagina de login</comment>
+  </data>
+  <data name="HtmlIDLoginAceptar" xml:space="preserve">
+    <value>bAceptar</value>
+    <comment>ID del boton de aceptar login</comment>
+  </data>
+  <data name="HtmlIDLoginClave" xml:space="preserve">
+    <value>txtClave</value>
+    <comment>ID del textbox de la clave del usuario</comment>
+  </data>
+  <data name="HtmlIDLoginUsuario" xml:space="preserve">
+    <value>txtUsuario</value>
+    <comment>ID del textbox del nombre de usuario</comment>
+  </data>
+  <data name="HtmlIDParametros" xml:space="preserve">
+    <value>ctl00_cp_optParametros</value>
+    <comment>ID del radio de Parametros</comment>
+  </data>
+  <data name="HtmlIDRadioExcel" xml:space="preserve">
+    <value>ctl00_cp_optExcel</value>
+    <comment>ID del radio de exportar a excel</comment>
+  </data>
+  <data name="HtmlIDRadioRango" xml:space="preserve">
+    <value>ctl00_cp_rdbRango</value>
+    <comment>ID del radio de EDC por rango</comment>
+  </data>
+  <data name="HtmlIDSalir" xml:space="preserve">
+    <value>ctl00_btnSalir_lnkButton</value>
+    <comment>ID del link de salir</comment>
+  </data>
+  <data name="HtmlIDSelectNumeroCuenta" xml:space="preserve">
+    <value>ctl00_cp_ddlCuenta</value>
+    <comment>ID del select del numero de cuenta</comment>
+  </data>
+  <data name="HtmlNameInput" xml:space="preserve">
+    <value>ctl00$cp$ctl25</value>
+    <comment>Nombre para el elemento input del boton exportar</comment>
+  </data>
+  <data name="NavigateAccount" xml:space="preserve">
+    <value>Accounts</value>
+    <comment>Parametro del metodo NavigateWebPage</comment>
+  </data>
+  <data name="SettingsLoginPasswordBFI" xml:space="preserve">
+    <value>LoginPasswordBFI</value>
+    <comment>Texto para obtener el password de BFI desde Application Settings</comment>
+  </data>
+  <data name="SettingsLoginPasswordTD" xml:space="preserve">
+    <value>LoginPasswordTD</value>
+    <comment>Texto para obtener el password de TD desde Application Settings</comment>
+  </data>
+  <data name="SettingsLoginUserBFI" xml:space="preserve">
+    <value>LoginUserBFI</value>
+    <comment>Texto para obtener el usuario de BFI desde Application Settings</comment>
+  </data>
+  <data name="SettingsLoginUserBFITD" xml:space="preserve">
+    <value>LoginUserTD</value>
+    <comment>Texto para obtener el usuario de TD desde Application Settings</comment>
+  </data>
+  <data name="URLAccount" xml:space="preserve">
+    <value>https://www.banesconline.com/mantis/WebSite/ConsultaMovimientosCuenta/MovimientosCuenta.aspx</value>
+    <comment>Direccion web de los movimientos de la cuenta</comment>
+  </data>
+  <data name="URLDefault" xml:space="preserve">
+    <value>https://www.banesconline.com/mantis/WebSite/default.aspx</value>
+    <comment>Direccion web de la pagina principal de BanescOnline</comment>
+  </data>
+  <data name="URLError" xml:space="preserve">
+    <value>https://www.banesconline.com/mantis/CAU/Comunes/Error.aspx?P=1</value>
+    <comment>Direccion web de la pagina de error</comment>
+  </data>
+  <data name="URLError2" xml:space="preserve">
+    <value>https://www.banesconline.com/mantis/CAU/Comunes/Error.aspx</value>
+    <comment>Direccion web de la pagina alterna de error</comment>
+  </data>
+  <data name="URLExportar" xml:space="preserve">
+    <value>https://www.banesconline.com/mantis/WebSite/ConsultaMovimientosCuenta/Exportar.aspx</value>
+    <comment>Direccion web de la pagina de exportar EDC</comment>
+  </data>
+  <data name="URLLogin" xml:space="preserve">
+    <value>https://www.banesconline.com/MANTIS/WEBSITE/login.aspx</value>
+    <comment>Direccion web de la pagina de login</comment>
+  </data>
+  <data name="URLLoginAlternate" xml:space="preserve">
+    <value />
+    <comment>Direccion web de la pagina de inicio alterna</comment>
+  </data>
+  <data name="URLSalir" xml:space="preserve">
+    <value>https://www.banesconline.com/mantis/WebSite/salir.aspx</value>
+    <comment>Direccion web de la pagina de salir</comment>
+  </data>
+</root>

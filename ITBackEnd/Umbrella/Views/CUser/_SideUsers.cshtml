@@ -1,0 +1,144 @@
+﻿@model InstaTransfer.DataAccess.CUser
+@{
+    Umbrella.Controllers.CommerceController controller = new Umbrella.Controllers.CommerceController();
+}
+<div class="nicescroll">
+    <div class="col-xs-12">
+        <button type="button" class="close right-bar-toggle  pull-right" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 id="rightsidebar-title">Detalles del Usuario</h4>
+    </div>
+    <div id="rightsidebar-body" class="col-xs-12">
+        <div class="row">
+            <div class="col-md-12">
+                @if (Model.CUserStatus.Id == 1)
+                {
+                    <div class="alert alert-success">
+                        <strong><i class="fa fa-check"></i></strong>
+                        @Model.CUserStatus.Description.ToString().Trim()
+                    </div>
+                }
+                @if (Model.CUserStatus.Id == 2)
+                {
+                    <div class="alert alert-danger">
+                        <strong><i class="fa fa-close"></i></strong>
+                        @Model.CUserStatus.Description.ToString().Trim()
+                    </div>
+                }
+                <hr />
+            </div>
+            <div class="col-md-12">
+                @Html.AntiForgeryToken()
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Nombre</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static text-muted">
+                                @Model.Name
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Apellido</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static text-muted">
+                                @Model.LastName
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Email</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static text-muted">
+                                @Model.AspNetUser.Email
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Comercio</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static text-muted">
+                                @Model.Commerce.BusinessName.Trim()
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Registro en el sistema</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static text-muted">
+                                @Model.CreateDate.ToString("yyyy/MM/dd h:mm tt", new System.Globalization.CultureInfo("es-VE")).Trim()
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Rol</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static text-muted">                              
+                                @controller.GetCUserRole(Model.Id).DisplayName.Trim()
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Usuario de contacto</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static text-muted">
+                                <input id="iscontactswitch" type="checkbox" class="js-switch-side" readonly @(Model.IsContact ? "checked" : "") data-color="#00b19d" data-size="" />
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Usuario de prueba</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static text-muted">
+                                <input id="testmodeswitch" type="checkbox" class="js-switch-side" readonly @(Model.TestMode ? "checked" : "") data-color="#00b19d" data-size="" />
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Estado</label>
+                        <div class="col-sm-8">
+                            <p class="form-control-static text-muted">
+                                @if (Model.CUserStatus.Id == 1)
+                                {
+                                    <span class="badge badge-success" data-toggle="tooltip" data-placement="top" title="" data-original-title="@Model.CUserStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                                        <i class="fa  fa-check"></i>
+                                    </span>
+                                }
+                                @if (Model.CUserStatus.Id == 2)
+                                {
+                                    <span class="badge badge-danger" data-toggle="tooltip" data-placement="top" title="" data-original-title="@Model.CUserStatus.Description.ToString().Trim()" aria-describedby="tooltip508029">
+                                        <i class="fa fa-close"></i>
+                                    </span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <label class="" style="color:#544c9f">Id: @Model.Id.ToString().Trim()</label>
+                    </div>
+                    @*<div class="form-group text-center">
+                            <div class="col-sm-12">
+                                <button id="update-profile" class="btn btn-icon btn-xs waves-effect waves-light btn-primary m-b-5 btn-icon">
+                                    <i class="md md-save"></i>
+                                    Actualizar usuario
+                                </button>
+                            </div>
+                        </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+        $(document).ready(function () {
+
+            // Switchery
+            var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch-side'));
+
+            elems.forEach(function (html) {
+                var switchery = new Switchery(html, { size: 'small', color: '#3DDCF7', disabled: true });
+                switchery.disable();
+            });
+
+                    });
+</script>

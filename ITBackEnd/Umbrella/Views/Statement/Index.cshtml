@@ -1,0 +1,409 @@
+﻿@model List<InstaTransfer.DataAccess.UBankStatementEntry>
+@{
+    ViewBag.Title = "Movimientos";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<InstaTransfer.DataAccess.USocialReason> socialReasons = ViewBag.SocialReasons;
+    var socialReasonJson = ViewBag.SocialReasonsJson;
+}
+<style>
+    .unfocused {
+        color: rgba(0,0,0,0.4);
+    }
+
+    .selected {
+        background-color: rgba(59, 175, 218, 0.74) !important;
+        color: white;
+    }
+</style>
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = ViewBag.Title }); }
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-box table-responsive">
+            <h4 class="m-t-0 header-title"><b>Movimientos Bancarios</b></h4>
+            <p class="text-muted font-13 m-b-30">
+                Movimientos registrados por el sistema Transax en tiempo real.
+            </p>
+            <div class="clearfix"></div>
+            @*<div class="row">
+                    <div class="col-md-3">
+                        <div class="toolbar">
+                            <select id="filterEmpresa" class="form-control">
+                                <option value="">Todas</option>
+                                @if (socialReasons != null)
+                                {
+                                    foreach (var sr in socialReasons)
+                                    {
+                                        <text>
+                                            <option value="@sr.Name.Trim()">@sr.Name.Trim()</option>
+                                        </text>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>*@
+            <div class="clearfix"></div>
+            @*ojo con el width:100%*@
+            <table id="datatable-buttons" class="table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Referencia</th>
+                        <th>Descripción</th>
+                        <th>Monto</th>
+                        <th>Banco Origen</th>
+                        <th>Registro en Sistema</th>
+                        <th>Empresa</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Modal -->
+<div id="custom-modal" class="modal-demo">
+    <button type="button" class="close" onclick="Custombox.close();">
+        <span>&times;</span><span class="sr-only">Close</span>
+    </button>
+    <h4 class="custom-modal-title">Agregar Usuario</h4>
+    <div class="custom-modal-text">
+        <form id="userform" method="post" action="@Url.Action("SaveUser", "Statement")" novalidate class="text-left">
+            <div class="form-group">
+                <div class="row">
+                    @*<div class="radio">
+                            <input type="radio" name="radio" id="radio1" value="option1" checked="">
+                            <label for="radio1">
+                                Default
+                            </label>
+                        </div>*@
+                    <div class="col-sm-6">
+                        <div class="radio">
+                            <input type="radio" name="radioBank" id="optionsRadios1" value="Banesco" checked>
+                            <label for="optionsRadios1">
+                                <img style="max-width: 60px;" src="@Url.Content("~/Content/images/banesco.png")" alt="">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="radio">
+                            <input type="radio" name="radioBank" id="optionsRadios2" value="Provincial">
+                            <label for="optionsRadios2">
+                                <img style="max-width: 60px;" src="@Url.Content("~/Content/images/provincial.png")" alt="">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-sm-12">
+                        <label class="error" for="radioBank" generated="true"></label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="username">Usuario*</label>
+                <input type="text" name="username" required placeholder="Nombre de Usuario" class="form-control" id="username">
+
+            </div>
+            <div class="form-group">
+                <label for="pass">Contraseña*</label>
+                <input id="pass" name="password" type="password" placeholder="Contraseña" required class="form-control">
+
+            </div>
+            <div class="form-group">
+                <label for="datariflist">RIF*</label>
+                @*<input type="text" name="rif" required placeholder="Ej: J123456789" class="form-control" id="rif">*@
+                @*<input type="text" name="rif" placeholder="Ej: J123456789" required class="form-control rifinput" id="rif" data-provide="typeahead" autocomplete="off">*@
+                <input id="datariflist" type="text" name="rif" placeholder="Ej: J123456789" required class="form-control rifinput" list="rifs" />
+                <datalist id="rifs">
+                    @if (socialReasons != null)
+                    {
+                        foreach (var sr in socialReasons)
+                        {
+                            <text>
+                                <option data-customvalue="@sr.Name.Trim()" value="@sr.Id">@sr.Name.Trim()</option>
+                            </text>
+                        }
+                    }
+
+                </datalist>
+            </div>
+
+            <div class="form-group">
+                <label for="company">Nombre de Empresa*</label>
+                <input type="text" name="company" required placeholder="Nombre de Empresa" class="form-control" id="company" disabled autocomplete="off">
+
+            </div>
+
+            <div class="form-group text-right m-b-0">
+                <button id="userfomsubmit" class="btn btn-primary waves-effect waves-light" type="submit">
+                    Aceptar
+                </button>
+                <button type="button" class="btn btn-default waves-effect waves-light m-l-5" onclick="Custombox.close();">
+                    Cancelar
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+@section scripts{
+    <!--jquery mask-->
+    <script src="@Url.Content("~/plugins/jquery-mask/jquery.mask.min.js")"></script>
+      <!--jquery validate-->
+    <script src="@Url.Content("~/plugins/jquery-validate/jquery.validate.min.js")"></script>
+    <script src="@Url.Content("~/plugins/jquery-validate/localization/messages_es.js")"></script>
+      <!--moment-->
+    <script src="@Url.Content("~/Scripts/moment.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/datetime-moment.js")"></script>
+      <!--typehead-->
+    <script src="@Url.Content("~/Scripts/bootstrap3-typeahead/bootstrap3-typeahead.min.js")"></script>
+
+    <script type="text/javascript">
+        function getExportFileName(formato) {
+
+            var filter = $('#filterEmpresa').val();
+            if (filter != "") {
+                console.log(project + "_" + filter);
+                return project + "_" + filter;
+            } else {
+                return project;
+            }
+        };
+        $(document).ready(function () {
+            var filename = "@InstaTransfer.ITResources.BackEnd.BackEndResources.FilenameTableStatement";
+            $.fn.dataTable.moment('yyyy/MM/dd h:mm a');
+            var table = $('#datatable-buttons').DataTable({
+                order: [5, 'desc'],
+
+                buttons: [{
+                    text: 'Copiar',
+                    extend: "copy",
+                    className: "btn-sm"
+                }, {
+                    extend: "csv",
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        //if ($('#filterEmpresa').val() != "") {
+                        //    config.filename = $('#filterEmpresa').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");;
+                        //} else {
+                        config.filename = filename;
+                        //}
+
+                        $.fn.dataTable.ext.buttons.excelHtml5.action(e, dt, button, config);
+                    }
+                }, {
+                    extend: "excel",
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        //if ($('#filterEmpresa').val() != "") {
+                        //    config.filename = $('#filterEmpresa').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                        //} else {
+                        config.filename = filename;
+                        // }
+
+                        $.fn.dataTable.ext.buttons.excelHtml5.action(e, dt, button, config);
+                    }
+                }, {
+                    extend: "pdf",
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        //if ($('#filterEmpresa').val() != "") {
+                        //    config.filename = $('#filterEmpresa').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                        //} else {
+                        config.filename = filename;
+                        // }
+
+                        $.fn.dataTable.ext.buttons.pdfHtml5.action(e, dt, button, config);
+                    }
+                }, {
+                    extend: "print",
+                    text: '<i class="md md-lg md-print"></i>',
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        //if ($('#filterEmpresa').val() != "") {
+                        //    config.filename = $('#filterEmpresa').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");;
+                        //} else {
+                        config.filename = filename;
+                        //}
+
+                        $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+                    }
+                }],
+                language: {
+                    url: "@Url.Content("~/Scripts/datatables/spanish.json")",
+                    buttons: {
+                        copyTitle: 'Tabla copiada al portapapeles',
+                        copySuccess: {
+                            _: 'Se han copiado %d filas.',
+                            1: 'Se ha copiado 1 fila.'
+                        }
+                    }
+                },
+                //responsive: true,
+                "ajax": '@Url.Action("GetData", "Statement")',
+                "dom": '<"row"<"col-md-6 col-sm-12"B><"col-md-6 col-sm-12 text-right"f>><"row"<"col-md-6 col-sm-12"l>><"row"<"col-md-6"r>><"row"<"col-sm-12"t>><"clearfix"><"col-md-6 col-sm-12"i><"col-md-6 col-sm-12"p>'
+            });
+
+
+            //<option value="Transdestino">Transdestino</option><option value="BFI">BFI</option><option value="Tecnologia Instapago, C.A.">Tecnologia Instapago, C.A.</option></select>');
+            var oTable;
+            oTable = $('#datatable-buttons').dataTable();
+            $('#filterEmpresa').change(function () {
+                //$.fn.dataTable.ext.buttons.pdfHtml5.filename = $(this).val();
+                //$.fn.dataTable.ext.buttons.pdfHtml5.title = $(this).val();
+
+                oTable.fnFilter($(this).val(), 6);
+            });
+
+
+            setInterval(function () {
+                table.ajax.reload(null, false);
+            }, 30000);
+
+
+        });
+
+        $('#datatable-buttons tbody').on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $("#datatable-buttons tr").each(function () {
+                    $(this).removeClass("unfocused");
+                    $(this).removeClass('selected');
+                });
+            } else {
+                $("#datatable-buttons tr").each(function () {
+                    $(this).addClass("unfocused");
+                    $(this).removeClass('selected');
+                });
+
+                $(this).toggleClass('selected');
+            }
+
+        });
+        var maskOptions = {
+            onKeyPress: function (cep, event, currentField, options) {
+                $(currentField).val($(currentField).val().toUpperCase());
+            },
+            translation: {
+                L: { pattern: /[Jj]/ },
+                N: { pattern: /[0-9]/ }
+            }
+        };
+        $('#datariflist').mask('LNNNNNNNNN', maskOptions);
+
+
+
+        $.validator.addMethod("formatrif", function (value, element) {
+            var RegExPattern = /^([J]{1})([0-9]{9})$/;
+            return this.optional(element) || (value.match(RegExPattern));
+        }, "Rif incorrecto")
+        var rifdata = [];
+        @*$(".rifinput").typeahead({
+            minLength: 0,
+            source: @(Html.Raw(socialReasonJson)),
+            displayText: function(item) {
+                return item.name
+            },
+            afterSelect: function(item) {
+                $("#company").val(item.id);
+                $('#company').prop('disabled', false).focus();
+
+                //this.$element[0].value = item.value
+            }
+        });*@
+        $('#datariflist').on('input', function () {
+            var value = $(this).val();
+            var customvalue = $('#rifs [value="' + value + '"]').data('customvalue');
+            if (customvalue != undefined) {
+                $("#company").val(customvalue);
+            } else {
+                $("#company").val("");
+            }
+            $('#company').prop('disabled', false);
+        });
+        //$('#myButton').click(function() {
+        //    $(".rifinput").val('J');
+        //    $(".rifinput").focus();
+        //    $(".rifinput").trigger('keyup');
+        //    $(".typeahead.dropdown-menu").show();
+
+
+        //});
+
+        @*@if (ViewBag.Success != null && (Boolean)ViewBag.Success == true)
+        {
+             <text>
+        $.Notification.notify('success', 'top right', 'Éxito!', 'Usuario creado con éxito.')
+        </text>
+        }
+        else if (ViewBag.Success == null)
+        {
+
+
+        }
+        else {
+              <text>
+        $.Notification.notify('error', 'top right', 'Error!', 'Error al crear el usuario.')
+             </text>
+        }*@
+
+
+        //SaveUser
+        $("#userform").validate({
+
+            rules: {
+                username: "required",
+                company: "required",
+                // compound rule
+                password: {
+                    required: true
+                },
+                optionsRadios: "required",
+                rif: {
+                    formatrif: true,
+                    required: true,
+
+                },
+            },
+            highlight: function (element) {
+                $(element)
+                        .parent()
+                        .removeClass("has-success")
+                        .addClass("has-error");
+            },
+            success: function (element) {
+                $(element)
+                        .parent()
+                        .removeClass("has-error")
+                        .addClass("has-success")
+                        .find("label.error")
+                        .remove();
+            },
+            submitHandler: function (form) {
+                //console.log("ike submit");
+                $.ajax({
+                    url: form.action,
+                    type: form.method,
+                    data: $(form).serialize(),
+                    success: function (response) {
+                        if (response.Success == true) {
+                            Custombox.close();
+                            // $.Notification.notify('success', 'top right', 'Éxito!', response.Msg)
+                            toastr.success(response.Msg, 'Éxito!');
+                        } else {
+                            Custombox.close();
+                            // $.Notification.notify('error', 'top right', 'Error!', response.Msg)
+                            toastr.error(response.Msg, 'Error!');
+                        }
+                    }
+                });
+
+            }
+        });
+
+
+
+
+    </script>
+}

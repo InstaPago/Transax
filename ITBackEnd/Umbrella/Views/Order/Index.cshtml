@@ -1,0 +1,68 @@
+﻿@model List<InstaTransfer.DataAccess.CPurchaseOrder>
+@{
+    ViewBag.Title = "Órdenes de Compra";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<InstaTransfer.DataAccess.CPurchaseOrderStatus> statusList = ViewBag.statusList;
+}
+<!-- #region Page Title -->
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = ViewBag.Title }); }
+<!-- #endregion -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="">
+            <div class="card-box table-responsive">
+
+                <h4 class="header-title"><b>Listado de Órdenes de Compra</b></h4>
+
+                <p class="text-muted font-13 m-b-30">
+                    Detalle de las Órdenes de Compra.
+                </p>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="toolbar">
+                            <select id="filterRoles" class="form-control">
+                                <option value="">Todas</option>
+                                @if (statusList.Count > 0)
+                                {
+                                    foreach (var status in statusList)
+                                    {
+                                        <text>
+                                            <option value="@status.Description.ToString().Trim()">@status.Description.ToString().Trim()</option>
+                                        </text>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                @{Html.RenderPartial("_OrdersTable", Model); }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            
+            // Filtro por estado
+            var oTable = $('#ocompra-table').DataTable();
+            $('#filterRoles').change(function () {
+                var val = $(this).val();
+                if (val != "") {
+                    regex = "^" + val + "$";             
+                    oTable.column(6).search(regex, true, false).draw();
+                }
+                else {
+                    oTable.search('');
+                    oTable.column(6).search(val).draw();
+                }
+  
+            });
+
+            // Tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+
+}

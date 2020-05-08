@@ -1,0 +1,48 @@
+﻿
+@{
+    var data = ViewBag.data;
+    var declarationId = ViewBag.declarationId;
+    List<InstaTransfer.DataAccess.UBankStatementEntry> entries = ViewBag.posibleentries;
+}
+
+
+<form id="formApprove" action="@Url.Action("ApproveDeclaration", "TDeclaration")" class="text-left">
+
+        <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <input type="email" class="form-control" id="fecha" readonly value="@data[0]">
+        </div>
+        <div class="form-group">
+            <label for="referencia">Referencia</label>
+            <input type="text" class="form-control" id="referencia" readonly value="@data[1]">
+           
+        </div>
+        <div class="form-group">
+            <label for="Monto">Monto</label>
+            <input type="email" class="form-control" id="Monto" readonly value="@data[2]">
+          
+        </div>
+        <div class="form-group">
+            <label for="Usuario">Usuario</label>
+            <input type="email" class="form-control" id="Usuario" readonly value="@data[3]">
+          
+        </div>
+        <div class="form-group">
+            <label for="comercio">Comercio</label>
+            <input type="email" class="form-control" id="comercio" readonly value="@data[4]">
+
+        </div>
+        <div class="form-group">
+            <label for="rif">Rif</label>
+            <input type="email" class="form-control" id="rif" readonly value="@data[5]">
+
+        </div>
+        <div class="form-group">
+            <label for="Estado">Estado</label>
+            <input type="email" class="form-control" id="Estado" readonly value="@data[6]">
+
+        </div>
+
+</form>
+
+

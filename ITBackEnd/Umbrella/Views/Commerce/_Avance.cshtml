@@ -1,0 +1,51 @@
+﻿@model InstaTransfer.DataAccess.AE_Avance
+@{
+    Layout = null;
+}
+
+<div class="col-lg-12 col-md-12 col-sm-12 text-center">
+    <img src="@Url.Content("~/Content/images/transax-logo.png")" height=40 />
+</div>
+<input type="hidden" id="AvanceId" value="@Model.Id" />
+<div class="col-lg-12 col-md-12 col-sm-12 text-center" style="margin-top:3%;">
+    Los fondos estarán disponibles en tu cuenta el próximo día hábil.
+    <br />
+    <br />
+    @Model.FechaCreacion.ToString("dd") de  @Model.FechaCreacion.ToString("MMMM") de @Model.FechaCreacion.ToString("yyyy")
+    <br />
+    <br />
+</div>
+<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 col-lg-offset-4 col-lg-offset-4 col-sm-offset-4">
+
+    <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-center propuesta" style="border:1px solid green; padding:4%;">
+
+        <label>Opción Seleccionada</label>
+        <br />
+        <h2>  @Model.Avance.ToString("N2") $</h2>
+        <br />
+        @if (!Model.Modalidad)
+        {
+        <br />
+        <span>
+            Pagas con el  @Model.Porcentaje % de las ventas diarias de tarjeta<br />
+            hasta que hayas reembolsado
+        </span>
+
+        <br />
+        <span>  @Model.Reembolso.ToString("N2") $</span>
+        <br />
+        <span>(máximo cobro diario por @Model.MaximoCobro.ToString("N2") Bs)</span>
+        }
+        else
+        {
+            <span>
+                Pagas el 1% diario en base al total del Capital pendiente por pagar.
+            </span>
+        }
+    </div>
+
+
+</div>
+
+
+

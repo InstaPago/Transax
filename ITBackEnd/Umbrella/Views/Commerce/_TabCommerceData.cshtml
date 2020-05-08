@@ -1,0 +1,180 @@
+﻿@model InstaTransfer.DataAccess.Commerce
+@{
+
+    var cUser = ViewBag.cUser != null ? ViewBag.cUser : null;
+
+    var isTransaXUser = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.TransaXUser);
+    var isTransaXAdmin = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.TransaXAdmin);
+}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="form-group">
+            <label>Estado del comercio</label>
+            <input type="checkbox" class="js-switch" crif="@Model.Rif" name="cstatus" readonly @(Model.CommerceStatus.Id.ToString().Trim() == "1" ? "checked" : "") data-color="#00b19d" data-size="small" />
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <form role="form" id="commerceform">
+
+        @Html.AntiForgeryToken()
+        <div class="col-xs-12 visible-xs text-center">
+            <h3>Datos</h3>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="rif">RIF</label>
+                <input type="text" readonly value="@Model.Rif" id="rif" name="@Html.NameFor(m=> m.Rif)" class="form-control">
+            </div>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="contact">Persona de Contacto</label>
+                <input type="text" value="@(cUser.Name != null ? string.Format("{0} {1}", cUser.Name.ToString().Trim(), cUser.LastName.ToString().Trim()) : string.Empty.ToString())" readonly id="contact" name="contact" class="form-control">
+
+            </div>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="commercename">Nombre del Comercio</label>
+                <input type="text" value="@Model.BusinessName.Trim()" id="commercename" name="@Html.NameFor(m=> m.BusinessName)" class="form-control" data-parsley-required data-parsley-trigger="input change autocompletechange focusin focusout" data-parsley-maxlength="30">
+            </div>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="contactemail">Email Persona de Contacto</label>
+                <input readonly type="email" value="@(cUser.AspNetUser.Email != null ? cUser.AspNetUser.Email.ToString() : string.Empty.ToString())" id="contactemail" class="form-control">
+            </div>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="socialreason">Razón Social</label>
+                <input type="text" value="@Model.SocialReasonName.Trim()" id="socialreason" name="@Html.NameFor(m=> m.SocialReasonName)" class="form-control" data-parsley-required data-parsley-trigger="focusin" data-parsley-maxlength="30">
+            </div>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="phone">Teléfono</label>
+                <input type="tel" value="@Model.Phone.Trim()" id="phone" name="@Html.NameFor(m=> m.Phone)" class="form-control" data-parsley-required data-parsley-trigger="input change autocompletechange focusin focusout" data-parsley-maxlength="30" data-parsley-intl-tel-no="">
+            </div>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="address">Dirección</label>
+                <textarea class="form-control" rows="3" id="address" name="@Html.NameFor(m=> m.Address)" data-parsley-required data-parsley-trigger="focusin" data-parsley-maxlength="100">@Model.Address.Trim()</textarea>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="comision">Comisión de Retiro (%)</label>
+                <input type="text" value="@Model.WithdrawalFee.ToString("N2")" id="comision" name="@Html.NameFor(m=> m.WithdrawalFee)" class="form-control" data-parsley-required data-parsley-pattern="\d{0,2}(\,\d{1,2})?" data-parsley-trigger="input change autocompletechange focusin focusout" data-parsley-maxlength="6"
+                       @(isTransaXUser || isTransaXAdmin ? "" : "readonly" )>
+            </div>
+        </div>
+        <div class="col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="trust">Factor Riesgo (%)</label>
+                <input type="text" value="@(Model.Trust.ToString("N2") )" id="trust" name="@Html.NameFor(m=> m.Trust)" class="form-control" data-parsley-required data-parsley-pattern="\d{0,2}(\,\d{1,2})?" data-parsley-trigger="input change autocompletechange focusin focusout" data-parsley-maxlength="6"
+                       @(isTransaXUser || isTransaXAdmin ? "" : "readonly" )>
+            </div>
+        </div>
+        <div class="col-xs-12 text-center">
+            <button id="modify-commerce-data" disabled class="btn btn-primary waves-effect waves-light w-md" type="button">
+                Guardar
+                <i class="md md-save"></i>
+            </button>
+        </div>
+    </form>
+
+    <div class="col-md-12 text-left" style="margin-top:3%; border-top:1px solid #b2afaf; padding-top:3%;">
+        @{ Html.RenderAction("_InfoBank", new { rif = Model.Rif }); }
+    </div>
+</div>
+
+<!-- Parsley JS -->
+<script src="~/plugins/parsleyjs/dist/parsley.min.js"></script>
+<script src="~/plugins/parsleyjs/dist/i18n/es.js"></script>
+
+<!--International Telephone Input-->
+<link href="~/Content/css/intlTelInput.css" rel="stylesheet" />
+<script src="@Url.Content("~/Content/js/intlTelInput.js")"></script>
+
+<script type="text/javascript">
+
+    function modifyCommerce() {
+        ShowLoader();
+        var $this = this;
+        var model = {
+            Rif: $("#rif").val(),
+            SocialReasonName: $("#socialreason").val(),
+            Phone: $("#phone").val(),
+            BusinessName: $("#commercename").val(),
+            Address: $("#address").val(),
+            WithdrawalFee: $("#comision").val(),
+            Trust: $("#trust").val()
+        };
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("ModifyCommerce", "Commerce")",
+            data: { __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').attr('value'), model: model },
+        })
+    .done(function (r) {
+        HideLoader();
+        if (r.success) {
+            // $.Notification.notify('success', 'top right', 'Éxito!', r.message)
+            toastr.success(r.message, 'Éxito!');
+
+        } else {
+            // $.Notification.notify('error', 'top right', 'Error!', r.message)
+            toastr.error(r.message, 'Error!');
+        }
+
+    });
+        HideLoader();
+    }
+
+    $(document).ready(function () {
+        var form = $('#commerceform');
+
+        // International Telephone Input
+        var telInput = $("#phone");
+
+        // initialise plugin
+        telInput.intlTelInput({
+            nationalMode: true,
+            onlyCountries: ["ve"],
+            initialCountry: "ve",
+            formatOnDisplay: false,
+            allowDropdown: false,
+            utilsScript: "@Url.Content("~/Content/js/utils.js")"
+        });
+
+        // Parsley
+        var formInstance = form.parsley();
+
+        window.Parsley.addValidator('intlTelNo', {
+            requirementType: 'integer',
+            validateNumber: (val, requirement, options) => {
+                return $(options.element).intlTelInput("isValidNumber");
+            },
+            messages: {
+                es: 'Número de teléfono inválido.'
+            }
+        });
+
+        // Activar boton submit
+        $(":input").on("keyup change autocompletechange autocomplete input", function () {
+            if (formInstance.isValid()) {
+                $('#modify-commerce-data').prop('disabled', false);
+            } else {
+                $('#modify-commerce-data').prop('disabled', 'disabled');
+            }
+        });
+
+        $(document).on("click", "#modify-commerce-data", function () {    
+            checkSession(modifyCommerce);
+        });
+    })
+
+</script>

@@ -1,0 +1,505 @@
+﻿@model Umbrella.Models.DashboardViewModels.TransactionsByDateAndStatusModel
+@{
+    List<Umbrella.Models.DashboardViewModels.TopCommercesModel> topCommerces = ViewBag.topCommerces;
+    List<Umbrella.Models.DashboardViewModels.TotalBankAccountCreditsModel> bankAccountCredits = ViewBag.bankAccountCredits;
+    List<Umbrella.Models.DashboardViewModels.TotalBankCreditsModel> bankCredits = ViewBag.bankCredits;
+    int realTimeDeclarationsCount = ViewBag.realTimeDeclarationsCount;
+    int currentDayPendingDeclarationsCount = ViewBag.currentDayPendingDeclarationsCount;
+    int currentDayDeclarationsCount = ViewBag.currentDayDeclarationsCount;
+    int currentMonthDeclarationsCount = ViewBag.currentMonthDeclarationsCount;
+    int reconciledDeclarationsCount = ViewBag.reconciledDeclarationsCount;
+    decimal currentMonthDeclarationsTotalAmount = ViewBag.currentMonthDeclarationsTotalAmount;
+    decimal currentDayDeclarationsTotalAmount = ViewBag.currentDayDeclarationsTotalAmount;
+    decimal reconciledDeclarationsTotalAmount = ViewBag.reconciledDeclarationsTotalAmount;
+    decimal creditsTotalAmount = ViewBag.creditsTotalAmount;
+    var currency = System.Globalization.RegionInfo.CurrentRegion.CurrencySymbol;
+
+    string[] bankNames = ViewBag.bankNames;
+    decimal[] bankTotals = ViewBag.bankTotals;
+    string[] issuingBankNames = ViewBag.issuingBankNames;
+    decimal[] creditsTotals = ViewBag.creditsTotals;
+
+    Umbrella.Models.ChartModels.MultiBarChartModel chartData = ViewBag.chartData;
+
+}
+
+
+@if (Model != null)
+{
+    @section contents{
+        <link href="~/plugins/morris/morris.css" rel="stylesheet">
+    }
+
+
+    <div class="row">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card-box widget-icon">
+                <div>
+                    <i class="md md-schedule" style="color: #22bdd6;"></i>
+                    <div class="wid-icon-info text-right">
+                        <p class="text-muted m-b-5 font-13 text-uppercase">Hoy</p>
+                        <h4 class="m-t-0 m-b-5 counter font-bold" data-count="@currentDayPendingDeclarationsCount"></h4>
+                        <small style="color: #544c9f;"><b>Declaraciones Por Conciliar</b></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card-box widget-icon">
+                <div>
+                    <i class="md md-today" style="color: #22bdd6;"></i>
+                    <div class="wid-icon-info text-right">
+                        <p class="text-muted m-b-5 font-13 text-uppercase">Hoy</p>
+                        <h4 class="m-t-0 m-b-5 counter font-bold" data-count="@currentDayDeclarationsCount"></h4>
+                        <small style="color: #544c9f;"><b>Declaraciones Conciliadas</b></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card-box widget-icon">
+                <div>
+                    <i class="md md-filter-frames" style="color: #22bdd6;"></i>
+                    <div class="wid-icon-info text-right">
+                        <p class="text-muted m-b-5 font-13 text-uppercase">Mes</p>
+                        <h4 class="m-t-0 m-b-5 counter font-bold" data-count="@currentMonthDeclarationsCount"></h4>
+                        <small style="color: #544c9f;"><b>Declaraciones Conciliadas</b></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card-box widget-icon">
+                <div>
+                    <i class="md md-archive" style="color: #22bdd6;"></i>
+                    <div class="wid-icon-info text-right">
+                        <p class="text-muted m-b-5 font-13 text-uppercase">De Por Vida</p>
+                        <h4 class="m-t-0 m-b-5 counter font-bold" data-count="@reconciledDeclarationsCount"></h4>
+                        <small style="color: #544c9f;"><b>Declaraciones Conciliadas</b></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end row -->
+
+    <div class="row">
+        <div class="col-sm-6 col-lg-6">
+            <div class="widget-simple text-left card-box">
+                <p class="text-muted">Total del Día</p>
+                <small style="color: #544c9f;"><b>Declaraciones Conciliadas</b></small>
+                <h3 class="text-right font-bold">@currency<span class="counter-totals" id="counter1" data-count="@currentDayDeclarationsTotalAmount.ToString("0.00#", new System.Globalization.CultureInfo("en-US"))"></span></h3>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-6">
+            <div class="widget-simple text-left card-box">
+                <p class="text-muted">Total del Mes</p>
+                <small style="color: #544c9f;"><b>Declaraciones Conciliadas</b></small>
+                <h3 class="text-right font-bold">@currency<span class="counter-totals" id="counter2" data-count="@currentMonthDeclarationsTotalAmount.ToString("0.00#", new System.Globalization.CultureInfo("en-US"))"></span></h3>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-lg-6">
+            <div class="widget-simple text-left card-box">
+                <p class="text-muted">Total de Por Vida</p>
+                <small style="color: #544c9f;"><b>Declaraciones Conciliadas</b></small>
+                <h3 class="text-right font-bold">@currency<span class="counter-totals" id="counter3" data-count="@reconciledDeclarationsTotalAmount.ToString("0.00#", new System.Globalization.CultureInfo("en-US"))"></span></h3>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-6">
+            <div class="widget-simple text-left card-box">
+                <p class="text-muted">Total de Por Vida</p>
+                <small style="color: #544c9f;"><b>Créditos en Cuenta</b></small>
+                <h3 class="text-right font-bold">@currency<span class="counter-totals" id="counter4" data-count="@creditsTotalAmount.ToString("0.00#", new System.Globalization.CultureInfo("en-US"))"></span></h3>
+            </div>
+        </div>
+    </div>
+
+            <!-- Bar Chart-->
+    <div class="row">
+        <div class="col-lg-12 hidden-xs">
+            <div class="portlet">
+                <!-- /primary heading -->
+                <div class="portlet-heading">
+                    <h3 class="portlet-title text-dark">
+                        <span class="header-title">Total del Mes por Banco Origen</span>
+                    </h3>
+                    <div class="portlet-widgets">
+                        <span class="divider"></span>
+                        <a data-toggle="collapse" data-parent="#accordion1" href="#portlet4"><i class="ion-minus-round"></i></a>
+                        <span class="divider"></span>
+                    </div>
+                    <div class="clearfix"></div>
+                    <small style="color: #544c9f;"><b>Declaraciones Conciliadas</b></small>
+                </div>
+                <div id="portlet4" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <canvas id="bar" height="50"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end row -->
+
+    <!-- MultiBar Chart-->
+    <div class="row">
+        <div class="col-lg-12 hidden-xs">
+            <div class="portlet">
+                <!-- /primary heading -->
+                <div class="portlet-heading">
+                    <h3 class="portlet-title text-dark">
+                        <span class="header-title">Total del Mes por Banco Origen</span>
+                    </h3>
+                    <div class="portlet-widgets">
+                        <span class="divider"></span>
+                        <a data-toggle="collapse" data-parent="#accordion2" href="#portlet5"><i class="ion-minus-round"></i></a>
+                        <span class="divider"></span>
+                    </div>
+                    <div class="clearfix"></div>
+                    <small style="color: #544c9f;"><b>Créditos en Cuenta</b></small>
+                </div>
+                <div id="portlet5" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <canvas id="bar-chart-grouped" height="90"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end row -->
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card-box">
+                <h4 class="text-dark  header-title m-t-0">Top 10 Comercios del Mes</h4>
+                <p class="text-muted m-b-25 font-13">
+                    Declaraciones Conciliadas.
+                </p>
+                @if (topCommerces.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Comercio</th>
+                                    <th class="text-center">Declaraciones</th>
+                                    <th class="text-right">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{var topCommerceCounter = 0;}
+                                @foreach (var item in topCommerces)
+                                {
+                                    topCommerceCounter++;
+                                    <tr>
+                                        <td>@topCommerceCounter</td>
+                                        <td>@item.Commerce</td>
+                                        <td class="text-center">@item.Count</td>
+                                        <td class="text-right">@item.TotalAmount.ToString("C")</td>
+                                    </tr>
+
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-info text-center">
+                                          <i class="md md-info"></i>  No hay data para mostrar.
+                                        </div>
+                                    }
+
+            </div>
+
+            <div class="card-box">
+                <h4 class="text-dark  header-title m-t-0">Ingreso Total por Cuenta Bancaria</h4>
+                <p class="text-muted m-b-25 font-13">
+                    Créditos en Cuenta
+                </p>
+                @if (bankAccountCredits.Count > 0)
+                {
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Cuenta</th>
+                                <th>Banco</th>
+                                <th class="text-right">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{var issuingBankCounter = 0;}
+                            @foreach (var item in bankAccountCredits)
+                            {
+                                issuingBankCounter++;
+                                <tr>
+                                    <td>@issuingBankCounter</td>
+                                    <td>@item.BankAccount</td>
+                                    <td>@item.ReceivingBank</td>
+                                    <td class="text-right">@item.TotalAmount.ToString("C")</td>
+                                </tr>
+
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                                }
+                                else
+                                {
+                                    <div class="alert alert-info text-center">
+                                        <i class="md md-info"></i>  No hay data para mostrar.
+                                    </div>
+                                }
+            </div>
+
+        </div>
+        <!-- end col 8 -->
+        <div class="col-lg-6">
+            <div class="card-box">
+                <h4 class="text-dark  header-title m-t-0">Transacciones del Mes</h4>
+                <p class="text-muted m-b-25 font-13">
+                    Declaraciones y Órdenes de Compra.
+                </p>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th class="text-left">Cantidad</th>
+                                <th>Estado</th>
+                                <th class="text-right">Monto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Declaración</td>
+                                <td>@Model.PendingDeclarations.Count</td>
+                                <td><span class="label label-warning">Por Conciliar</span></td>
+                                <td class="text-right">@Model.PendingDeclarations.TotalAmount.ToString("C")</td>
+                            </tr>
+                            <tr>
+                                <td>Declaración</td>
+                                <td>@Model.ReconciledDeclarations.Count</td>
+                                <td><span class="label label-success">Conciliadas</span></td>
+                                <td class="text-right">@Model.ReconciledDeclarations.TotalAmount.ToString("C")</td>
+                            </tr>
+                            <tr>
+                                <td>Declaración</td>
+                                <td>@Model.AnnuledDeclarations.Count</td>
+                                <td><span class="label label-danger">Anuladas</span></td>
+                                <td class="text-right">@Model.AnnuledDeclarations.TotalAmount.ToString("C")</td>
+                            </tr>
+                            <tr>
+                                <td>Orden de Compra</td>
+                                <td>@Model.PendingPurchaseOrders.Count</td>
+                                <td><span class="label label-warning">Por Declarar</span></td>
+                                <td class="text-right">@Model.PendingPurchaseOrders.TotalAmount.ToString("C")</td>
+                            </tr>
+                            <tr>
+                                <td>Orden de Compra</td>
+                                <td>@Model.DeclaredPurchaseOrders.Count</td>
+                                <td><span class="label label-success">Declaradas</span></td>
+                                <td class="text-right">@Model.DeclaredPurchaseOrders.TotalAmount.ToString("C")</td>
+                            </tr>
+
+                            <tr>
+                                <td>Orden de Compra</td>
+                                <td>@Model.AnnuledPurchaseOrders.Count</td>
+                                <td><span class="label label-danger">Anuladas</span></td>
+                                <td class="text-right">@Model.AnnuledPurchaseOrders.TotalAmount.ToString("C")</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- end col 4-->
+    </div>
+
+    <!-- end row -->
+                                }
+
+<!-- Chart JS -->
+<script src="@Url.Content("~/plugins/chartjs/Chart.min.js")"></script>
+<!-- Count Up -->
+<script src="@Url.Content("~/plugins/countUp/countUp.js")"></script>
+<script src="@Url.Content("~/plugins/countUp/countUp-jquery.js")"></script>
+
+<script>
+
+    $(document).on('ready', function () {
+        // Count Up Monto Total
+        var options = {
+            useEasing : true,
+            useGrouping : true,
+            separator : '.',
+            decimal : ',',
+        };
+
+        $('.counter-totals').each(function() {
+
+            var $this = $(this),
+                countTo = $this.attr('data-count'),
+                id = $this.attr('id');
+
+            var demo = new CountUp(id, 0, countTo, 2, 3, options);
+            demo.start();
+
+        });
+
+        // Count Up Cuenta Declaraciones
+        $('.counter').each(function() {
+
+            var $this = $(this),
+                countTo = $this.attr('data-count');
+
+            $({ countNum: $this.text()}).animate({
+                countNum: countTo
+            },
+
+            {
+                useGrouping : true,
+                decimal : ',',
+                separator : '.',
+                decimals : 2,
+                duration: 1000,
+                easing:'linear',
+                step: function() {
+                    $this.text(Math.floor(this.countNum));
+                },
+                complete: function() {
+                    $this.text(this.countNum);
+                    //alert('finished');
+                }
+
+            });
+
+
+
+        });
+
+        // Chart JS Bar - Total Por Banco Origen (Declaraciones Conciliadas)
+        var ctx = document.getElementById("bar").getContext('2d');
+
+        var bankNames = @Html.Raw(Json.Encode(bankNames));
+        var banktotals = @Html.Raw(Json.Encode(bankTotals));
+        var currency = @Html.Raw(Json.Encode(currency));
+
+        if (bankNames.length <= 3) {
+        var percentage = 0.10
+        }
+        var barChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: bankNames,
+                datasets: [{
+                    label: 'Declaraciones Conciliadas Totales',
+                    backgroundColor: "#22bdd6",
+                    borderColor: "#22bdd6",
+                    borderWidth: 3,
+                    hoverBackgroundColor: "#22bdd6",
+                    hoverBorderColor: "#544c9f",
+                    data: banktotals
+                }]
+            },
+            options: {
+                tooltips: {
+                    callbacks: {
+                        label:
+                            function(tooltipItems, data) {
+                                return data.datasets[tooltipItems.datasetIndex].label +
+                                    ': ' + currency +
+                                    Number(tooltipItems.yLabel).toLocaleString("es-VE", {minimumFractionDigits: 2});
+                            }
+                    }
+                },
+                scales: {
+                    xAxes:[{                
+                        maxBarThickness: 40
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            callback: function(value, index, values) {
+                                if(parseInt(value) >= 1000){
+                                    return currency + value.toString()
+                                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                                        .replace(/[,.]/g, function (m) {
+                                            return m === ',' ? '.' : ',';
+                                        });
+                                } else {
+                                    return currency + (value.toFixed(2))
+                                        .replace(/[,.]/g, function (m) {
+                                            return m === ',' ? '.' : ',';
+                                        });
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+
+        // Chart JS MultiBar - Total Por Banco Origen (Creditos en Cuenta)
+
+        var issuingBankNames = @Html.Raw(Json.Encode(issuingBankNames));
+        var credits = @Html.Raw(Json.Encode(creditsTotals));
+
+        new Chart(document.getElementById("bar-chart-grouped"), {
+            type: 'bar',
+            data: @Html.Raw(Json.Encode(chartData)),
+            options: {
+                tooltips: {
+                    callbacks: {
+                        label:
+                            function(tooltipItems, data) {
+                                return data.datasets[tooltipItems.datasetIndex].label +
+                                    ': ' + currency +
+                                    Number(tooltipItems.yLabel).toLocaleString("es-VE", {minimumFractionDigits: 2});
+                            }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Créditos en Cuenta (Bs.)'
+                },
+                scales: {
+                    xAxes:[{
+                        maxBarThickness: 40
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            callback: function(value, index, values) {
+                                if(parseInt(value) >= 1000){
+                                    return currency +
+                                        value.toString()
+                                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                                            .replace(/[,.]/g, function (m) {
+                                                return m === ',' ? '.' : ',';
+                                            });
+                                } else {
+                                    return currency + (value.toFixed(2))
+                                    .replace(/[,.]/g, function (m) {
+                                        return m === ',' ? '.' : ',';
+                                    });
+                                }
+                            }
+                        }
+                    }]
+                }
+            }
+        });
+    });
+
+</script>
+<!-- end row -->

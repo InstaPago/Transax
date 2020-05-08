@@ -1,0 +1,110 @@
+﻿@model InstaTransfer.DataAccess.AE_Propuesta
+@{
+    Layout = null;
+    bool avanceactiva = (bool)ViewBag.Avance;
+}
+<boby style=" background: #f5f5f5;   font-family: 'Noto Sans', sans-serif;   margin: 0;   color: #4c5667;   overflow-x: hidden !important; font-size:12px !important;">
+
+
+
+
+    <div style="width:100%; text-align:center; float:left; margin-top:3%;">
+        <img src="@Url.Content("~/Content/images/transax-logo.png")" height=40 />
+    </div>
+
+    <div style="margin-top:3%; width:100%; text-align:center; float:left;">
+        <br />
+        <h2 style="font-size:15px;">@Model.Commerce.BusinessName</h2>
+        <br />
+        <br />
+        @Model.FechaCreacion.ToString("dd") de  @Model.FechaCreacion.ToString("MMMM") de @Model.FechaCreacion.ToString("yyyy")
+        <br />
+        <br />
+
+        TransaX puede otorgarte un financimiento para que puedas concentrarte en crecer tu negocio.
+        <br />
+        <br />
+        Selecciona cualquiera de las siguientes opciones para solicitar tu capital.
+        <br />
+        <br />
+        Los fondos estarán disponibles en tu cuenta el próximo día hábil.
+        <br />
+        <br />
+
+    </div>
+    <div style="width:32%; text-align:center; float:left; margin-left:2%; margin-top:3%;">
+
+        <div style="border:1px solid gray; padding:4%; width:85%; text-align:center; font-size:11px;">
+            <label>Opción 1</label>
+            <br />
+            <h2>  @Model.AvanceOpcion1.ToString("C")</h2>
+            <br />
+            Pagas con el <strong>@Model.PorcentajeOpcion1 % </strong> de las ventas diarias de tarjeta<br />
+            hasta que hayas reembolsado
+
+            <br />
+            <strong>
+                @Model.ReembolsoOpcion1.ToString("C")
+            </strong>
+            <br />
+            (máximo cobro diario por <strong> @Model.MaximoCobroOpcion1.ToString("C")   </strong>)
+        </div>
+
+
+    </div>
+    <div style="width:32%; text-align:center; float:left; margin-top:3%;">
+
+        <div style="border:1px solid gray; padding:4%; width:85%; text-align:center; font-size:11px;">
+            <label>Opción 2</label>
+
+            <br />
+            <h2>@Model.AvanceOpcion2.ToString("C")</h2>
+            <br />
+            Pagas con el <strong> @Model.PorcentajeOpcion2 % </strong> de las ventas diarias de tarjeta<br />
+            hasta que hayas reembolsado
+            <br />
+            <strong>
+                @Model.ReembolsoOpcion2.ToString("C")
+            </strong>
+            <br />
+            (máximo cobro diario por <strong> @Model.MaximoCobroOpcion2.ToString("C")   </strong>)
+        </div>
+
+
+    </div>
+    <div style="width:32%; text-align:center; float:left; margin-top:3%;">
+
+        <div style="border:1px solid gray; padding:4%; width:85%; text-align:center; font-size:11px;">
+            <label>Opción 3</label>
+
+            <h2>   @Model.AvanceOpcion3.ToString("C")</h2>
+            <br />
+            Pagas con el <strong> @Model.PorcentajeOpcion3 % </strong> de las ventas diarias de tarjeta<br />
+            hasta que hayas reembolsado
+            <br />
+
+            <strong>
+                @Model.ReembolsoOpcion3.ToString("C")
+            </strong>
+            <br />
+
+            (máximo cobro diario por <strong> @Model.MaximoCobroOpcion3.ToString("C")   </strong>)
+        </div>
+    </div>
+    <div style="width:100%; text-align:center; float:left; margin-top:5%;">
+        <label>Apruebo Opción Nro ______</label>
+    </div>
+    <div style="width:100%; text-align:center; float:left; margin-top:5%;">
+        <label>Aprobado por, _______________________________</label>
+        <label style="margin-left:10%">Firma _______________________________</label>
+    </div>
+    <div style="width:100%; text-align:center; float:left; margin-top:12%; font-size:10px;">
+        TransaX es una marca y servicio proporcionado por Tecnología Instapago C:A, J'40187810'5.
+        <br />
+        Av. Sur, Centro Empresarial Lagunita, Ofic. 115, Urb. La lagunita - Caracas.
+    </div>
+
+</boby>
+
+
+

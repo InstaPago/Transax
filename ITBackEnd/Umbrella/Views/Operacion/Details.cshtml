@@ -1,0 +1,354 @@
+﻿@model InstaTransfer.DataAccess.AE_Operacion
+@{
+    ViewBag.Title = "Operacion Detalle";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<InstaTransfer.DataAccess.AE_Avance> ListaAvances = (List<InstaTransfer.DataAccess.AE_Avance>)ViewBag.Avances;
+    List<InstaTransfer.DataAccess.AE_Variable> Variables = (List<InstaTransfer.DataAccess.AE_Variable>)ViewBag.Variables;
+    List<InstaTransfer.DataAccess.AE_Dolar> Dolar = (List<InstaTransfer.DataAccess.AE_Dolar>)ViewBag.Dolar;
+    List<InstaTransfer.DataAccess.AE_BalanceDiario> Balance = (List<InstaTransfer.DataAccess.AE_BalanceDiario>)ViewBag.Balance;
+    List<InstaTransfer.DataAccess.AE_ValorAccionTR> Acciones = (List<InstaTransfer.DataAccess.AE_ValorAccionTR>)ViewBag.Acciones;
+    decimal capital = (Variables.Where(u => u.Descripcion.Contains("Activos")).Sum(u => u.Monto) - Variables.Where(u => u.Descripcion.Contains("Pasivos")).Sum(u => u.Monto) - (Model.Monto * Dolar.FirstOrDefault().Tasa));
+    decimal capitalneto = Math.Round((capital * Model.PorcentajeGanancia / 100), 2);
+    decimal capitalnetodolares = Math.Round((capitalneto * Model.PorcentajeGanancia / 100) / Dolar.FirstOrDefault().Tasa, 2);
+    decimal Cobrado = (decimal)ViewBag.Cobrado;
+    decimal Reembolso = (decimal)ViewBag.Reembolso;
+    decimal Prestado = (decimal)ViewBag.Prestado;
+}
+@section contents{
+
+}
+<!--Morris Chart-->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-box table-responsive" style="padding-bottom:5%;">
+            <div class="col-lg-12" style="margin-top:3%;"></div>
+            <div class="col-lg-12" style="margin-bottom:3%;">
+                <div class="col-lg-12 col-md-12 col-sm-12 text-center">
+                    <img src="@Url.Content("~/Content/images/transax-logo.png")" height=40 />
+                </div>
+                <div class="col-lg-12 text-center" style="margin-top:1%;">
+                    <label style="font-size:20px;">REPORTE</label>
+                </div>
+                <div class="col-lg-12 text-center" style="margin-top:0%;">
+                    <label>Calculo al día @DateTime.Now.Day de @DateTime.Now.ToString("MMMM"), @DateTime.Now.ToString("yyyy") </label>
+                </div>
+            </div>
+            <div class="col-lg-4 col-lg-offset-2">
+                <div class="col-lg-12 text-left" style="margin-top:4%;">
+                    <label>Resumen de @Model.CUser.Name @Model.CUser.LastName</label>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-8 text-left">
+                    <span>Fecha de Inicio</span>
+                </div>
+                <div class="col-lg-4 text-right">
+                    @Model.FechaInicioOperacion.ToString("dd")  @Model.FechaInicioOperacion.ToString("MMMM") de @Model.FechaInicioOperacion.ToString("yyyy")
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-7 text-left">
+                    <span>Total Aportes</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    $
+                </div>
+                <div class="col-lg-4 text-right">
+                    @Model.Monto.ToString("N")
+                </div>
+                @*<div class="col-lg-7 text-left">
+                        <span>Total Aportes (Bs)</span>
+                    </div>
+                    <div class="col-lg-1 text-center">
+                        Bs
+                    </div>
+                    <div class="col-lg-4 text-right">
+                        @((Model.Monto * Dolar.FirstOrDefault().Tasa).ToString("N"))
+                    </div>*@
+                <div class="clearfix"></div>
+                <div class="col-lg-12 text-left" style="margin-top:3%;">
+                    <label>Balance y Desempeño Actual</label>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-7 text-left">
+                    <span>(+) Valor de activos</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    $
+                </div>
+                <div class="col-lg-4 text-right">
+                    @Balance.FirstOrDefault().TotalActivos.ToString("N2")
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-12" style="margin-top:3%">
+                    <span>Pasivos</span>
+                    <hr style="margin-top:5px; margin-bottom:5px;" />
+                </div>
+                <div class="col-lg-7 text-left">
+                    <span>Balance Deuda</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    $
+                </div>
+                <div class="col-lg-4 text-right">
+                    -
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-7 text-left">
+                    <span>Intereses</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    $
+                </div>
+                <div class="col-lg-4 text-right">
+                    -
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-12">
+                    <hr style="margin-top:5px; margin-bottom:5px;" />
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-7 text-left">
+                    <span>(-) Total Paivos</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    $
+                </div>
+                <div class="col-lg-4 text-right">
+                    @Balance.FirstOrDefault().TotalPasivos.ToString("N2")
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-12 text-center" style="margin-top:3%;">
+
+                </div>
+                <div class="col-lg-7 text-left">
+                    <span>(=) Capital Bruto</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    $
+                </div>
+                <div class="col-lg-4 text-right">
+                    @Balance.FirstOrDefault().TotalCapital.ToString("N2")
+                </div>
+                <div class="col-lg-12 text-center" style="margin-top:3%;">
+
+                </div>
+                <div class="clearfix"></div>
+                @*<div class="col-lg-7 text-left">
+                        <span>Capital Neto (Bs)</span>
+                    </div>
+                    <div class="col-lg-1 text-center">
+                        Bs
+                    </div>
+                    <div class="col-lg-4 text-right">
+                        @( Math.Round((capitalneto),2).ToString("N"))
+                    </div>*@
+                <div class="clearfix"></div>
+                <div class="col-lg-12 text-left" style="margin-top:3%;">
+                    <label>Rendimiento Actual</label>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-7 text-left">
+                    <span>Acciones</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    U
+                </div>
+                <div class="col-lg-4 text-right">
+                    @Model.RepresentacionFondo.ToString("N2")
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-7 text-left">
+                    <span>Valor Acción</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    $
+                </div>
+                <div class="col-lg-4 text-right">
+                    @Acciones.FirstOrDefault().ValorAccion.ToString("N2")
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-12" style="margin-top:3%">
+
+                    <hr style="margin-top:5px; margin-bottom:5px;" />
+                </div>
+                <div class="col-lg-7 text-left">
+                    <span>Total</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    $
+                </div>
+                <div class="col-lg-4 text-right">
+                    @((Acciones.FirstOrDefault().ValorAccion * Model.RepresentacionFondo).ToString("N2") )
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-7 text-left">
+                    <span>Rendimiento Global</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    $
+                </div>
+                <div class="col-lg-4 text-right">
+                    @(((Model.RepresentacionFondo * Acciones.FirstOrDefault().ValorAccion) - Model.Monto).ToString("N2") )
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-12" style="margin-top:3%">
+
+                    <hr style="margin-top:5px; margin-bottom:5px;" />
+                </div>
+                <div class="clearfix"></div>
+
+                <div class="col-lg-7 text-left">
+                    <span>Ganancias </span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    $
+                </div>
+                <div class="col-lg-4 text-right">
+                    <strong>@((((Model.RepresentacionFondo * Acciones.FirstOrDefault().ValorAccion) - Model.Monto) * Model.PorcentajeGanancia / 100).ToString("N2")  )</strong>  
+                </div>
+                <div class="clearfix"></div>
+
+                <div class="col-lg-7 text-left">
+                    <span>Rendimiento</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    %
+                </div>
+                <div class="col-lg-4 text-right">
+                    <strong>@((((((Model.RepresentacionFondo * Acciones.FirstOrDefault().ValorAccion) - Model.Monto) * Model.PorcentajeGanancia / 100) * 100) / Model.Monto).ToString("N2")  )</strong>     
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="col-lg-12 text-left" style="margin-top:4%;">
+                    <label>Notas:</label>
+                </div>
+                @*<div class="clearfix"></div>
+                    <div class="col-lg-12 text-left">
+                        <span>1.- Valor actual de los adelantos en circulación.</span>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-lg-12 text-left">
+                        <span>2.- Valor de deuda total menos amortizaciones realizadas.</span>
+                    </div>*@
+                <div class="clearfix"></div>
+                <div class="col-lg-12 text-left">
+                    <span>1.- Ganancias Corresponde al @Model.PorcentajeGanancia % de Rendimiento Global.</span>
+                </div>
+                @*<div class="clearfix"></div>
+                    <div class="col-lg-12 text-left">
+                        <span>4.- Calculado en base a una tasa promedio de @Dolar.FirstOrDefault().Tasa.ToString("N") Bs/USD.</span>
+                    </div>*@
+            </div>
+
+            <div class="col-lg-4">
+                <div class="col-lg-12 text-left" style="margin-top:4%;">
+                    <label>Resumen del Fondo</label>
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-8 text-left">
+                    <span>Número de Adelantos Realizados</span>
+                </div>
+                <div class="col-lg-4 text-right">
+                    @ListaAvances.Count()
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-7 text-left">
+                    <span>Valor Total de Adelantos Realizados</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    $
+                </div>
+                <div class="col-lg-4 text-right">
+                    @(  Math.Round(ListaAvances.Sum(u => u.Reembolso), 2).ToString("N2"))
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-7 text-left">
+                    <span>TIR a la Fecha (en Bs)</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    %
+                </div>
+                <div class="col-lg-4 text-right">
+                    823
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-12" style="margin-top:6%">
+
+                </div>
+                <div class="col-lg-7 text-left">
+                    <span>Adelantos Realizados en Curso</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    $
+                </div>
+                <div class="col-lg-4 text-right">
+                    @( Math.Round(ListaAvances.Where(u => u.IdEstatus == 1).Sum(u => u.Reembolso), 2).ToString("N2"))
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-7 text-left">
+                    <span>Número de Adelantos</span>
+                </div>
+                <div class="col-lg-1 text-center">
+
+                </div>
+                <div class="col-lg-4 text-right">
+                    @ListaAvances.Where(u => u.IdEstatus == 1).Count()
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-7 text-left">
+                    <span>(-) Total Abonado</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    $
+                </div>
+                <div class="col-lg-4 text-right">
+                    @( Math.Round(Cobrado, 2).ToString("N") )
+                </div>
+                <div class="clearfix"></div>
+                <div class="col-lg-12">
+                    <hr style="margin-top:5px; margin-bottom:5px;" />
+                </div>
+                <div class="col-lg-7 text-left">
+                    <span>Cuenta por Cobrar</span>
+                </div>
+                <div class="col-lg-1 text-center">
+                    $
+                </div>
+                <div class="col-lg-4 text-right">
+                    @( Math.Round(Reembolso - Cobrado, 2).ToString("N") )
+                </div>
+                <div class="clearfix"></div>
+                @*<div class="col-lg-12 col-md-12 col-sm-12 text-center">
+                        <img src="@Url.Content("~/Content/images/Firmas.JPG")" />
+                    </div>*@
+
+            </div>
+
+            <div class="clearfix"></div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>
+
+
+
+
+@section scripts {
+
+
+    <!-- Chart JS -->
+    <script src="~/Scripts/Chart.min.js"></script>
+    <script src="~/Scripts/jquery.core.js"></script>
+    <script src="~/Scripts/jquery.app.js"></script>
+    @*
+        <script src="~/Scripts/pages/jquery.chartjs.init.js"></script>*@
+    <script>
+        $(document).on('ready', function () {
+
+
+
+        });
+
+    </script>
+}
+
+

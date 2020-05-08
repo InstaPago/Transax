@@ -1,0 +1,439 @@
+﻿@model List<InstaTransfer.DataAccess.CUser>
+@{
+    List<string[]> usersData = ViewBag.UsersData;
+    ViewBag.Title = "Usuarios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<InstaTransfer.DataAccess.AspNetRole> roles = ViewBag.Roles;
+    var rolesJson = ViewBag.rolesJson;
+
+}
+
+@using System.Web.Mvc.Html
+@using InstaTransfer.ITResources.Constants
+
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = ViewBag.Title }); }
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-box table-responsive">
+            <div class="row">
+                <div class="col-xs-10">
+                    <h4 class="header-title"><b>Listado de Usuarios</b></h4>
+                </div>
+                @if (User.IsInRole(UserRoleConstant.TransaXAdmin) || (User.IsInRole(UserRoleConstant.CommerceAdmin)))
+                {
+                    <div class="col-xs-2 text-right">
+                        <a href="#" class="btn waves-effect waves-light btn-primary m-b-5 addcuser">
+                            Crear Usuario &nbsp; <i class="fa fa-user-plus"></i>
+                        </a>
+
+                    </div>
+                }
+
+            </div>
+            <p class="text-muted font-13 m-b-30">
+                Detalles de los usuarios registrados al comercio.
+            </p>
+
+            @{Html.RenderPartial("_UsersTable", Model); }
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <!--Garlic JS-->
+    <script src="~/plugins/garlicjs/garlic.min.js"></script>
+
+    <script type="text/javascript">
+
+        // Agregar Usuario
+        function addUser() {
+            //alert("hola");
+            ShowLoader();
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("AddCUser", "CUser")"
+            }).done(function (response) {
+                $("#rightsidebar-title").html("Agregar Usuario");
+                $("#rsidebar").html(response);
+                $('#wrapper').toggleClass('right-bar-enabled');
+                HideLoader();
+
+                // Switchery
+                var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch-side'));
+
+                elems.forEach(function (html) {
+                    var switchery = new Switchery(html, { size: 'small', color: '#3DDCF7', disabled: true });
+                });
+            }).fail(function (response) {
+             
+                HideLoader();
+            });
+        }
+
+        function switchTestMode(element) {
+            alert(element.checked);
+        }
+
+        function getExportFileName(formato) {
+            var project = "Transax";
+            var filter = $('#filterRoles').val();
+            if (filter != "") {
+                console.log(project + "_" + filter);
+                return project + "_" + filter;
+            } else {
+                return project;
+            }
+        };
+
+        $(document).ready(function () {
+
+
+            // Tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
+
+
+            //$('.xeditable').editable({
+            //    send: 'never'
+            //}).on('save', function (e, params) {
+            //    $("#update-profile").prop("disabled", false);
+            //});
+            //$('#roleselect').editable({
+            //    emptytext: 'Seleccione un rol',
+            //    mode: 'inline',
+            //    //cargar a partir de una lista de roles
+            //    source: [
+            //    { value: 1, text: 'rol 1' },
+            //    { value: 2, text: 'rol 2' }
+            //    ],
+            //    //valor seleccionado
+            //    value: 2
+            //});
+            //$('#firstname').editable({
+            //    validate: function (value) {
+            //        if ($.trim(value) == '') return 'This field is required';
+            //    }
+            //});
+            $('#update-profile').click(function () {
+                $('.xeditable').editable('submit', {
+                    url: '@Url.Action("ModifyCUser", "CUser")',
+                    data: {
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').attr('value'),
+                        id: "@ViewBag.userid",
+                        Name: $(".username").innerText(),
+                        LastName: $('.userlastname').innerText(),
+                        TestMode: $("#testmodeswitch").prop("checked"),
+                        IsContact: $("#iscontactswitch").prop("checked"),
+                        //rol: $("#roleselect").text(),
+                    },
+                    ajaxOptions: {
+                        dataType: 'json',
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $('.loggeduser').each(function () {
+                                $(this).html($(".profilename").text() + " " + $(".profilelastname").text())
+                            });
+                            toastr.success(response.message, 'Éxito!');
+
+                        } else {
+                            toastr.error(response.message, 'Error!');
+                        }
+                    },
+                    error: function (errors) {
+                        toastr.error(errors.message, 'Error!');
+                    }
+                });
+            });
+            var sideuserswitchery = Array.prototype.slice.call(document.querySelectorAll('.sideuserswitchery'));
+
+            sideuserswitchery.forEach(function (html) {
+                var switchery = new Switchery(html, { size: 'small', color: '#00b19d' });
+            });
+
+            // Agregar Usuario
+            $(".addcuser").on("click", function (e) {
+                e.preventDefault();
+                //checkSession(addUser);
+                adduser();
+            });
+
+            // Tabla de Usuarios
+            @Html.Partial("_InitUserTable")
+            var oTable;
+            oTable = $('#users-table').dataTable();
+        });
+    </script>
+}
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- TITLE OF SITE -->
+    <title>Transax – Preguntas Frecuentes</title>
+    <meta name="description" content="Implementa en tu negocio la única herramienta automatizada de conciliación de pagos por transferencia. Impulsa tu empresa con análisis de ingresos y avances de efectivo en línea." />
+
+    <!-- FAVICON  -->
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+
+    <!-- =========================
+       STYLESHEETS
+    ============================== -->
+    <!-- BOOTSTRAP CSS -->
+    <link rel="stylesheet" href="css/plugins/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/bootstrap.min.css">
+    <link rel="stylesheet" href="css/plugins/bootstrap.css">
+    <!-- FONT ICONS -->
+    <link rel="stylesheet" href="css/icons/iconfont.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- PLUGINS STYLESHEET -->
+    <link rel="stylesheet" href="css/plugins/magnific-popup.css">
+    <link rel="stylesheet" href="css/plugins/owl.carousel.css">
+    <link rel="stylesheet" href="css/plugins/loaders.css">
+    <link rel="stylesheet" href="css/plugins/animate.css">
+
+    <!-- CUSTOM STYLESHEET -->
+    <!--link rel="stylesheet" href="css/style.css"-->
+    <link rel="stylesheet" href="css/transax.css">
+    <!-- RESPONSIVE FIXES -->
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body data-spy="scroll" data-target="#main-navbar">
+    <!-- Preloader -->
+    <div class="loader bg-white">
+        <div class="loader-inner ball-scale-ripple-multiple vh-center">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <div class="main-container" id="page">
+
+        <!-- =========================
+             HEADER
+        ============================== -->
+        <header id="nav1-3">
+            <nav class="navbar navbar-fixed-top bg-transparent" id="main-navbar">
+
+                <div class="container">
+
+                    <div class="navbar-header">
+                        <!-- Menu Button for Mobile Devices -->
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+
+
+                        <a href="transax.html" class="navbar-brand logo-black smooth-scroll"><img src="images/logo-black.png" alt="Transax" title="Transax" /></a>
+                        <a href="transax.html" class="navbar-brand logo-white smooth-scroll"><img src="images/logo-white.png" alt="Transax" title="Transax" /></a>
+                    </div><!-- /End Navbar Header -->
+                    <div class="collapse navbar-collapse" id="navbar-collapse">
+                        <!-- Menu Links -->
+                        <ul class="nav navbar-nav navbar-right center-md">
+                            <li><a href="about.html">Sobre Transax</a></li>
+                            <li><a href="api.html">API / Documentación</a></li>
+                            <li class="active"><a href="faq.html">FAQ</a></li>
+                            <li><a href="#contact" class="smooth-scroll">Contacto</a></li>
+                            <li><a href="login.html" class="btn-nav btn-blue smooth-scroll m-l-md ">Iniciar sesión</a></li>
+                        </ul><!-- /End Menu Links -->
+                    </div><!-- /End Navbar Collapse -->
+                </div><!-- /End Container -->
+            </nav><!-- /End Navbar -->
+        </header>
+        <!-- /End Header Section -->
+        <!-- =========================
+            PAGE HEADER
+        ============================== -->
+        <section class="page-head bg-dark-blue p-y-md">
+            <!-- <div class="overlay"></div> -->
+            <div class="container">
+                <div class="row h-bg text-white">
+                    <div class="col-sm-6">
+                        <h1 class="h3 f-w-900 m-b-0 text-white">FAQ - Preguntas Frecuentes</h1>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- /End Page Header -->
+        <!-- =========================
+           FAQ
+        ============================== -->
+        <section class="p-t-md p-b-0 faqs bg-white">
+            <div class="container">
+                <!-- Faq Panel -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div class="panel-group p-b-md" id="accordion-tech">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <p class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion-tech" href="#collapse11">¿Transax identifica de forma automática las transferencias entrantes, a quién pertenecen, y qué servicio o producto están pagando, de forma automática? ¿o debo intervenir para hacer la conciliación?</a>
+                                    </p>
+                                </div>
+                                <div id="collapse11" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <p>Transax evalúa en sus cuentas pote las transferencias entrantes de forma automática, y basados en la información que carga sus clientes en su comercio web (referencia, banco origen, cédula), podemos hacer el match.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <p class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion-tech" href="#collapse12">¿En cuánto tiempo se identifican las transferencias luego que las ejecuta el cliente final?</a>
+                                    </p>
+                                </div>
+                                <div id="collapse12" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <p>El tiempo promedio de identificación es de 1 minuto.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <p class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion-tech" href="#collapse13">Para solicitar un avance de efectivo ¿qué información o recaudos requieren?</a>
+                                    </p>
+                                </div>
+                                <div id="collapse13" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <p>El comercio debe poseer un punto de venta físico o virtual (Instapago), ser visitado por uno de nuestros Ejecutivos, y proveer un usuario de sólo consulta en su banca en línea.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <p class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion-tech" href="#collapse14">¿En cuánto tiempo liquidan un avance de efectivo?</a>
+                                    </p>
+                                </div>
+                                <div id="collapse14" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <p>Luego de evaluar sus movimientos, Transax genera 3 propuestas de avances. Al seleccionar una, se liquida el avance en sólo 24 horas.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <p class="panel-title">
+                                        <a data-toggle="collapse" data-parent="#accordion-tech" href="#collapse15">¿Cómo pago los avances de efectivo?</a>
+                                    </p>
+                                </div>
+                                <div id="collapse15" class="panel-collapse collapse">
+                                    <div class="panel-body">
+                                        <p>Transax debita diariamente de forma automática un porcentaje de las ventas realizadas, según la propuesta seleccionada.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- /End Panel Group -->
+                    </div><!-- /End Col -->
+                </div><!-- /End Row -->
+            </div><!-- /End Container -->
+        </section>
+
+
+        <!-- =========================
+            FOOTER
+        ============================== -->
+        <section id="contact" class="p-y bg-light bg-grey footer">
+            <div class="container">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="aliados">
+                            <div class="row">
+                                <p class="small">Aliados</p>
+                                <a href="http://legendsoft.com.ve/" target="_blank">
+                                    <img src="images/legendsoft.png" class="img-responsive s-x-auto" alt="">
+                                </a>
+
+                            </div>
+                        </div>
+                        <div class="contact">
+                            <div class="row">
+                                <div class="ctn">
+                                    <img src="images/footer-location.png" class="s-x-auto" alt="">
+                                    <p class="small">
+                                        Av. Federico Boyd y calle 51, <br />
+                                        Scotia Plaza pisos 9, 10, 11. Urb. Bella Vista. Panamá, Panamá.
+
+                                    </p>
+                                </div>
+                                <div class="ctn">
+                                    <img src="images/footer-phone.png" class="s-x-auto" alt="">
+                                    <p class="small">
+                                        +507 64893839<br>
+
+                                    </p>
+                                </div>
+                                <div class="ctn">
+                                    <img src="images/footer-mail.png" class="s-x-auto" alt="">
+                                    <p class="small">
+                                        <a href="#" target="_blank"></a><br>
+                                        <a href="#" target="_blank">contacto@transax.tech</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div><!-- /End Col-12 -->
+            </div><!-- /End Container -->
+        </section>
+        <!-- /End Footer -->
+        <!-- =========================
+            FIRMA
+        ============================== -->
+        <section class="p-y bg-white firma">
+            <div class="container text-center">
+                <div class="row">
+                    <div class="firma-ctn">
+                        <p class="small">Powered By</p>
+                        <a href="http://legendsoft.com.ve/" target="_blank">
+                            <img src="images/legendsoft.png" alt="">
+                        </a>
+                    </div>
+                </div>
+            </div><!-- /End Container -->
+        </section>
+        <!-- /End Firma -->
+
+
+
+    </div><!-- /End Main Container -->
+    <!-- Back to Top Button -->
+    <a href="#" class="top" style="background-color:#28bed7;">Top</a>
+
+    <!-- =========================
+         SCRIPTS
+    ============================== -->
+    <script src="js/plugins/jquery1.11.2.min.js"></script>
+    <script src="js/plugins/bootstrap.min.js"></script>
+    <script src="js/plugins/jquery.easing.1.3.min.js"></script>
+    <script src="js/plugins/jquery.countTo.js"></script>
+    <script src="js/plugins/jquery.formchimp.min.js"></script>
+    <script src="js/plugins/jquery.jCounter-0.1.4.js"></script>
+    <script src="js/plugins/jquery.magnific-popup.min.js"></script>
+    <script src="js/plugins/jquery.vide.min.js"></script>
+    <script src="js/plugins/owl.carousel.min.js"></script>
+    <script src="js/plugins/spectragram.min.js"></script>
+    <script src="js/plugins/twitterFetcher_min.js"></script>
+    <script src="js/plugins/wow.min.js"></script>
+    <script src="js/plugins/picker.js"></script>
+    <script src="js/plugins/picker.date.js"></script>
+    <!-- Custom Script -->
+    <script src="js/custom.js"></script>
+
+</body>
+</html>
+

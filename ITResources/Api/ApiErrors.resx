@@ -1,0 +1,272 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DeclarationAmountExceptionCode" xml:space="preserve">
+    <value>IT-API-012</value>
+    <comment>Codigo de error para el monto de la declaracion</comment>
+  </data>
+  <data name="DeclarationAmountExceptionMessage" xml:space="preserve">
+    <value>El monto de la declaracion y la orden de compra no coinciden</value>
+    <comment>Mensaje de error para el monto de la declaracion</comment>
+  </data>
+  <data name="DeclarationErrorCode" xml:space="preserve">
+    <value>IT-API-009</value>
+    <comment>Codigo para declaracion fallida</comment>
+  </data>
+  <data name="DeclarationErrorMessage" xml:space="preserve">
+    <value>Declaracion fallida</value>
+    <comment>Mensaje para declaracion fallida</comment>
+  </data>
+  <data name="DeclarationNotFoundErrorCode" xml:space="preserve">
+    <value>IT-API-010</value>
+    <comment>Codigo para declaracion no encontrada</comment>
+  </data>
+  <data name="DeclarationNotFoundMessage" xml:space="preserve">
+    <value>Declaracion no encontrada</value>
+    <comment>Mensaje para declaracion no encontrada</comment>
+  </data>
+  <data name="DeclarationPaymentUserExceptionCode" xml:space="preserve">
+    <value>IT-API-013</value>
+    <comment>Codigo de error de validacion del pagador</comment>
+  </data>
+  <data name="DeclarationPaymentUserExceptionMessage" xml:space="preserve">
+    <value>Los datos del pagador de la declaracion no coinciden con los registrados en la orden de compra</value>
+    <comment>Mensaje de error de validacion del pagador</comment>
+  </data>
+  <data name="DeclarationValidationErrorCode" xml:space="preserve">
+    <value>IT-API-008</value>
+    <comment>Codigo de error de validacion de la declaracion</comment>
+  </data>
+  <data name="DeclarationValidationErrorMessage" xml:space="preserve">
+    <value>Error en la validacion de los datos de la declaracion</value>
+    <comment>Mensaje de error de validacion de la declaracion</comment>
+  </data>
+  <data name="DuplicateReferenceExceptionCode" xml:space="preserve">
+    <value>IT-API-002</value>
+    <comment>Codigo de error de referencia duplicada</comment>
+  </data>
+  <data name="DuplicateReferenceExceptionMessage" xml:space="preserve">
+    <value>El numero de referencia ya se encuentra registrado</value>
+    <comment>Mensaje de error de referencia duplicada</comment>
+  </data>
+  <data name="InactiveUserExceptionCode" xml:space="preserve">
+    <value>IT-API-015</value>
+    <comment>Codigo de error para rol del usuario del comercio invalido</comment>
+  </data>
+  <data name="InactiveUserExceptionMessage" xml:space="preserve">
+    <value>Error al ingresar un usuario inactivo.</value>
+    <comment>Mensaje de error para usuario del comercio inactivo</comment>
+  </data>
+  <data name="InvalidUserExceptionCode" xml:space="preserve">
+    <value>IT-API-001</value>
+    <comment>Codigo de error de usuario invalido</comment>
+  </data>
+  <data name="InvalidUserExceptionMessage" xml:space="preserve">
+    <value>Usuario inválido</value>
+    <comment>Mensaje de error de usuario invalido</comment>
+  </data>
+  <data name="InvalidUserRoleExceptionCode" xml:space="preserve">
+    <value>IT-API-014</value>
+    <comment>Codigo de error para rol del usuario del comercio invalido</comment>
+  </data>
+  <data name="InvalidUserRoleExceptionMessage" xml:space="preserve">
+    <value>Rol del usuario del comercio invalido</value>
+    <comment>Mensaje de error para rol del usuario del comercio invalido</comment>
+  </data>
+  <data name="InvalidUserTestModeExceptionCode" xml:space="preserve">
+    <value>IT-API-016</value>
+    <comment>Codigo de error para usuario en modo de pruebas</comment>
+  </data>
+  <data name="InvalidUserTestModeExceptionMessage" xml:space="preserve">
+    <value>Comercio inactivo, no puede acceder con este usuario</value>
+    <comment>Mensaje de error para usuario en modo de pruebas</comment>
+  </data>
+  <data name="OperationErrorCode" xml:space="preserve">
+    <value>IT-API-000</value>
+    <comment>Codigo de error para operacion fallida</comment>
+  </data>
+  <data name="OperationErrorMessage" xml:space="preserve">
+    <value>Operacion fallida</value>
+    <comment>Mensaje para operacion fallida</comment>
+  </data>
+  <data name="ParametersRequiredErrorCode" xml:space="preserve">
+    <value>IT-API-007</value>
+    <comment>Codigo de error para parametros requeridos</comment>
+  </data>
+  <data name="ParametersRequiredErrorMessage" xml:space="preserve">
+    <value>Parametros requeridos</value>
+    <comment>Mensaje para parametros requeridos</comment>
+  </data>
+  <data name="PurchaseOrderAnnulledExceptionCode" xml:space="preserve">
+    <value>IT-API-014</value>
+    <comment>Codigo de error de orden de compra anulada</comment>
+  </data>
+  <data name="PurchaseOrderAnnulledExceptionMessage" xml:space="preserve">
+    <value>La orden de compra se encuentra anulada</value>
+    <comment>Mensaje de error de orden de compra anulada</comment>
+  </data>
+  <data name="PurchaseOrderCreateErrorCode" xml:space="preserve">
+    <value>IT-API-005</value>
+    <comment>Codigo de error en la creacion de la orden de compra</comment>
+  </data>
+  <data name="PurchaseOrderCreateErrorMessage" xml:space="preserve">
+    <value>Error al crear la orden de compra</value>
+    <comment>Mensaje de error en la creacion de la orden de compra</comment>
+  </data>
+  <data name="PurchaseOrderDeclaredExceptionCode" xml:space="preserve">
+    <value>IT-API-004</value>
+    <comment>Codigo de error de orden ya declarada</comment>
+  </data>
+  <data name="PurchaseOrderDeclaredExceptionMessage" xml:space="preserve">
+    <value>La orden de compra ya se encuentra declarada</value>
+    <comment>Mensaje de error de orden ya declarada</comment>
+  </data>
+  <data name="PurchaseOrderErrorCode" xml:space="preserve">
+    <value>IT-API-011</value>
+    <comment>Codigo de error de orden de compra invalida</comment>
+  </data>
+  <data name="PurchaseOrderErrorMessage" xml:space="preserve">
+    <value>Orden de compra invalida</value>
+    <comment>Mensaje de error de orden de compra invalida</comment>
+  </data>
+  <data name="PurchaseOrderNotFoundExceptionCode" xml:space="preserve">
+    <value>IT-API-003</value>
+    <comment>Codigo de error de orden no encontrada</comment>
+  </data>
+  <data name="PurchaseOrderNotFoundExceptionMessage" xml:space="preserve">
+    <value>No se encontro la orden de compra asociada</value>
+    <comment>Mensaje de error de orden no encontrada</comment>
+  </data>
+  <data name="PurchaseOrderValidationErrorCode" xml:space="preserve">
+    <value>IT-API-006</value>
+    <comment>Codigo de error en la validacion de los campos de la orden de compra</comment>
+  </data>
+  <data name="PurchaseOrderValidationErrorMessage" xml:space="preserve">
+    <value>Error en la validacion de los datos de la orden</value>
+    <comment>Codigo de error en la validacion de los campos de la orden de compra</comment>
+  </data>
+  <data name="SignatureVerificationExceptionCode" xml:space="preserve">
+    <value>IT-API-017</value>
+    <comment>Codigo de error en el token</comment>
+  </data>
+  <data name="SignatureVerificationExceptionMessage" xml:space="preserve">
+    <value>Error al verificar el token</value>
+    <comment>Mensaje de error en el token</comment>
+  </data>
+</root>

@@ -1,0 +1,86 @@
+﻿@model InstaTransfer.DataAccess.CUser
+@{
+    InstaTransfer.DataAccess.AspNetRole role = ViewBag.role;
+}
+@if (Model != null)
+{
+    <div class="text-center card-box">
+        <div class="member-card">
+            <div class="thumb-xl member-thumb m-b-10 center-block">
+                <div class="bnwstyle">
+                    @*<span class="fa-stack fa-lg profileedit">
+                        <a href="#">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                        </a>
+                    </span>*@
+                    <img src="@Url.Content("~/Content/images/user-default.png")" class="img-circle img-thumbnail" alt="">
+                </div>
+            </div>
+
+            <div class="">
+                <h4 class="m-b-5 loggeduser">@Model.Name @Model.LastName</h4>
+                <p class="text-muted">@(Model.Commerce.BusinessName != null ? Model.Commerce.BusinessName : string.Empty)</p>
+            </div>
+
+            @*<button type="button" class="btn btn-success btn-sm w-sm waves-effect m-t-10 waves-light">Follow</button>
+                <button type="button" class="btn btn-danger btn-sm w-sm waves-effect m-t-10 waves-light">Message</button>*@
+
+            <br />
+            <div class="text-left m-t-20">
+                @Html.AntiForgeryToken()
+                <p class="text-muted font-13">
+                    <strong>Nombre :</strong>
+                    <span class="m-l-15">
+                        <a href="#" data-type="text" data-name="@Html.NameFor(m => m.Name)" class="profilename"></a>
+                        @Model.Name
+
+                    </span>
+                </p>
+                <p class="text-muted font-13">
+                    <strong>Apellido :</strong>
+                    <span class="m-l-15">
+                        <a href="#" data-type="text" data-name="@Html.NameFor(m => m.LastName)" class="profilelastname"></a>
+                        @Model.LastName
+
+                    </span>
+                </p>
+                <p class="text-muted font-13">
+                    <strong>Rol:</strong>
+                    <span class="m-l-15">
+                        <a href="#" id="roleselect" data-type="select"></a>
+                        @role.DisplayName.Trim()
+                    </span>
+                </p>
+                <p class="text-muted font-13">
+                    <strong>Usuario de contacto :</strong>
+                    <span class="m-l-15">
+                        <input id="iscontactswitch" type="checkbox" readonly data-plugin="profilepanelswitch" data-color="#00b19d" data-size="small" />
+                    </span>
+                </p>
+                <p class="text-muted font-13">
+                    <strong>Usuario de prueba :</strong>
+                    <span class="m-l-15">
+                        <input id="testmodeswitch" type="checkbox" readonly @(Model.TestMode ? "checked" : "") data-plugin="profilepanelswitch" data-color="#00b19d" data-size="small" />
+                    </span>
+                </p>
+
+                @*<button class="btn btn-default" id="update-profile">Actualizar perfil</button>*@
+            </div>
+
+            @*<ul class="social-links list-inline m-t-30">
+                <li>
+                    <a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Facebook"><i class="fa fa-facebook"></i></a>
+                </li>
+                <li>
+                    <a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Twitter"><i class="fa fa-twitter"></i></a>
+                </li>
+                <li>
+                    <a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Skype"><i class="fa fa-skype"></i></a>
+                </li>
+            </ul>*@
+
+        </div>
+
+    </div> <!-- end card-box -->
+}

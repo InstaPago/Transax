@@ -1,0 +1,15 @@
+﻿@model List<InstaTransfer.DataAccess.UDeclaration>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="">
+            <h4 class="header-title"><b>Listado de Declaraciones</b></h4>
+            <p class="text-muted font-13 m-b-30">
+                Detalles de las Declaraciones.
+            </p>
+            <div class="clearfix"></div>
+            <div class="clearfix"></div>
+            @{Html.RenderPartial("~/Views/Declaration/_DeclarationsTable.cshtml", Model); }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,146 @@
+﻿
+@{
+    List<InstaTransfer.DataAccess.CUser> Users = ViewBag.Users;
+}
+
+<div class="nicescroll">
+    <div class="col-xs-12">
+        <button type="button" class="close right-bar-toggle  pull-right" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 id="rightsidebar-title">
+            Agregar Operación
+        </h4>
+    </div>
+    <div id="rightsidebar-body" class="col-xs-12">
+        <form id="userform" method="post" action="@Url.Action("CreateOperacion", "Operacion")" novalidate class="text-left" data_parsley_validate="">
+
+            @Html.AntiForgeryToken()
+
+            <div class="form-group" style="margin-top:3%;">
+                <label class="control-label">Fecha Inicio</label>
+                <input type="date" name="FechaInicio" class="form-control" />
+
+            </div>
+            <div class="form-group" style="margin-top:3%;">
+                <label class="control-label">Fecha Fin</label>
+                <input type="date" name="FechaFin" class="form-control" />
+            </div>
+            <div class="form-group" style="margin-top:3%;">
+                <label class="control-label">Monto</label>
+                <input type="text" class="form-control" name="Monto" />
+            </div>
+            <div class="form-group" style="margin-top:3%;">
+                <label class="control-label">Porcentaje Ganancía</label>
+                <input type="text" class="form-control" name="PorcentajeG" />
+            </div>
+            <div class="form-group" style="margin-top:3%;">
+                <label class="control-label">Inversionista</label>
+                <select name="Inversionista" class="form-control">
+                    @foreach (var item in Users)
+                    {
+                        <option selected  value="@item.Id">@item.Name @item.LastName</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group" style="margin-top:3%;">
+                <label class="control-label">Estatus</label>
+                <select name="Estatus" class="form-control">
+                    <option  selected value="1">Activa</option>
+                    <option value="2">En espera</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-top:3%;">
+                <label class="control-label">Modalidad</label>
+                <select name="Tipo" class="form-control">
+                    <option selected value="1">Bimensual</option>
+                    <option value="2">Trimestral</option>
+                    <option value="3">Semestral</option>
+                    <option value="4">Anual</option>
+                </select>
+            </div>
+
+
+            <div class="form-group text-center m-b-0" style="margin-top:3%;">
+                <button id="userfomsubmit" class="col-sm-12 btn btn-primary waves-effect waves-light" type="button" disabled>
+                    Agregar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Parsley JS -->
+<script type="text/javascript" src="~/plugins/parsleyjs/dist/parsley.min.js"></script>
+<script src="~/plugins/parsleyjs/dist/i18n/es.js"></script>
+
+<script type="text/javascript">
+
+    function createUser() {
+        swal({
+            title: "¿Seguro desea agregar esta operación?",
+            text: "No podrá revertir esta acción",
+            type: "info",
+            showCancelButton: true,
+            cancelButtonText: "Cancelar",
+            confirmButtonText: "Si, agregar usuario",
+            closeOnConfirm: false
+        }, function () {
+            ShowLoader();
+            $.ajax({
+                method: "POST",
+                url: '@Url.Action("CreateOperacion", "Operacion")',
+                data: $("#userform").serialize()
+            })
+    .done(function (r) {
+        HideLoader();
+        if (r.success) {
+            swal({
+                title: "Exito!",
+                text: r.message,
+                type: "success",
+            }, function () {
+                location.reload();
+            });
+        } else {
+            swal("Error!", r.message, "error");
+        }
+    });
+        });
+        HideLoader();
+    }
+
+    $(document).ready(function () {
+
+        var form = $('form');
+
+        // Parsley
+        var formInstance = form.parsley();
+
+        // Garlic
+        form.garlic();
+
+        $(window).bind('beforeunload', function () {
+            form.garlic('destroy');
+        });
+
+        // Activar boton submit
+        $(":input").on("keyup change autocompletechange autocomplete input", function () {
+            if (formInstance.isValid()) {
+                $('#userfomsubmit').prop('disabled', false);
+            } else {
+                $('#userfomsubmit').prop('disabled', 'disabled');
+            }
+        });
+
+        // Switchery
+        var sideuserswitchery = Array.prototype.slice.call(document.querySelectorAll('input[data-plugin="profilepanelswitch"]'));
+        sideuserswitchery.forEach(function (html) {
+            var switchery = new Switchery(html, { size: 'small', color: '#00b19d' });
+        });
+
+        // Submit
+        $('#userfomsubmit').on('click', function () {
+            checkSession(createUser);
+        });
+
+    });
+</script>

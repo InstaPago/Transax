@@ -1,0 +1,13 @@
+﻿@using InstaTransfer.ITResources.Constants;
+
+@{
+    ViewBag.Title = "Inicio";
+}
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new PaymentRequest.Models.PageTitle { title = "Solicitud de Pago en Transax", breadcumb = "Inicio" }); }
+
+<!-- Page Body -->
+<div class="row">
+    <div class="col-md-12">
+        @Html.Action("Dashboard", "Home")
+    </div>
+</div>

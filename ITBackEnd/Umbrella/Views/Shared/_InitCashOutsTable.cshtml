@@ -1,0 +1,98 @@
+﻿
+
+     var table = $('#cashouts-table').DataTable({
+                "columnDefs": [
+           {
+               "targets": [3],
+               "searchable": false
+           },
+           {
+               "targets": [4],
+               "searchable": true,
+               "visible": false
+
+           }
+                ],
+                order: [2, 'desc'],
+                buttons: [{
+                    text: 'Copiar',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 6]
+                    },
+                    extend: "copy",
+                    className: "btn-sm"
+                }, {
+                    extend: "csv",
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 6]
+                    },
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        if ($('#filterRoles').val() != ""  && $('#filterRoles').val() != undefined) {
+                            config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");;
+                        } else {
+                            config.filename = projectname;
+                        }
+
+                        $.fn.dataTable.ext.buttons.csvHtml5.action(e, dt, button, config);
+                    }
+                }, {
+                    extend: "excel",
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 5]
+                    },
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        if ($('#filterRoles').val() != ""  && $('#filterRoles').val() != undefined) {
+                            config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                        } else {
+                            config.filename = projectname;
+                        }
+
+                        $.fn.dataTable.ext.buttons.excelHtml5.action(e, dt, button, config);
+                    }
+                }, {
+                    extend: "pdf",
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 5]
+                    },
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        if ($('#filterRoles').val() != "" && $('#filterRoles').val() != undefined) {
+                            config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");
+                        } else {
+                            config.filename = projectname;
+                        }
+
+                        $.fn.dataTable.ext.buttons.pdfHtml5.action(e, dt, button, config);
+                    }
+                }, {
+                    extend: "print",
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 5]
+                    },
+                    text: 'Imprimir',
+                    className: "btn-sm",
+                    action: function (e, dt, button, config) {
+                        if ($('#filterRoles').val() != "" && $('#filterRoles').val() != undefined) {
+                            config.filename = $('#filterRoles').val().replace(/[^\w\s]/gi, '').replace(/ /g, "_");;
+                        } else {
+                            config.filename = projectname;
+                        }
+
+                        $.fn.dataTable.ext.buttons.print.action(e, dt, button, config);
+                    }
+                }],
+                language: {
+                    url: "@Url.Content("~/Scripts/datatables/spanish.json")",
+                    buttons: {
+                        copyTitle: 'Tabla copiada al portapapeles',
+                        copySuccess: {
+                            _: 'Se han copiado %d filas.',
+                            1: 'Se ha copiado 1 fila.'
+                        }
+                    }
+                },
+                //responsive: true,
+                "dom": '<"row"<"col-md-6 col-xs-12"B><"col-md-6 col-xs-12 text-right"f>><"row"<"col-md-6 col-xs-12"l>><"row"<"col-md-6"r>><"row"<"col-xs-12"t>><"clearfix"><"col-md-6 col-xs-12"i><"col-md-6 col-xs-12"p>'
+            });

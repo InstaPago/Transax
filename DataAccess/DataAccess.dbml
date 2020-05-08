@@ -1,0 +1,904 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="InstaTransfer_Source" Class="DataAccessDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=169.54.211.86\LEGENDINSTANCE;Initial Catalog=InstaTransfer_Source;User ID=dbatech" SettingsObjectName="InstaTransfer.DataAccess.Properties.Settings" SettingsPropertyName="InstaTransfer_SourceConnectionString4" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.UUserType" Member="UUserTypes">
+    <Type Name="UUserType">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_ArchivosStatus" Member="AE_ArchivosStatus">
+    <Type Name="AE_ArchivosStatus">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="AE_ArchivosStatus_AE_Archivo" Member="AE_Archivos" ThisKey="Id" OtherKey="IdAE_ArchivosStatus" Type="AE_Archivo" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_AvanceEfectivoEstatus" Member="AE_AvanceEfectivoEstatus">
+    <Type Name="AE_AvanceEfectivoEstatus">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="AE_AvanceEfectivoEstatus_AE_Avance" Member="AE_Avances" ThisKey="Id" OtherKey="IdEstatus" Type="AE_Avance" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_MovimientosCuenta" Member="AE_MovimientosCuentas">
+    <Type Name="AE_MovimientosCuenta">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Referencia" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Descripcion" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Monto" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="RifCommerce" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaRegistro" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Activo" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="Commerce_AE_MovimientosCuenta" Member="Commerce" ThisKey="RifCommerce" OtherKey="Rif" Type="Commerce" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_MovimientosDebito" Member="AE_MovimientosDebitos">
+    <Type Name="AE_MovimientosDebito">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Referencia" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Descripcion" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Monto" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaRegistro" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Activo" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IdAE_EstadoCuenta" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Lote" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="AE_EstadoCuenta_AE_MovimientosDebito" Member="AE_EstadoCuenta" ThisKey="IdAE_EstadoCuenta" OtherKey="Id" Type="AE_EstadoCuenta" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_ProcesoSolicitudApi" Member="AE_ProcesoSolicitudApis">
+    <Type Name="AE_ProcesoSolicitudApi">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="RifCommerce" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Estatus" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="AE_ProcesoSolicitudApi_AE_SolicitudApi" Member="AE_SolicitudApis" ThisKey="Id" OtherKey="IdProceso" Type="AE_SolicitudApi" />
+      <Association Name="Commerce_AE_ProcesoSolicitudApi" Member="Commerce" ThisKey="RifCommerce" OtherKey="Rif" Type="Commerce" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_SolicitudApi" Member="AE_SolicitudApis">
+    <Type Name="AE_SolicitudApi">
+      <Column Name="Id" Type="System.String" DbType="NVarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="RifCommerce" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaPrimerRequest" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="FechaInicio" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaFin" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Request" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="FechaResponse" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Response" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="IdBankStatementRequest" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="Message" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Procesado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Reprocesar" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Intentos" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Error" Type="System.String" DbType="NVarChar(500)" CanBeNull="true" />
+      <Column Name="Activa" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FechaUltimoRequest" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Analisis" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="UltimoEstatus" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdProceso" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="AE_ProcesoSolicitudApi_AE_SolicitudApi" Member="AE_ProcesoSolicitudApi" ThisKey="IdProceso" OtherKey="Id" Type="AE_ProcesoSolicitudApi" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_UsuarioBanco" Member="AE_UsuarioBancos">
+    <Type Name="AE_UsuarioBanco">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="RifCommerce" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="Username" Type="System.String" DbType="VarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="AccountNumber" Type="System.String" DbType="NChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="Active" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="Commerce_AE_UsuarioBanco" Member="Commerce" ThisKey="RifCommerce" OtherKey="Rif" Type="Commerce" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_VariablesGenerales" Member="AE_VariablesGenerales">
+    <Type Name="AE_VariablesGenerale">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Valor" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AspNetRoles" Member="AspNetRoles">
+    <Type Name="AspNetRole">
+      <Column Name="Id" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
+      <Column Name="DisplayName" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
+      <Association Name="AspNetRole_AspNetUserRole" Member="AspNetUserRoles" ThisKey="Id" OtherKey="RoleId" Type="AspNetUserRole" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AspNetUserClaims" Member="AspNetUserClaims">
+    <Type Name="AspNetUserClaim">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(128) NOT NULL" CanBeNull="false" />
+      <Column Name="ClaimType" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="ClaimValue" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Association Name="AspNetUser_AspNetUserClaim" Member="AspNetUser" ThisKey="UserId" OtherKey="Id" Type="AspNetUser" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AspNetUserLogins" Member="AspNetUserLogins">
+    <Type Name="AspNetUserLogin">
+      <Column Name="LoginProvider" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="ProviderKey" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="AspNetUser_AspNetUserLogin" Member="AspNetUser" ThisKey="UserId" OtherKey="Id" Type="AspNetUser" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AspNetUserRoles" Member="AspNetUserRoles">
+    <Type Name="AspNetUserRole">
+      <Column Name="UserId" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="RoleId" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="AspNetRole_AspNetUserRole" Member="AspNetRole" ThisKey="RoleId" OtherKey="Id" Type="AspNetRole" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="AspNetUser_AspNetUserRole" Member="AspNetUser" ThisKey="UserId" OtherKey="Id" Type="AspNetUser" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AspNetUsers" Member="AspNetUsers">
+    <Type Name="AspNetUser">
+      <Column Name="Id" Type="System.String" DbType="NVarChar(128) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="NVarChar(256)" CanBeNull="true" />
+      <Column Name="EmailConfirmed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="PasswordHash" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="SecurityStamp" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="PhoneNumber" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="PhoneNumberConfirmed" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="TwoFactorEnabled" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="LockoutEndDateUtc" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="LockoutEnabled" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="AccessFailedCount" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="UserName" Type="System.String" DbType="NVarChar(256) NOT NULL" CanBeNull="false" />
+      <Association Name="AspNetUser_AspNetUserClaim" Member="AspNetUserClaims" ThisKey="Id" OtherKey="UserId" Type="AspNetUserClaim" />
+      <Association Name="AspNetUser_AspNetUserLogin" Member="AspNetUserLogins" ThisKey="Id" OtherKey="UserId" Type="AspNetUserLogin" />
+      <Association Name="AspNetUser_AspNetUserRole" Member="AspNetUserRoles" ThisKey="Id" OtherKey="UserId" Type="AspNetUserRole" />
+      <Association Name="AspNetUser_CUser" Member="CUsers" ThisKey="Id" OtherKey="IdAspNetUser" Type="CUser" />
+      <Association Name="AspNetUser_EndUser" Member="EndUsers" ThisKey="Id" OtherKey="IdAspNetUser" Type="EndUser" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CashOutTransaction" Member="CashOutTransactions">
+    <Type Name="CashOutTransaction">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IdCommerceBankAccount" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="IdStatus" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Reference" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="CancellationReason" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="Commission" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="IVA" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="CommissionPercentage" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="Timestamp" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="StatusChangeDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="CashOutTransaction_CommerceBalance" Member="CommerceBalances" ThisKey="Id" OtherKey="IdCashOutTransaction" Type="CommerceBalance" />
+      <Association Name="CashOutTransaction_CommerceBalance1" Member="CommerceBalances1" ThisKey="Id" OtherKey="IdCashOutTransaction" Type="CommerceBalance" />
+      <Association Name="CashOutTransactionStatus_CashOutTransaction" Member="CashOutTransactionStatus" ThisKey="IdStatus" OtherKey="Id" Type="CashOutTransactionStatus" IsForeignKey="true" />
+      <Association Name="CommerceBankAccount_CashOutTransaction" Member="CommerceBankAccount" ThisKey="IdCommerceBankAccount" OtherKey="Id" Type="CommerceBankAccount" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CashOutTransactionStatus" Member="CashOutTransactionStatus">
+    <Type Name="CashOutTransactionStatus">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="CashOutTransactionStatus_CashOutTransaction" Member="CashOutTransactions" ThisKey="Id" OtherKey="IdStatus" Type="CashOutTransaction" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CommerceBalance" Member="CommerceBalances">
+    <Type Name="CommerceBalance">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="PreviousBalance" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="CurrentBalance" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="RifCommerce" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="IdCashOutTransaction" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="IdDeclaration" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Association Name="CashOutTransaction_CommerceBalance" Member="CashOutTransaction" ThisKey="IdCashOutTransaction" OtherKey="Id" Type="CashOutTransaction" IsForeignKey="true" />
+      <Association Name="CashOutTransaction_CommerceBalance1" Member="CashOutTransaction1" ThisKey="IdCashOutTransaction" OtherKey="Id" Type="CashOutTransaction" IsForeignKey="true" />
+      <Association Name="UDeclaration_CommerceBalance" Member="UDeclaration" ThisKey="IdDeclaration" OtherKey="Id" Type="UDeclaration" IsForeignKey="true" />
+      <Association Name="Commerce_CommerceBalance" Member="Commerce" ThisKey="RifCommerce" OtherKey="Rif" Type="Commerce" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CommerceBankAccount" Member="CommerceBankAccounts">
+    <Type Name="CommerceBankAccount">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="RifCommerce" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="AccountNumber" Type="System.String" DbType="NChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="Alias" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdUBank" Type="System.String" DbType="NChar(4) NOT NULL" CanBeNull="false" />
+      <Column Name="IdStatus" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Observation" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="IsCashOut" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsAvanceEfectivo" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsScraper" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="CommerceBankAccount_CashOutTransaction" Member="CashOutTransactions" ThisKey="Id" OtherKey="IdCommerceBankAccount" Type="CashOutTransaction" />
+      <Association Name="CommerceBankAccountStatus_CommerceBankAccount" Member="CommerceBankAccountStatus" ThisKey="IdStatus" OtherKey="Id" Type="CommerceBankAccountStatus" IsForeignKey="true" />
+      <Association Name="CommerceBankAccountType_CommerceBankAccount" Member="CommerceBankAccountType" ThisKey="IdType" OtherKey="Id" Type="CommerceBankAccountType" IsForeignKey="true" />
+      <Association Name="UBank_CommerceBankAccount" Member="UBank" ThisKey="IdUBank" OtherKey="Id" Type="UBank" IsForeignKey="true" />
+      <Association Name="Commerce_CommerceBankAccount" Member="Commerce" ThisKey="RifCommerce" OtherKey="Rif" Type="Commerce" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CommerceBankAccountStatus" Member="CommerceBankAccountStatus">
+    <Type Name="CommerceBankAccountStatus">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="CommerceBankAccountStatus_CommerceBankAccount" Member="CommerceBankAccounts" ThisKey="Id" OtherKey="IdStatus" Type="CommerceBankAccount" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CommerceBankAccountType" Member="CommerceBankAccountTypes">
+    <Type Name="CommerceBankAccountType">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Association Name="CommerceBankAccountType_CommerceBankAccount" Member="CommerceBankAccounts" ThisKey="Id" OtherKey="IdType" Type="CommerceBankAccount" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CommerceStatus" Member="CommerceStatus">
+    <Type Name="CommerceStatus">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="CommerceStatus_Commerce" Member="Commerces" ThisKey="Id" OtherKey="IdCommerceStatus" Type="Commerce" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CPurchaseOrder" Member="CPurchaseOrders">
+    <Type Name="CPurchaseOrder">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="EndUserCI" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EndUserEmail" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="OrderNumber" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
+      <Column Name="RifCommerce" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="IdCUser" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="IdCPurchaseOrderStatus" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="StatusChangeDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="CPurchaseOrder_PaymentRequest" Member="PaymentRequests" ThisKey="Id" OtherKey="IdCPurchaseOrder" Type="PaymentRequest" />
+      <Association Name="CPurchaseOrder_UDeclaration" Member="UDeclarations" ThisKey="Id" OtherKey="IdCPurchaseOrder" Type="UDeclaration" />
+      <Association Name="CPurchaseOrderStatus_CPurchaseOrder" Member="CPurchaseOrderStatus" ThisKey="IdCPurchaseOrderStatus" OtherKey="Id" Type="CPurchaseOrderStatus" IsForeignKey="true" />
+      <Association Name="CUser_CPurchaseOrder" Member="CUser" ThisKey="IdCUser" OtherKey="Id" Type="CUser" IsForeignKey="true" />
+      <Association Name="Commerce_CPurchaseOrder" Member="Commerce" ThisKey="RifCommerce" OtherKey="Rif" Type="Commerce" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CPurchaseOrderStatus" Member="CPurchaseOrderStatus">
+    <Type Name="CPurchaseOrderStatus">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="CPurchaseOrderStatus_CPurchaseOrder" Member="CPurchaseOrders" ThisKey="Id" OtherKey="IdCPurchaseOrderStatus" Type="CPurchaseOrder" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CUser" Member="CUsers">
+    <Type Name="CUser">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NChar(20)" CanBeNull="true" />
+      <Column Name="LastName" Type="System.String" DbType="NChar(20)" CanBeNull="true" />
+      <Column Name="IdAspNetUser" Type="System.String" DbType="NVarChar(128)" CanBeNull="true" />
+      <Column Name="RifCommerce" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Column Name="IdCUserStatus" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="StatusChangeDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="TestMode" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="IsContact" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="LastLoginDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="CUser_CPurchaseOrder" Member="CPurchaseOrders" ThisKey="Id" OtherKey="IdCUser" Type="CPurchaseOrder" />
+      <Association Name="CUser_CUserNotification" Member="CUserNotifications" ThisKey="Id" OtherKey="IdCUser" Type="CUserNotification" />
+      <Association Name="CUser_AE_BalanceAccione" Member="AE_BalanceAcciones" ThisKey="Id" OtherKey="IdInversionista" Type="AE_BalanceAccione" />
+      <Association Name="CUser_AE_Operacion" Member="AE_Operacions" ThisKey="Id" OtherKey="IdInversionista" Type="AE_Operacion" />
+      <Association Name="AspNetUser_CUser" Member="AspNetUser" ThisKey="IdAspNetUser" OtherKey="Id" Type="AspNetUser" IsForeignKey="true" />
+      <Association Name="CUserStatus_CUser" Member="CUserStatus" ThisKey="IdCUserStatus" OtherKey="Id" Type="CUserStatus" IsForeignKey="true" />
+      <Association Name="Commerce_CUser" Member="Commerce" ThisKey="RifCommerce" OtherKey="Rif" Type="Commerce" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CUserNotification" Member="CUserNotifications">
+    <Type Name="CUserNotification">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdUNotification" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="IdCUser" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="Action" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="CUser_CUserNotification" Member="CUser" ThisKey="IdCUser" OtherKey="Id" Type="CUser" IsForeignKey="true" />
+      <Association Name="UNotification_CUserNotification" Member="UNotification" ThisKey="IdUNotification" OtherKey="Id" Type="UNotification" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CUserStatus" Member="CUserStatus">
+    <Type Name="CUserStatus">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NChar(50)" CanBeNull="true" />
+      <Association Name="CUserStatus_CUser" Member="CUsers" ThisKey="Id" OtherKey="IdCUserStatus" Type="CUser" />
+    </Type>
+  </Table>
+  <Table Name="dbo.EndUser" Member="EndUsers">
+    <Type Name="EndUser">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="CI" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="LastName" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdAspNetUser" Type="System.String" DbType="NVarChar(128)" CanBeNull="true" />
+      <Column Name="Phone" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="EndUser_PaymentRequest" Member="PaymentRequests" ThisKey="Id" OtherKey="IdEndUser" Type="PaymentRequest" />
+      <Association Name="AspNetUser_EndUser" Member="AspNetUser" ThisKey="IdAspNetUser" OtherKey="Id" Type="AspNetUser" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PaymentRequest" Member="PaymentRequests">
+    <Type Name="PaymentRequest">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="RifCommerce" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="RequestEmail" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdEndUser" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="IdPaymentRequestStatus" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdCPurchaseOrder" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="TimesSent" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ChangeDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="CPurchaseOrder_PaymentRequest" Member="CPurchaseOrder" ThisKey="IdCPurchaseOrder" OtherKey="Id" Type="CPurchaseOrder" IsForeignKey="true" />
+      <Association Name="EndUser_PaymentRequest" Member="EndUser" ThisKey="IdEndUser" OtherKey="Id" Type="EndUser" IsForeignKey="true" />
+      <Association Name="PaymentRequestStatus_PaymentRequest" Member="PaymentRequestStatus" ThisKey="IdPaymentRequestStatus" OtherKey="Id" Type="PaymentRequestStatus" IsForeignKey="true" />
+      <Association Name="Commerce_PaymentRequest" Member="Commerce" ThisKey="RifCommerce" OtherKey="Rif" Type="Commerce" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.PaymentRequestStatus" Member="PaymentRequestStatus">
+    <Type Name="PaymentRequestStatus">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="PRDescription" Type="System.String" DbType="NChar(50)" CanBeNull="true" />
+      <Association Name="PaymentRequestStatus_PaymentRequest" Member="PaymentRequests" ThisKey="Id" OtherKey="IdPaymentRequestStatus" Type="PaymentRequest" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UBank" Member="UBanks">
+    <Type Name="UBank">
+      <Column Name="Id" Type="System.String" DbType="NChar(4) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="RIF" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Association Name="UBank_CommerceBankAccount" Member="CommerceBankAccounts" ThisKey="Id" OtherKey="IdUBank" Type="CommerceBankAccount" />
+      <Association Name="UBank_UBankAccount" Member="UBankAccounts" ThisKey="Id" OtherKey="IdUBank_Receiver" Type="UBankAccount" />
+      <Association Name="UBank_UBankStatement" Member="UBankStatements" ThisKey="Id" OtherKey="IdUBank_Receiver" Type="UBankStatement" />
+      <Association Name="UBank_UBankStatementEntry" Member="UBankStatementEntries" ThisKey="Id" OtherKey="IdUBank_Issuer" Type="UBankStatementEntry" />
+      <Association Name="UBank_UBankTag" Member="UBankTags" ThisKey="Id" OtherKey="IdUBank" Type="UBankTag" />
+      <Association Name="UBank_UDeclaration" Member="UDeclarations" ThisKey="Id" OtherKey="IdUBank" Type="UDeclaration" />
+      <Association Name="UBank_UUser" Member="UUsers" ThisKey="Id" OtherKey="IdUBank" Type="UUser" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UBankAccount" Member="UBankAccounts">
+    <Type Name="UBankAccount">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="AccountNumber" Type="System.String" DbType="NChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="AccountType" Type="System.String" DbType="NChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdUBank_Receiver" Type="System.String" DbType="NChar(4)" CanBeNull="true" />
+      <Column Name="IdUSocialReason" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Association Name="UBankAccount_UBankInstruction" Member="UBankInstructions" ThisKey="Id" OtherKey="IdUBankAccount" Type="UBankInstruction" />
+      <Association Name="UBank_UBankAccount" Member="UBank" ThisKey="IdUBank_Receiver" OtherKey="Id" Type="UBank" IsForeignKey="true" />
+      <Association Name="USocialReason_UBankAccount" Member="USocialReason" ThisKey="IdUSocialReason" OtherKey="Id" Type="USocialReason" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UBankInstruction" Member="UBankInstructions">
+    <Type Name="UBankInstruction">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="[Order]" Member="Order" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IdUBankAccount" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="IdUBankInstructionType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="UBankAccount_UBankInstruction" Member="UBankAccount" ThisKey="IdUBankAccount" OtherKey="Id" Type="UBankAccount" IsForeignKey="true" />
+      <Association Name="UBankInstructionType_UBankInstruction" Member="UBankInstructionType" ThisKey="IdUBankInstructionType" OtherKey="Id" Type="UBankInstructionType" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UBankInstructionType" Member="UBankInstructionTypes">
+    <Type Name="UBankInstructionType">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="UBankInstructionType_UBankInstruction" Member="UBankInstructions" ThisKey="Id" OtherKey="IdUBankInstructionType" Type="UBankInstruction" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UBankStatement" Member="UBankStatements">
+    <Type Name="UBankStatement">
+      <Column Name="Id" Type="System.String" DbType="VarChar(200) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Date" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="IdUBank_Receiver" Type="System.String" DbType="NChar(4) NOT NULL" CanBeNull="false" />
+      <Column Name="IdSocialReason" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Association Name="UBankStatement_UBankStatementEntry" Member="UBankStatementEntries" ThisKey="Id" OtherKey="IdUBankStatement" Type="UBankStatementEntry" />
+      <Association Name="UBank_UBankStatement" Member="UBank" ThisKey="IdUBank_Receiver" OtherKey="Id" Type="UBank" IsForeignKey="true" />
+      <Association Name="USocialReason_UBankStatement" Member="USocialReason" ThisKey="IdSocialReason" OtherKey="Id" Type="USocialReason" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UBankStatementEntry" Member="UBankStatementEntries">
+    <Type Name="UBankStatementEntry">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Ref" Type="System.String" DbType="VarChar(50) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Money NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Balance" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="IdUBankStatement" Type="System.String" DbType="VarChar(200)" CanBeNull="true" />
+      <Column Name="IdUBank_Issuer" Type="System.String" DbType="NChar(4)" CanBeNull="true" />
+      <Column Name="TimeStamp" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="UBankStatementEntry_UDeclaration" Member="UDeclarations" ThisKey="Id" OtherKey="IdUBankStatementEntry" Type="UDeclaration" />
+      <Association Name="UBankStatement_UBankStatementEntry" Member="UBankStatement" ThisKey="IdUBankStatement" OtherKey="Id" Type="UBankStatement" IsForeignKey="true" DeleteRule="CASCADE" />
+      <Association Name="UBank_UBankStatementEntry" Member="UBank" ThisKey="IdUBank_Issuer" OtherKey="Id" Type="UBank" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UBankTag" Member="UBankTags">
+    <Type Name="UBankTag">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdUBank" Type="System.String" DbType="NChar(4) NOT NULL" CanBeNull="false" />
+      <Association Name="UBank_UBankTag" Member="UBank" ThisKey="IdUBank" OtherKey="Id" Type="UBank" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UDeclaration" Member="UDeclarations">
+    <Type Name="UDeclaration">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="TransactionDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Reference" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="EndUserCI" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="EndUserEmail" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdUOperationType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdUBank" Type="System.String" DbType="NChar(4) NOT NULL" CanBeNull="false" />
+      <Column Name="RifCommerce" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="IdUDeclarationStatus" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdCUser" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="IdUBankStatementEntry" Type="System.Guid" DbType="UniqueIdentifier" CanBeNull="true" />
+      <Column Name="IdCPurchaseOrder" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="CreateDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="StatusChangeDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="UDeclaration_CommerceBalance" Member="CommerceBalances" ThisKey="Id" OtherKey="IdDeclaration" Type="CommerceBalance" />
+      <Association Name="CPurchaseOrder_UDeclaration" Member="CPurchaseOrder" ThisKey="IdCPurchaseOrder" OtherKey="Id" Type="CPurchaseOrder" IsForeignKey="true" />
+      <Association Name="UBank_UDeclaration" Member="UBank" ThisKey="IdUBank" OtherKey="Id" Type="UBank" IsForeignKey="true" />
+      <Association Name="UBankStatementEntry_UDeclaration" Member="UBankStatementEntry" ThisKey="IdUBankStatementEntry" OtherKey="Id" Type="UBankStatementEntry" IsForeignKey="true" />
+      <Association Name="UDeclarationStatus_UDeclaration" Member="UDeclarationStatus" ThisKey="IdUDeclarationStatus" OtherKey="Id" Type="UDeclarationStatus" IsForeignKey="true" />
+      <Association Name="UOperationType_UDeclaration" Member="UOperationType" ThisKey="IdUOperationType" OtherKey="Id" Type="UOperationType" IsForeignKey="true" />
+      <Association Name="Commerce_UDeclaration" Member="Commerce" ThisKey="RifCommerce" OtherKey="Rif" Type="Commerce" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UDeclarationStatus" Member="UDeclarationStatus">
+    <Type Name="UDeclarationStatus">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="UDeclarationStatus_UDeclaration" Member="UDeclarations" ThisKey="Id" OtherKey="IdUDeclarationStatus" Type="UDeclaration" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UNotification" Member="UNotifications">
+    <Type Name="UNotification">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Code" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Association Name="UNotification_CUserNotification" Member="CUserNotifications" ThisKey="Id" OtherKey="IdUNotification" Type="CUserNotification" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UOperationType" Member="UOperationTypes">
+    <Type Name="UOperationType">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="UOperationType_UDeclaration" Member="UDeclarations" ThisKey="Id" OtherKey="IdUOperationType" Type="UDeclaration" />
+    </Type>
+  </Table>
+  <Table Name="dbo.USocialReason" Member="USocialReasons">
+    <Type Name="USocialReason">
+      <Column Name="Id" Type="System.String" DbType="NChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdUType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="USocialReason_UBankAccount" Member="UBankAccounts" ThisKey="Id" OtherKey="IdUSocialReason" Type="UBankAccount" />
+      <Association Name="USocialReason_UBankStatement" Member="UBankStatements" ThisKey="Id" OtherKey="IdSocialReason" Type="UBankStatement" />
+      <Association Name="USocialReason_UUser" Member="UUsers" ThisKey="Id" OtherKey="IdUSocialReason" Type="UUser" />
+      <Association Name="USocialReasonType_USocialReason" Member="USocialReasonType" ThisKey="IdUType" OtherKey="Id" Type="USocialReasonType" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.USocialReasonType" Member="USocialReasonTypes">
+    <Type Name="USocialReasonType">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="USocialReasonType_USocialReason" Member="USocialReasons" ThisKey="Id" OtherKey="IdUType" Type="USocialReason" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UUser" Member="UUsers">
+    <Type Name="UUser">
+      <Column Name="Username" Type="System.String" DbType="VarChar(500) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
+      <Column Name="IdUBank" Type="System.String" DbType="NChar(4) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="IdUSocialReason" Type="System.String" DbType="NChar(10)" CanBeNull="true" />
+      <Column Name="IdUserStatus" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="IdUUserType" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="StatusChangeDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Association Name="UBank_UUser" Member="UBank" ThisKey="IdUBank" OtherKey="Id" Type="UBank" IsForeignKey="true" />
+      <Association Name="USocialReason_UUser" Member="USocialReason" ThisKey="IdUSocialReason" OtherKey="Id" Type="USocialReason" IsForeignKey="true" />
+      <Association Name="UUserStatus_UUser" Member="UUserStatus" ThisKey="IdUserStatus" OtherKey="Id" Type="UUserStatus" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.UUserStatus" Member="UUserStatus">
+    <Type Name="UUserStatus">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NChar(50)" CanBeNull="true" />
+      <Association Name="UUserStatus_UUser" Member="UUsers" ThisKey="Id" OtherKey="IdUserStatus" Type="UUser" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_Archivos" Member="AE_Archivos">
+    <Type Name="AE_Archivo">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FechaCreacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IdAE_avance" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Valores" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="FechaEjecucion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Ruta" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="Monto" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="IdAE_ArchivosStatus" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="RutaRespuesta" Type="System.String" DbType="NVarChar(150)" CanBeNull="true" />
+      <Column Name="ConsultaExitosa" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="StatusChangeDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="CorreoSoporteEnviado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="AE_ArchivosStatus_AE_Archivo" Member="AE_ArchivosStatus" ThisKey="IdAE_ArchivosStatus" OtherKey="Id" Type="AE_ArchivosStatus" IsForeignKey="true" />
+      <Association Name="AE_Avance_AE_Archivo" Member="AE_Avance" ThisKey="IdAE_avance" OtherKey="Id" Type="AE_Avance" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_Dolar" Member="AE_Dolars">
+    <Type Name="AE_Dolar">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IdUsuario" Type="System.String" DbType="NVarChar(128) NOT NULL" CanBeNull="false" />
+      <Column Name="Tasa" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PromedioAcumulado" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaValor" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_Variables" Member="AE_Variables">
+    <Type Name="AE_Variable">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="NVarChar(250) NOT NULL" CanBeNull="false" />
+      <Column Name="Monto" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Tasa" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_ValorAccion" Member="AE_ValorAccions">
+    <Type Name="AE_ValorAccion">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FechaOperacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaCreacionRegistro" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaUltimaActualizacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="TotalAcciones" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalCapitalusd" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ValorAccion" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="IdBalanceDiario" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdBalanceAcciones" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="AE_BalanceDiario_AE_ValorAccion" Member="AE_BalanceDiario" ThisKey="IdBalanceDiario" OtherKey="Id" Type="AE_BalanceDiario" IsForeignKey="true" />
+      <Association Name="AE_BalanceAccione_AE_ValorAccion" Member="AE_BalanceAccione" ThisKey="IdBalanceAcciones" OtherKey="Id" Type="AE_BalanceAccione" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_BalanceDiario" Member="AE_BalanceDiarios">
+    <Type Name="AE_BalanceDiario">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FechaOperaicon" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaCreacionRegistro" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaUltimaActualizacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="TotalCuentaBs" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalCuentaEstimadoUsd" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalPorCobrarBs" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalPorCobrarEstimadoUsd" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalCuentaUsd" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalActivos" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalPasivoUsd" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalPasivoBs" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalPasivosEstimadoUsd" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalPasivos" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalExcluirUsd" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalExcluirBs" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalExcluirEstimadoUsd" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalExcluir" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TasaUtilizada" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalCapital" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalCobroDiario" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalGananciaDiaria" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Association Name="AE_BalanceDiario_AE_ValorAccion" Member="AE_ValorAccions" ThisKey="Id" OtherKey="IdBalanceDiario" Type="AE_ValorAccion" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_OperacionAporteCapital" Member="AE_OperacionAporteCapitals">
+    <Type Name="AE_OperacionAporteCapital">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdOperacion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Monto" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Moneda" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaRegistro" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="CapitalOperacion" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Association Name="AE_Operacion_AE_OperacionAporteCapital" Member="AE_Operacion" ThisKey="IdOperacion" OtherKey="Id" Type="AE_Operacion" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_OperacionPago" Member="AE_OperacionPago1s">
+    <Type Name="AE_OperacionPago1">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Monto" Type="System.Decimal" DbType="Decimal(18,0) NOT NULL" CanBeNull="false" />
+      <Column Name="Moneda" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Tasa" Type="System.Decimal" DbType="Decimal(18,0) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaPago" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IdOperacion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TipoPagoUtilidad" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="TipoPagoCapital" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="TipoReinversionUtilidad" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="AE_Operacion_AE_OperacionPago1" Member="AE_Operacion" ThisKey="IdOperacion" OtherKey="Id" Type="AE_Operacion" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_BalanceAcciones" Member="AE_BalanceAcciones">
+    <Type Name="AE_BalanceAccione">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TotaCapital" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="CapitalEntrada" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="CapitalSalida" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="FactorInicial" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalAccionesExistentes" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="AccionesEntrantes" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="AccionesRetiradas" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="AccionesAjustadas" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalAcciones" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaOperacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaRegistro" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaUltimaActualizacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="ValorAcciones" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="IdInversionista" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Association Name="AE_BalanceAccione_AE_ValorAccion" Member="AE_ValorAccions" ThisKey="Id" OtherKey="IdBalanceAcciones" Type="AE_ValorAccion" />
+      <Association Name="CUser_AE_BalanceAccione" Member="CUser" ThisKey="IdInversionista" OtherKey="Id" Type="CUser" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_OperacionPago" Member="AE_OperacionPagos">
+    <Type Name="AE_OperacionPago">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Monto" Type="System.Decimal" DbType="Decimal(18,0) NOT NULL" CanBeNull="false" />
+      <Column Name="Moneda" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Tasa" Type="System.Decimal" DbType="Decimal(18,0) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaPago" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="IdOperacion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TipoPagoUtilidad" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="TipoPagoCapital" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="TipoReinversionUtilidad" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="AE_Operacion_AE_OperacionPago" Member="AE_Operacion" ThisKey="IdOperacion" OtherKey="Id" Type="AE_Operacion" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_AdministradorPago" Member="AE_AdministradorPagos">
+    <Type Name="AE_AdministradorPago">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdOperacion" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaRegistro" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Monto" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Moneda" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Tasa" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PagoUtilidad" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="AE_Operacion_AE_AdministradorPago" Member="AE_Operacion" ThisKey="IdOperacion" OtherKey="Id" Type="AE_Operacion" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_GastoFondo" Member="AE_GastoFondos">
+    <Type Name="AE_GastoFondo">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FechaRegsitro" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Monto" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_Propuesta" Member="AE_Propuestas">
+    <Type Name="AE_Propuesta">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="RifCommerce" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="PorcentajeOpcion1" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PorcentajeOpcion2" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PorcentajeOpcion3" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="AvanceOpcion1" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="AvanceOpcion2" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="AvanceOpcion3" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ReembolsoOpcion1" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ReembolsoOpcion2" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ReembolsoOpcion3" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="MaximoCobroOpcion1" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="MaximoCobroOpcion2" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="MaximoCobroOpcion3" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Estatus" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="FechaCreacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Tasa" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="AvanceOpcion1Bs" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="AvanceOpcion2Bs" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="AvanceOpcion3Bs" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="ReembolsoOpcion1Bs" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="ReembolsoOpcion2Bs" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="ReembolsoOpcion3Bs" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="MaximoCobroOpcion1Bs" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="MaximoCobroOpcion2Bs" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="MaximoCobroOpcion3Bs" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="Modalidad" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="Commerce_AE_Propuesta" Member="Commerce" ThisKey="RifCommerce" OtherKey="Rif" Type="Commerce" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_CambioDiario" Member="AE_CambioDiarios">
+    <Type Name="AE_CambioDiario">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FechaRegistro" Type="System.DateTime" DbType="Date NOT NULL" CanBeNull="false" />
+      <Column Name="MontoBs" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="CantidadUsd" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TasaUtilizada" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
+      <Column Name="TasaPromedio" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="IdEstatus" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_EstadoCuenta" Member="AE_EstadoCuentas">
+    <Type Name="AE_EstadoCuenta">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdAvance" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaRegistro" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Monto" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="SaldoInicial" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="SaldoFinal" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Abono" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Estatus" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaOperacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Lote" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="MontoBase" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="Tasa" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="MontoBs" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="SoloUtilidad" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Efectivo" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="EfectivoCambiado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="AE_EstadoCuenta_AE_MovimientosDebito" Member="AE_MovimientosDebitos" ThisKey="Id" OtherKey="IdAE_EstadoCuenta" Type="AE_MovimientosDebito" />
+      <Association Name="AE_Avance_AE_EstadoCuenta" Member="AE_Avance" ThisKey="IdAvance" OtherKey="Id" Type="AE_Avance" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_ValorAccionTR" Member="AE_ValorAccionTRs">
+    <Type Name="AE_ValorAccionTR">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="FechaOperacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaCreacionRegistro" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaUltimaActualizacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="TotalAcciones" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="CapitalInicial" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="CapitalPorCobrar" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="SaldoUSD" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="CuentaVenezuela" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="Tasa" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="UsdVenezuela" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="UsdTransito" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="AbonoCapital" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="UtilidadReportada" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalCobroDiario" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="GastoReportado" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PagoUtilidadAdministrador" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PagoUtilidadMesInversionista" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PagoCapitalInversionista" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Prestamo" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="CapitalNuevoIngreso" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="NuevoCapital" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ValorAccion" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_Operacion" Member="AE_Operacions">
+    <Type Name="AE_Operacion">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="IdInversionista" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaInicioOperacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaFinOperacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Monto" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PorcentajeGanancia" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="MontoGanado" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TipoPago" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdEstatus" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="RepresentacionFondo" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="MontoInicial" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="MontoFinal" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="RetiraUtilidadMes" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="SeRetiraFondo" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="AE_Operacion_AE_OperacionAporteCapital" Member="AE_OperacionAporteCapitals" ThisKey="Id" OtherKey="IdOperacion" Type="AE_OperacionAporteCapital" />
+      <Association Name="AE_Operacion_AE_OperacionPago1" Member="AE_OperacionPago1s" ThisKey="Id" OtherKey="IdOperacion" Type="AE_OperacionPago1" />
+      <Association Name="AE_Operacion_AE_OperacionPago" Member="AE_OperacionPagos" ThisKey="Id" OtherKey="IdOperacion" Type="AE_OperacionPago" />
+      <Association Name="AE_Operacion_AE_AdministradorPago" Member="AE_AdministradorPagos" ThisKey="Id" OtherKey="IdOperacion" Type="AE_AdministradorPago" />
+      <Association Name="CUser_AE_Operacion" Member="CUser" ThisKey="IdInversionista" OtherKey="Id" Type="CUser" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_ArchivoUpload" Member="AE_ArchivoUploads">
+    <Type Name="AE_ArchivoUpload">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Fecha" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="RifCommerce" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="Ruta" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="FileName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Commerce_AE_ArchivoUpload" Member="Commerce" ThisKey="RifCommerce" OtherKey="Rif" Type="Commerce" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Commerce" Member="Commerces">
+    <Type Name="Commerce">
+      <Column Name="Rif" Type="System.String" DbType="NChar(10) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="BusinessName" Type="System.String" DbType="NChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="SocialReasonName" Type="System.String" DbType="NChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Address" Type="System.String" DbType="NChar(512) NOT NULL" CanBeNull="false" />
+      <Column Name="Phone" Type="System.String" DbType="NChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="IdCommerceStatus" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="WithdrawalFee" Type="System.Decimal" DbType="Decimal(5,3) NOT NULL" CanBeNull="false" />
+      <Column Name="Commission" Type="System.Decimal" DbType="Money NOT NULL" CanBeNull="false" />
+      <Column Name="Trust" Type="System.Decimal" DbType="Decimal(5,3) NOT NULL" CanBeNull="false" />
+      <Column Name="Nativa" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="Commerce_AE_MovimientosCuenta" Member="AE_MovimientosCuentas" ThisKey="Rif" OtherKey="RifCommerce" Type="AE_MovimientosCuenta" />
+      <Association Name="Commerce_AE_ProcesoSolicitudApi" Member="AE_ProcesoSolicitudApis" ThisKey="Rif" OtherKey="RifCommerce" Type="AE_ProcesoSolicitudApi" />
+      <Association Name="Commerce_AE_UsuarioBanco" Member="AE_UsuarioBancos" ThisKey="Rif" OtherKey="RifCommerce" Type="AE_UsuarioBanco" />
+      <Association Name="Commerce_CommerceBalance" Member="CommerceBalances" ThisKey="Rif" OtherKey="RifCommerce" Type="CommerceBalance" />
+      <Association Name="Commerce_CommerceBankAccount" Member="CommerceBankAccounts" ThisKey="Rif" OtherKey="RifCommerce" Type="CommerceBankAccount" />
+      <Association Name="Commerce_CPurchaseOrder" Member="CPurchaseOrders" ThisKey="Rif" OtherKey="RifCommerce" Type="CPurchaseOrder" />
+      <Association Name="Commerce_CUser" Member="CUsers" ThisKey="Rif" OtherKey="RifCommerce" Type="CUser" />
+      <Association Name="Commerce_PaymentRequest" Member="PaymentRequests" ThisKey="Rif" OtherKey="RifCommerce" Type="PaymentRequest" />
+      <Association Name="Commerce_UDeclaration" Member="UDeclarations" ThisKey="Rif" OtherKey="RifCommerce" Type="UDeclaration" />
+      <Association Name="Commerce_AE_Propuesta" Member="AE_Propuestas" ThisKey="Rif" OtherKey="RifCommerce" Type="AE_Propuesta" />
+      <Association Name="Commerce_AE_ArchivoUpload" Member="AE_ArchivoUploads" ThisKey="Rif" OtherKey="RifCommerce" Type="AE_ArchivoUpload" />
+      <Association Name="Commerce_AE_Avance" Member="AE_Avances" ThisKey="Rif" OtherKey="RifCommerce" Type="AE_Avance" />
+      <Association Name="Commerce_AE_Avance1" Member="AE_Avances1" ThisKey="Rif" OtherKey="RifCommerce" Type="AE_Avance" />
+      <Association Name="CommerceStatus_Commerce" Member="CommerceStatus" ThisKey="IdCommerceStatus" OtherKey="Id" Type="CommerceStatus" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.AE_Avance" Member="AE_Avances">
+    <Type Name="AE_Avance">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="RifCommerce" Type="System.String" DbType="NChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaCreacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Porcentaje" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Avance" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Reembolso" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="MaximoCobro" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="IdEstatus" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IdPropuesta" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="NumeroCuenta" Type="System.String" DbType="NChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="Usuario" Type="System.String" DbType="NChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="Clave" Type="System.String" DbType="NChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaInicioCobro" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="TasaUtilizada" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="AvanceBs" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="ReembolsoBs" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="MaximoCobroBs" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="GastoBanco" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="PorcentajePrestamo" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Modalidad" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="AprobadoNativa" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="AE_Avance_AE_Archivo" Member="AE_Archivos" ThisKey="Id" OtherKey="IdAE_avance" Type="AE_Archivo" />
+      <Association Name="AE_Avance_AE_EstadoCuenta" Member="AE_EstadoCuentas" ThisKey="Id" OtherKey="IdAvance" Type="AE_EstadoCuenta" />
+      <Association Name="AE_AvanceEfectivoEstatus_AE_Avance" Member="AE_AvanceEfectivoEstatus" ThisKey="IdEstatus" OtherKey="Id" Type="AE_AvanceEfectivoEstatus" IsForeignKey="true" />
+      <Association Name="Commerce_AE_Avance" Member="Commerce" ThisKey="RifCommerce" OtherKey="Rif" Type="Commerce" IsForeignKey="true" />
+      <Association Name="Commerce_AE_Avance1" Member="Commerce1" ThisKey="RifCommerce" OtherKey="Rif" Type="Commerce" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CP_Beneficiarios" Member="CP_Beneficiarios">
+    <Type Name="CP_Beneficiario">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Rif" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Departamento" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Contrato" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="TipoPagador" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Cuenta" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="TitularCuenta" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Registro" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Actualizacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CP_Archivo" Member="CP_Archivos">
+    <Type Name="CP_Archivo">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Ruta" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Registro" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Contenido" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="FechaLectura" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Tipo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="ReferenciaOrigen" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CP_ArchivoEstadoCuenta" Member="CP_ArchivoEstadoCuentas">
+    <Type Name="CP_ArchivoEstadoCuenta">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CodigoComercio" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="ArchivoLecturaPolar" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaLectura" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="MontoDebito" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="DetalleDebito" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="MontoCredito" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="DetalleCredito" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="Total" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="TotalArchivo" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="Estatus" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ArchivoCobroBanesco" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

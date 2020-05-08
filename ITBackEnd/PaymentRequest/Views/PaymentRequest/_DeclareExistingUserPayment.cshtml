@@ -1,0 +1,274 @@
+﻿@model InstaTransfer.BLL.Models.Declaration.DeclarationRequestViewModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    InstaTransfer.DataAccess.PaymentRequest request = ViewBag.Request;
+    InstaTransfer.DataAccess.EndUser endUser = ViewBag.EndUser;
+    InstaTransfer.DataAccess.Commerce commerce = request.Commerce;
+    List<InstaTransfer.DataAccess.UBank> banks = ViewBag.Banks;
+}
+
+<!-- DatePicker -->
+<link href="~/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+<!-- Bootstrap Tour -->
+<link href="~/plugins/bootstrap-tour/bootstrap-tour.min.css" rel="stylesheet" />
+
+
+
+@{
+    ViewBag.Title = "Solicitud de Pago en Transax";
+}
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new PaymentRequest.Models.PageTitle { title = "Solicitud de Pago en Transax", breadcumb = "Inicio" }); }
+
+<!-- Page Body -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>Declaración del Pago</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="clearfix">
+                            <div class="pull-left">
+                                <h1 class="text-right">@commerce.BusinessName</h1>
+                            </div>
+                            <div class="pull-right">
+                                <h4>
+                                    Solicitud # <br>
+                                    <strong>@request.Id</strong>
+                                </h4>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <div class="pull-left m-t-30">
+                                    <address>
+                                        <strong>@commerce.SocialReasonName</strong><br>
+                                        @commerce.Address<br>
+                                        <abbr title="Teléfono">Tel:</abbr> @commerce.Phone
+                                    </address>
+                                </div>
+                                <div class="pull-right m-t-30">
+                                    <p><strong>Fecha de la Orden: </strong> @request.CPurchaseOrder.CreateDate.ToShortDateString()</p>
+                                    <p class="m-t-10"><strong>Status de la Orden: </strong> <span class="label label-warning">@request.CPurchaseOrder.CPurchaseOrderStatus.Description</span></p>
+                                    <p class="m-t-10"><strong>Orden #: </strong> @(request.CPurchaseOrder.OrderNumber != null ? request.CPurchaseOrder.OrderNumber : "No Especificado")</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="m-h-50"></div>*@
+                <div class="row">
+                    <div class="col-md-12">
+                        @using (Html.BeginForm("CreateExistingUserDeclaration", "PaymentRequest", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", id = "declarationForm", role = "form", novalidate = "", data_parsley_validate = "" }))
+                        {
+                            @Html.AntiForgeryToken();
+
+                            // Campos Ocultos
+                            @Html.HiddenFor(m => m.amount, Model.amount);
+                            @Html.HiddenFor(m => m.idoperationtype, Model.idoperationtype);
+                            @Html.HiddenFor(m => m.idpaymentrequest, Model.idpaymentrequest);
+                            @Html.HiddenFor(m => m.idpurchaseorder, Model.idpurchaseorder);
+                            @Html.HiddenFor(m => m.requestemail, Model.requestemail);
+
+                            @*@Html.ValidationSummary("Registro fallido", new { @class = "text-danger" })*@
+                            <div class="col-md-6">
+                                <div class="card-box ">
+                                    <h4 class="m-t-0 header-title"><b>Datos del Usuario</b></h4>
+                                    <p class="text-muted font-13 m-b-30">
+                                        Datos personales del pagador.
+                                    </p>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label>Cédula</label>
+                                            @Html.TextBoxFor(m => m.declarationuser.userci, new { @class = "form-control", required = "", @readonly = "", data_parsley_maxlength = "30", data_parsley_trigger = "focusout" })
+                                            @*@Html.ValidationMessageFor(m => m.commerceUserModel.Name, null, new { @class = "text-danger" })*@
+                                        </div>
+                                    </div>
+                                    <div class="row p-t-10">
+                                        <div class="col-md-6">
+                                            <label>Nombre</label>
+                                            @Html.TextBoxFor(m => m.declarationuser.userfirstname, new { @class = "form-control", required = "", @readonly = "", data_parsley_maxlength = "30", data_parsley_trigger = "focusout" })
+                                            @*@Html.ValidationMessageFor(m => m.commerceUserModel.Name, null, new { @class = "text-danger" })*@
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Apellido</label>
+                                            @Html.TextBoxFor(m => m.declarationuser.userlastname, new { @class = "form-control", required = "", @readonly = "", data_parsley_maxlength = "30", data_parsley_trigger = "focusout" })
+                                            @*@Html.ValidationMessageFor(m => m.commerceUserModel.LastName, null, new { @class = "text-danger" })*@
+                                        </div>
+                                    </div>
+                                    <div class="row p-t-10">
+                                        <div class="col-md-6">
+                                            <label>Teléfono</label>
+                                            @Html.TextBoxFor(m => m.declarationuser.userphone, new { @class = "form-control block", @readonly = "", @type = "tel", required = "" })
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Correo Electrónico</label>
+                                            @Html.TextBoxFor(m => m.declarationuser.useremail, new { @class = "form-control", @readonly = "", required = "" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card-box">
+                                    <h4 class="m-t-0 header-title"><b>Datos del Pago</b></h4>
+                                    <p class="text-muted font-13 m-b-30">
+                                        Ingrese los datos del recibo de pago.
+                                    </p>
+                                    <div class="">
+                                        <label>Banco Origen</label>
+                                        @Html.DropDownListFor(m => m.idissuingbank, new SelectList(banks, "Id", "Name"), "Seleccione su banco", new { @class = "text-box form-control", data_parsley_required = "" })
+                                        @*@Html.ValidationMessageFor(m => m.commerceUserModel.Name, null, new { @class = "text-danger" })*@
+
+                                    </div>
+                                    <div class="p-t-10">
+                                        <label>Fecha de la Transacción</label>
+                                        <div id="transactiondate-container" class="input-group">
+                                            @Html.TextBoxFor(m => m.transactiondate, new { @class = "form-control", id = "datepicker-autoclose", required = "", placeholder = "dd/MM/yy", data_parsley_maxlength = "30", data_parsley_trigger = "change focusout" })
+                                            <span class="input-group-addon bg-primary b-0 text-white"><i class="md md-event"></i></span>
+                                            @*@Html.ValidationMessageFor(m => m.commerceUserModel.Name, null, new { @class = "text-danger" })*@
+                                        </div>
+                                    </div>
+                                    <div class="p-t-10">
+                                        <label>Número de Referencia</label>
+                                        @Html.TextBoxFor(m => m.referencenumber, new { @class = "form-control", required = "", data_parsley_maxlength = "20", data_parsley_minlength = "5", data_parsley_trigger = "focusout" })
+                                        @*@Html.ValidationMessageFor(m => m.commerceUserModel.LastName, null, new { @class = "text-danger" })*@
+                                    </div>
+                                    <div class="row">
+                                        <hr>
+                                        <div class="col-sm-7">
+                                            <h5 class="small text-inverse">TÉRMINOS Y CONDICIONES</h5>
+                                            <small>
+                                                Todas las declaraciones serán confirmadas dentro de los
+                                                primeros 3 días hábiles luego de ser realizada la transferencia. De no
+                                                ser confirmado el pago dentro del tiempo establecido, le haremos
+                                                llegar un correo solicitando declarar el pago nuevamente.
+                                            </small>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <h3 class="text-right">Bs. @request.Amount.ToString("N2")</h3>
+                                        </div>
+                                        <div class="text-right p-t-10 hidden-print">
+                                            <a href="javascript:window.print()" class="btn btn-inverse waves-effect waves-light"><i class="fa fa-print"></i></a>
+                                            <button id="btn-declarar" type="button" class="btn btn-primary waves-effect waves-light btn-declarar">Declarar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end row -->
+<!--International Telephone Input-->
+<script src="~/plugins/intl-tel-input/intlTelInput.min.js"></script>
+<!-- Parsley JS -->
+<script type="text/javascript" src="~/plugins/parsleyjs/dist/parsley.min.js"></script>
+<script src="~/plugins/parsleyjs/dist/i18n/es.js"></script>
+<!-- DatePicker -->
+<script src="~/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+<script src="~/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js"></script>
+<!-- Bootstrap Tour -->
+<script src="~/plugins/bootstrap-tour/bootstrap-tour.min.js"></script>
+
+<script type="text/javascript">
+
+    function createDeclaration() {
+        $.post("@Url.Action("CreateExistingUserDeclaration", "PaymentRequest")", $("#declarationForm").serialize(), function (r) {
+            console.log(r);
+            if (r.success) {
+                HideLoader();
+                toastr.options.onHidden = function () { window.top.location = r.url; }
+                toastr.options.progressBar = true;
+                toastr.success(r.message, "Operación exitosa");
+            }
+            else {
+                HideLoader();
+                toastr.error(r.message, "Operación fallida");
+                $('.btn-declarar').prop("disabled", false);
+            }
+        });
+    }
+
+    // Instance the tour
+    var tour = new Tour({
+        steps: [
+        {
+            element: "#idissuingbank",
+            title: "Paso 1",
+            content: "Seleccione el banco desde donde se realizó la transferencia",
+            placement: "left"
+        },
+        {
+            element: "#transactiondate-container",
+            title: "Paso 2",
+            content: "Seleccione la fecha en la que realizó la transferencia",
+            placement: "left"
+        },
+        {
+            element: "#referencenumber",
+            title: "Paso 3",
+            content: "Coloque el número de referencia suministrado por su banco",
+            placement: "left"
+        },
+        {
+            element: "#btn-declarar",
+            title: "Paso 4",
+            content: "Presione declarar para finalizar el proceso",
+            placement: "left"
+        }],
+        backdrop: true
+    });
+
+    // Initialize the tour
+    tour.init();
+
+    // Start the tour
+    tour.start();
+
+    // Ver Tour
+    if (tour.ended) {
+        $('#start-tour').removeAttr('hidden');
+    }
+
+    $('#start-tour').click(function (e) {
+        e.preventDefault();
+        tour.restart();
+    });
+
+
+    // Date Picker
+    $('#datepicker-autoclose').datepicker({
+        endDate: "1d",
+        startDate: "01-06-2017",
+        language: "es",
+        format: "dd/mm/yy",
+        autoclose: true,
+        todayHighlight: true,
+        todayBtn: true
+    }).on('hide', function () {
+        $(this).parsley().validate();
+    });
+
+    // Submit
+    $('.btn-declarar').click(function () {
+
+        $("#declarationForm").parsley().validate();
+        if ($("#declarationForm").parsley().isValid()) {
+            ShowLoader();
+            $('.btn-declarar').prop("disabled", true);
+
+            checkSession(function () {
+                createDeclaration();
+            });
+        }
+    });
+
+</script>

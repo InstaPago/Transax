@@ -1,0 +1,562 @@
+﻿@model InstaTransfer.DataAccess.AE_Propuesta
+@{
+    Layout = null;
+    bool avanceactiva = (bool)ViewBag.Avance;
+    List<InstaTransfer.DataAccess.CommerceBankAccount> _Cuentas = (List<InstaTransfer.DataAccess.CommerceBankAccount>)ViewBag.Cuentas;
+    string __rif = Model.RifCommerce;
+    List<InstaTransfer.DataAccess.AE_UsuarioBanco> Usuarios = (List<InstaTransfer.DataAccess.AE_UsuarioBanco>)ViewBag.Usuarios;
+    bool modo = Model.Modalidad;
+}
+
+<div class="col-lg-12 col-md-12 col-sm-12 text-center">
+    <img src="@Url.Content("~/Content/images/transax-logo.png")" height=40 />
+</div>
+<input type="hidden" id="PropuestaId" value="@Model.Id" />
+<input type="hidden" id="_rif" value="@Model.RifCommerce" />
+<div class="col-lg-11 col-md-11 col-sm-11 text-center" style="margin-top:3%;">
+    TransaX puede otorgarte un financimiento para que puedas concentrarte en crecer tu negocio.
+    <br />
+    <br />
+    Selecciona cualquiera de las siguientes opciones para solicitar tu capital.
+    <br />
+    <br />
+    Los fondos estarán disponibles en tu cuenta el próximo día hábil.
+    <br />
+    <br />
+    @Model.FechaCreacion.ToString("dd") de  @Model.FechaCreacion.ToString("MMMM") de @Model.FechaCreacion.ToString("yyyy")
+    <br />
+    <br />
+</div>
+<div class="col-lg-1">
+    <button id="update-config" style="width:auto;" class="btn btn-default waves-effect waves-light" type="button" data-toggle="modal" data-target="#updateconfig">
+        @*Configuración*@
+
+        <i class="md  md-settings" style="font-size:20px;"></i>
+    </button>
+    <!-- Modal -->
+    <div id="updateconfig" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Detalle Propuesta</h4>
+                </div>
+                <form action="@Url.Action("_UpdateConfigPropuesta", "Avance")" typeof="post" id="formupdateconfigPropuesta">
+                    <div class="modal-body">
+                        <input type="hidden" value="@Model.Id" name="__id" />
+                        <label>Opcion 1</label>
+                        <input type="text" class="form-control" name="__avance1" id="numerocuenta" value="@Model.AvanceOpcion1" required="required" />
+                        <label>Retorno 1</label>
+                        <input type="text" class="form-control" name="__reembolso1" id="usuario" value="@Model.ReembolsoOpcion1" required="required" />
+                        <label>Maximo cobro 1</label>
+                        <input type="text" class="form-control" name="__maximo1" id="clave" value="@Model.MaximoCobroOpcion1" required="required" />
+                        <hr />
+                        <label>Opcion 2</label>
+                        <input type="text" class="form-control" name="__avance2" id="numerocuenta" value="@Model.AvanceOpcion2" required="required" />
+                        <label>Retorno 2</label>
+                        <input type="text" class="form-control" name="__reembolso2" id="usuario" value="@Model.ReembolsoOpcion2" required="required" />
+                        <label>Maximo cobro 2</label>
+                        <input type="text" class="form-control" name="__maximo2" id="clave" value="@Model.MaximoCobroOpcion2" required="required" />
+                        <hr />
+                        <label>Opcion 3</label>
+                        <input type="text" class="form-control" name="__avance3" id="numerocuenta" value="@Model.AvanceOpcion3" required="required" />
+                        <label>Retorno 3</label>
+                        <input type="text" class="form-control" name="__reembolso3" id="usuario" value="@Model.ReembolsoOpcion3" required="required" />
+                        <label>Maximo cobro 3</label>
+                        <input type="text" class="form-control" name="__maximo3" id="clave" value="@Model.MaximoCobroOpcion3" required="required" />
+                    </div>
+                    <div class="modal-footer">
+                        <input type="submit" id="updateinfo" class="btn btn-primary" value="Guardar" />
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+
+    <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-center propuesta" style="border:1px solid gray; padding:4%;">
+        <div class="col-lg-1 pull-right">
+            @*@if (!avanceactiva)
+                {*@
+            <div class="radio radio-primary">
+                <input id="radio-h1" class="radio seleccion" type="radio" value="1" name="seleccion">
+                <label for="radio-h1">
+                </label>
+            </div>
+            @*}*@
+        </div>
+        <label>Opción 1</label>
+        <br />
+        <h2>  @Model.AvanceOpcion1.ToString("N2") $</h2>
+        @if (!modo)
+        {
+        <label style="color:gray; font-size:10pt;">(@Model.AvanceOpcion1Bs.Value.ToString("N2") Bs)</label>
+        }
+        <br />
+        @if (!modo)
+        {
+        <span>
+            Pagas con el  @Model.PorcentajeOpcion1 % de las ventas diarias de tarjeta<br />
+            hasta que hayas reembolsado
+        </span>
+        <br />
+        <span>@Model.ReembolsoOpcion1.ToString("N2") $ </span>
+        <br />
+        <span> (máximo cobro diario por @Model.MaximoCobroOpcion1.ToString("N2") $) </span>
+        <br />
+        <label style="color:gray; font-size:10pt;">(@Model.MaximoCobroOpcion1Bs.Value.ToString("N2") Bs)</label>
+        }
+        else
+        {
+        <span>
+            Pagas el 12% mensual en base al total del Capital pendiente por pagar.
+        </span>
+        }
+
+    </div>
+
+
+</div>
+<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+    <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12 text-center propuesta" style="border:1px solid gray; padding:4%;">
+        <label>Opción 2</label>
+        @*@if (!avanceactiva)
+            {*@
+        <div class="col-lg-1 pull-right">
+
+            <div class="radio radio-primary">
+                <input id="radio-h2" class="radio seleccion" type="radio" value="2" name="seleccion">
+                <label for="radio-h2">
+                </label>
+            </div>
+
+        </div>
+        @*}*@
+        <br />
+        <h2>@Model.AvanceOpcion2.ToString("N2") $</h2>
+        @if (!modo)
+        {
+        <label style="color:gray; font-size:10pt;">(@Model.AvanceOpcion2Bs.Value.ToString("N2") Bs)</label>
+        }
+        <br />
+        @if (!modo)
+        {
+        <span>
+            Pagas con el  @Model.PorcentajeOpcion2 % de las ventas diarias de tarjeta<br />
+            hasta que hayas reembolsado
+        </span>
+        <br />
+        <span>@Model.ReembolsoOpcion2.ToString("N2") $ </span>
+        <br />
+        <span> (máximo cobro diario por @Model.MaximoCobroOpcion2.ToString("N2") $) </span>
+        <br />
+        <label style="color:gray; font-size:10pt;">(@Model.MaximoCobroOpcion2Bs.Value.ToString("N2") Bs)</label>
+        }
+        else
+        {
+        <span>
+            Pagas el 10% mensual en base al total del Capital pendiente por pagar.
+        </span>
+        }
+    </div>
+
+
+</div>
+<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+
+    <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12  text-center propuesta" style="border:1px solid gray; padding:4%;">
+        <label>Opción 3</label>
+        @*@if (!avanceactiva)
+            {*@
+        <div class="col-lg-1 pull-right">
+
+            <div class="radio radio-primary">
+                <input id="radio-h3" class="radio seleccion" type="radio" value="3" name="seleccion">
+                <label for="radio-h3">
+
+                </label>
+
+            </div>
+        </div>
+        @*}*@
+        <br />
+        <h2>   @Model.AvanceOpcion3.ToString("N2") $</h2>
+        @if (!modo)
+        {
+        <label style="color:gray; font-size:10pt;">(@Model.AvanceOpcion3Bs.Value.ToString("N2") Bs)</label>
+        }
+        <br />
+        @if (!modo)
+        {
+        <span>
+            Pagas con el  @Model.PorcentajeOpcion3 % de las ventas diarias de tarjeta<br />
+            hasta que hayas reembolsado
+        </span>
+        <br />
+        <span>@Model.ReembolsoOpcion3.ToString("N2") $ </span>
+        <br />
+        <span> (máximo cobro diario por @Model.MaximoCobroOpcion3.ToString("N2") $) </span>
+        <br />
+        <label style="color:gray; font-size:10pt;">(@Model.MaximoCobroOpcion3Bs.Value.ToString("N2") Bs)</label>
+        }
+        else
+        {
+        <span>
+            Pagas el 10% mensual en base al total del Capital pendiente por pagar.
+        </span>
+        }
+    </div>
+
+
+
+</div>
+
+@*@if (!avanceactiva)
+    {*@
+<div class="clearfix"></div>
+<div class="form-group clearfix">
+    <div class="col-lg-12 text-center" style="margin-top:4%">
+        <a id="printticketanchor" class="btn btn-success" target="_blank" href="@Url.Action("_printePropuesta", "Account" , new { _id = Model.Id })">Descargar .pdf</a>
+
+        <input type="button" id="_Mail" value="Enviar por correo" class="btn btn-success" />
+        <input type="button" id="_Eliminar" value="Eliminar Propuesta" class="btn btn-danger" />
+        <iframe id="download" width="1" height="1" style="display:none"></iframe>
+    </div>
+</div>
+<div class="clearfix"></div>
+
+@if (Usuarios.Count > 0)
+{
+    <div class="clearfix"></div>
+    <div class="col-lg-12 text-center" style="margin-top:3%;">
+        <h4 class="text-dark  header-title m-t-0">DATOS BANCARIOS</h4>
+        <hr />
+    </div>
+    <div class="col-lg-6" style="margin-top:1%;">
+        <div class="col-lg-12 text-center">
+            <h4 class="text-dark  header-title m-t-0">nuevo usuario</h4>
+        </div>
+        <input type="hidden" value="@__rif" name="rif" />
+        <input type="hidden" value="@modo.ToString()" name="modo" id="modo" />
+        <div class="form-group clearfix">
+            <label class="col-lg-3 control-label" for="usuario"> Usuario *</label>
+            <div class="clearfix"></div>
+            <div class="col-lg-8">
+                <input id="_Usuario" name="Usuario" type="text" class="required form-control" required>
+            </div>
+        </div>
+        <div class="form-group clearfix">
+            <label class="col-lg-3 control-label " for="clave"> Contrasena *</label>
+            <div class="clearfix"></div>
+            <div class="col-lg-8">
+                <input id="_Clave" name="Clave" type="password" class="required form-control" required>
+
+            </div>
+        </div>
+        <div class="form-group clearfix">
+            <label class="col-lg-3 control-label " for="surname1"> Cuenta *</label>
+            <div class="clearfix"></div>
+            <div class="col-lg-8">
+                <select name="IdCuenta" class="form-control" id="cuentabancaria">
+                    @foreach (var _item in _Cuentas)
+                    {
+                    <option value="@_item.Id">@_item.Alias - @_item.AccountNumber.Substring((_item.AccountNumber.Length - 6), 6)</option>
+                    }
+
+                </select>
+
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        @*<div class="col-lg-6 col-lg-offset-3">
+                <input class="btn btn-primary" id="Iniciar" type="submit" value="Crear" />
+            </div>*@
+
+    </div>
+    <div class="col-lg-6 " style="margin-top:1%;">
+        <div class="col-lg-12 text-center">
+            <h4 class="text-dark  header-title m-t-0">Usuarios Existentes</h4>
+        </div>
+        @foreach (var item in Usuarios)
+            {
+
+        <div class="col-lg-12">
+            <div class="radio radio-primary">
+                <input id="radio-@item.Id" class="radio" type="radio" value="@item.Id" name="bank">
+                <label for="radio-@item.Id">
+                    @(item.Username + " - " + item.AccountNumber.Substring((item.AccountNumber.Length - 6), 6))
+                </label>
+
+            </div>
+
+
+        </div>
+            }
+    </div>
+}
+else
+{
+    <div class="clearfix"></div>
+    <div class="col-lg-12 text-center" style="margin-top:3%;">
+        <h4 class="text-dark  header-title m-t-0">DATOS BANCARIOS</h4>
+        <hr />
+    </div>
+    <div class="col-lg-4 col-lg-offset-4" style="margin-top:1%;">
+        @*<h4 class="text-dark  header-title m-t-0">Nuevo Usuario</h4>*@
+        <input type="hidden" value="@__rif" name="rif" />
+        <input type="hidden" value="@modo.ToString()" name="modo" id="modo" />
+        <div class="form-group clearfix">
+            <label class="col-lg-3 control-label" for="usuario"> Usuario *</label>
+            <div class="clearfix"></div>
+            <div class="col-lg-12">
+                <input id="_Usuario" name="Usuario" type="text" class="required form-control" required>
+            </div>
+        </div>
+        <div class="form-group clearfix">
+            <label class="col-lg-3 control-label " for="clave"> Contrasena *</label>
+            <div class="clearfix"></div>
+            <div class="col-lg-12">
+                <input id="_Clave" name="Clave" type="password" class="required form-control" required>
+
+            </div>
+        </div>
+        <div class="form-group clearfix">
+            <label class="col-lg-3 control-label " for="surname1"> Cuenta *</label>
+            <div class="clearfix"></div>
+            <div class="col-lg-12">
+                <select name="IdCuenta" class="form-control" id="cuentabancaria">
+                    @foreach (var _item in _Cuentas)
+                    {
+                        <option value="@_item.Id">@_item.Alias - @_item.AccountNumber.Substring((_item.AccountNumber.Length - 6), 6)</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        @*<div class="col-lg-6 col-lg-offset-3">
+                <input class="btn btn-primary" id="Iniciar" type="submit" value="Crear" />
+            </div>*@
+
+    </div>
+}
+
+<div class="form-group clearfix">
+    <div class="col-lg-12 text-center" style="margin-top:2%">
+        <div class="checkbox checkbox-primary">
+            <input id="checkbox-h1" type="checkbox" name="terminos">
+            <label for="checkbox-h1">
+                Acepto terminos y condiciones
+            </label>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12 text-center" style="margin-top:2%;">
+    @if (avanceactiva)
+    {
+        int porcentaje = (int)ViewBag.Porcentaje;
+        if (porcentaje > 75)
+        {
+            <input type="button" id="_Continuar" value="Continuar" class="btn btn-primary" />
+        }
+        else
+        {
+
+            <div class="alert alert-warning">
+                <strong>Alerta!</strong> Su avance activo no cumple con el 75% de progreso.
+            </div>
+
+
+        }
+    }
+    else
+    {
+
+        <input type="button" id="_Continuar" value="Continuar" class="btn btn-primary" />
+    }
+
+</div>
+
+<script type="text/javascript">
+
+    $(document).on('submit', '#formupdateconfigPropuesta', function (e) {
+
+        Pace.start();
+
+
+
+
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("_UpdateConfigPropuesta", "Avance")",
+            data: $("#formupdateconfigPropuesta").serialize(),
+        })
+        .done(function (r) {
+
+        if (r.success) {
+            // $.Notification.notify('success', 'top right', 'Éxito!', r.message)
+            toastr.success("Información actualizada de forma correcta", 'Éxito!');
+            window.setTimeout(location.reload(), 4000);
+
+
+        } else {
+            // $.Notification.notify('error', 'top right', 'Error!', r.message)
+            toastr.error(r.message, 'Error!');
+        }
+    });
+
+
+
+        Pace.stop();
+        return false;
+    });
+
+    $(document).on('click', '#_Eliminar', function () {
+        //alert("aqui");
+        //Pace.start();
+        var _rif = $('#_rif').val();
+        var IdPropuesta = $('#PropuestaId').val();
+        var datos = { IdPropuesta: IdPropuesta, _rif: _rif };
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("_EliminarPropuesta", "Commerce")",
+            data: datos,
+        })
+       .done(function (r) {
+           //$("#_propuesta").html(r);
+           //$("#_finish-2").trigger("click");
+
+           //if (r.Success) {
+           // $.Notification.notify('success', 'top right', 'Éxito!', r.message)
+           toastr.success("Propuesta Eliminada de forma correcta!", 'Éxito!');
+           $("#GenerarPropuesta").hide();
+           $("#_EliminarMovimientos").hide();
+           $("#panelmovimientos").hide();
+           $("#nomovimientos").show();
+           $("#tab-one").trigger("click");
+
+           //POST
+           //$("#radio-h" + seleccion).parent().parent().hide();
+           //var _html = $("#radio-h" + seleccion).parent().parent().parent().parent().html();
+           //$("#Confirmacion").html('<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 col-lg-offset-4 col-sm-offset-4 col-md-offset-4">' + _html + '</div>');
+           //} else {
+           //    toastr.error("Error enviando el correo!", 'Alerta!');
+           //}
+       });
+        // Pace.stop();
+    });
+    $(document).on('click', '#_Mail', function () {
+        //alert("aqui");
+        //Pace.start();
+        var _rif = $('#_rif').val();
+        var IdPropuesta = $('#PropuestaId').val();
+        var datos = { IdPropuesta: IdPropuesta, _rif: _rif };
+        $.ajax({
+            method: "POST",
+            url: "@Url.Action("_EnviarPropuesta", "Account")",
+            data: datos,
+        })
+    .done(function (r) {
+        //$("#_propuesta").html(r);
+        //$("#_finish-2").trigger("click");
+
+        //if (r.Success) {
+        // $.Notification.notify('success', 'top right', 'Éxito!', r.message)
+        toastr.success("Propuesta enviada de forma correcta!", 'Éxito!');
+        //$("#_finish-2").trigger("click");
+        //POST
+        //$("#radio-h" + seleccion).parent().parent().hide();
+        //var _html = $("#radio-h" + seleccion).parent().parent().parent().parent().html();
+        //$("#Confirmacion").html('<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 col-lg-offset-4 col-sm-offset-4 col-md-offset-4">' + _html + '</div>');
+        //} else {
+        //    toastr.error("Error enviando el correo!", 'Alerta!');
+        //}
+    });
+        // Pace.stop();
+    });
+    $(document).on('click', '#_Continuar', function () {
+        Pace.start();
+        ShowLoader();
+        var seleccion = $('input[name=seleccion]:checked').val();
+        var idpropuesta = $('#PropuestaId').val();
+        var modo = $('#modo').val();
+        var idusuario = $('input[name=bank]:checked').val();
+        var idcuenta = $("#cuentabancaria").val();
+        var usuario = $("#_Usuario").val();
+        var clave = $("#_Clave").val();
+        //alert(usuario);
+        //alert(clave);
+        //alert(idcuenta);
+        //alert(idusuario);
+        var win = true;
+        if (!usuario.length > 0 || !clave.length > 0) {
+
+            if (typeof idusuario === "undefined") {
+                win = false;
+                toastr.error('Debes Completar los datos bancarios', 'Alerta!');
+                return false;
+            }
+        } else {
+
+            if (!idcuenta.length > 0) {
+                win = false;
+                toastr.error('Debes Completar los datos bancarios', 'Alerta!');
+                return false;
+            }
+        }
+        if (seleccion != 1 && seleccion != 2 && seleccion != 3) {
+            toastr.error('Debes seleccionar una opción', 'Alerta!');
+
+        } else {
+            if ($("#checkbox-h1").is(':checked')) {
+
+
+                var datos = { idpropuesta: idpropuesta, seleccion: seleccion, usuario: usuario, clave: clave, idusuario: idusuario, idcuenta: idcuenta, modo: modo };
+                //alert(modo);
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("_GenerarAvance", "Commerce")",
+                    data: datos,
+                })
+            .done(function (r) {
+
+                //$("#_propuesta").html(r);
+                //$("#_finish-2").trigger("click");
+
+                if (r.success) {
+                    // $.Notification.notify('success', 'top right', 'Éxito!', r.message)
+                    toastr.success("Avance creado de forma correcta!", 'Éxito!');
+                    //POST
+                    //$("#radio-h" + seleccion).parent().parent().hide();
+                    //var _html = $("#radio-h" + seleccion).parent().parent().parent().parent().html();
+                    //$("#Confirmacion").html('<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 col-lg-offset-4 col-sm-offset-4 col-md-offset-4">' + _html + '</div>');
+                    var _datos = { id: r.id };
+                    $.ajax({
+                        method: "POST",
+                        url: "@Url.Action("_Avance", "Commerce")",
+                        data: _datos,
+                    })
+                .done(function (r) {
+                    $("#Confirmacion").html(r);
+                    $("#_finish-2").trigger("click");
+                });
+
+                } else {
+                    // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                    toastr.error(r.message, 'Error!');
+                }
+            });
+            } else {
+                toastr.error('Debes aceptar terminos y condiciones', 'Alerta!');
+            }
+        }
+        HideLoader();
+        Pace.stop();
+    });
+</script>
+
+

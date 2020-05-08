@@ -1,0 +1,267 @@
+﻿@model InstaTransfer.BLL.Models.CashOut.CashOutRequest
+@{
+    InstaTransfer.BLL.Models.CashOut.CashOutTotals totals = ViewBag.totals;
+    List<InstaTransfer.DataAccess.CommerceBankAccount> bankAccounts = ViewBag.bankAccounts;
+    decimal IVA = ViewBag.IVA;
+    string IVAString = ViewBag.IVAString;
+    string commissionPercentageString = ViewBag.commissionPercentageString;
+    decimal commissionPercentage = ViewBag.commissionPercentage;
+
+}
+<div class="col-xs-12">
+
+    <h4 id="rightsidebar-title">
+        Solicitar Retiro
+    </h4>
+</div>
+<div id="rightsidebar-body" class="col-xs-12">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="text-center">Saldo Disponible</h3>
+            <h3 class="text-center text-success">Bs. @totals.BalanceTotals.CurrentBalance.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <form id="requestCashOutForm" method="post" action="@Url.Action("RequestCashOut", "CashOut")" novalidate class="text-left">
+
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    <label class="control-label ">Cuenta Bancaria</label>
+                    @Html.DropDownListFor(m => m.BankAccountId, new SelectList(bankAccounts, "Id", "Alias"), "Seleccione una cuenta", new { @class = "text-box form-control" })
+                    @*@Html.ValidationMessageFor(m => m.BankAccountId, null, new { @class = "text-danger" })*@
+                </div>
+                <div class="form-group">
+                    <label class="control-label ">Monto</label>
+                    @Html.TextBoxFor(m => m.Amount, new { @class = "form-control" })
+                    @*@Html.ValidationMessageFor(m => m.Amount, null, new { @class = "text-danger" })*@
+                </div>
+                <div class="form-group">
+                    <label class="control-label ">Descripción</label>
+                    @Html.TextBoxFor(m => m.Description, new { @class = "form-control garlic-auto-save" })
+                    @Html.ValidationMessageFor(m => m.Description, null, new { @class = "text-danger" })
+                </div>
+
+            </form>
+        </div>
+        <div class="col-md-12">
+            <h4>Comisiones Asociadas</h4>
+
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-6 control-label ">Comisión Fija</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static text-danger">
+                            @totals.BalanceTaxes.Commission.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-6 control-label ">Comisión por Porcentaje (@(commissionPercentageString))</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static text-danger" id="commissionPercentageLabel">
+                            @totals.BalanceTaxes.CommissionPercentage.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-6 control-label">IVA por Comisión (@(IVAString)%)</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static text-danger" id="commissionIVALabel">
+                            @totals.BalanceTaxes.CommissionIVA.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()
+                        </p>
+                    </div>
+                </div>
+                <hr>
+                <div class="form-group">
+                    <label class="col-sm-6 control-label">Subtotal</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static" id="totalCashoutLabel">
+                            @totals.Amount.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-6 control-label">Comisiones</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static" id="commissionTotalLabel">
+                            @totals.BalanceTaxes.CommissionTotal.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-6 control-label">Total a Retirar</label>
+                    <div class="col-sm-6">
+                        <p class="form-control-static text-success" id="totalLabel">
+                            @totals.TotalCashOut.ToString("#,##0.00", new System.Globalization.CultureInfo("es-VE")).Trim()
+                        </p>
+                    </div>
+                </div>
+            </div>
+            @*Submit*@
+            <div class="form-group">
+                <div class="form-control-static">
+                    <button id="submitRequest" class="col-sm-12 btn btn-primary waves-effect waves-light btn-submitRequest" style="margin-bottom:10px;" type="submit" disabled="disabled">
+                        Enviar Solicitud
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--JQuery Validation-->
+<script src="~/plugins/jquery-validate/jquery.validate.min.js"></script>
+<script src="~/plugins/jquery-validate/localization/messages_es.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var form = $('#requestCashOutForm');
+
+        // Garlic
+        form.garlic();
+
+        $(window).bind('beforeunload', function () {
+            form.garlic('destroy');
+        });
+
+        var amount =  $("input[name='Amount']").value;
+        var currentBalance = @totals.BalanceTotals.CurrentBalance.ToString("0.00#", new System.Globalization.CultureInfo("en-US"));
+        var commissionFixed = @totals.BalanceTaxes.Commission.ToString("0.00#", new System.Globalization.CultureInfo("en-US"));
+        var commissionTotal = @totals.BalanceTaxes.CommissionTotal.ToString("0.00#", new System.Globalization.CultureInfo("en-US"));
+        var IVA = @IVA.ToString("0.00#", new System.Globalization.CultureInfo("en-US"));
+        var commissionIVA =  @totals.BalanceTaxes.CommissionIVA.ToString("0.00#", new System.Globalization.CultureInfo("es-US"));
+        var commissionPercentage = @commissionPercentage.ToString("0.00#", new System.Globalization.CultureInfo("en-US"));
+        var maxCashOut = currentBalance;
+        var minCashOut = @totals.Amount.ToString("0.00#", new System.Globalization.CultureInfo("en-US"));
+
+        //  ----------------------------------------------Validaciones-------------------------------------------
+
+        var $validator = $("#requestCashOutForm").validate({
+            lang: 'es',
+            rules: {
+                Description: {
+                    required: false,
+                    maxlength: 40
+                },
+                BankAccountId: {
+                    required: true
+                }
+            }
+        });
+
+        $('#BankAccountId').on('blur', function() {
+            if ($("#requestCashOutForm").valid()) {
+                $('#submitRequest').prop('disabled', false);
+            } else {
+                $('#submitRequest').prop('disabled', 'disabled');
+            }
+        });
+
+        $('#Description').on('blur', function() {
+            if ($("#requestCashOutForm").valid()) {
+                $('#submitRequest').prop('disabled', false);
+            } else {
+                $('#submitRequest').prop('disabled', 'disabled');
+            }
+        });
+
+        //  ----------------------------------------------End Validaciones-------------------------------------------
+
+        // Funcion para recalcular los labels
+        function setLabelsAmounts(_amount){
+            var commissionPercentage2 = _amount * commissionPercentage;
+            var commissionIVA = (commissionFixed + commissionPercentage2) * IVA;
+            var commissionTotal = commissionIVA + commissionFixed + commissionPercentage2;
+            var total = _amount - commissionTotal;
+            $('#commissionPercentageLabel').html(Number(commissionPercentage2).toLocaleString("es-VE", {minimumFractionDigits: 2}));
+            $('#commissionIVALabel').html(Number(commissionIVA).toLocaleString("es-VE", {minimumFractionDigits: 2}));
+            $('#totalCashoutLabel').html(Number(_amount).toLocaleString("es-VE", {minimumFractionDigits: 2}));
+            $('#commissionTotalLabel').html(Number(commissionTotal).toLocaleString("es-VE", {minimumFractionDigits: 2}));
+            $('#totalLabel').html(Number(total).toLocaleString("es-VE", {minimumFractionDigits: 2}));
+        };
+
+        //Bootstrap-TouchSpin
+        $("input[name='Amount']").TouchSpin({
+            initval: minCashOut,
+            min: minCashOut,
+            max: maxCashOut,
+            step: 1,
+            forcestepdivisibility: "none",
+            stepinterval: 50,
+            decimals : 2,
+            postfix: "Retirar todo",
+            postfix_extraclass : "btn btn-default btn-retirarTodo",
+            buttondown_class: "btn btn-primary",
+            buttonup_class: "btn btn-primary",
+            maxboostedstep: 10000000,
+            prefix: 'Bs.'
+        });
+
+        // Boton "Retirar todo"
+        $(document).on('click', '.btn-retirarTodo', function () {
+            $("input[name='Amount']").val(Number(maxCashOut));
+            setLabelsAmounts(Number(maxCashOut));
+        });
+
+        @*$(document).on('click', '#submitRequest', function () {
+            @(totals.Amount = amount);
+        });*@
+
+        // Al perder el foto del monto recalculo los labels
+        $("input[name='Amount']").on("blur", function () {
+            var amount2 = Number(this.value);
+            setLabelsAmounts(Number(amount2));
+        });
+
+        // Al aumentar o disminuir el touchspin recalculo los labels
+        $("input[name='Amount']").on("touchspin.on.stopspin", function () {
+            var amount2 = Number(this.value);
+            setLabelsAmounts(amount2);
+        });
+
+        // Input en el monto
+        $("input[name='Amount']").on('input', function(){
+            $('#totalCashoutLabel').html(amount.toLocaleString("es-VE"));
+        });
+
+        // Submit
+        $(document).on('click', '.btn-submitRequest', function () {
+            swal({
+                title: "¿Seguro desea realizar la solicitud?",
+                text: "No podrá revertir esta operación",
+                type: "info",
+                showCancelButton: true,
+                cancelButtonText: "Cancelar",
+                confirmButtonText: "Si, solicitar el retiro",
+                closeOnConfirm: false
+            }, function () {
+                ShowLoader();
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: '@Url.Action("CreateCashOutRequest", "CashOut")',
+                    data :  $("#requestCashOutForm").serialize()
+                })
+        .done(function (r) {
+            HideLoader();
+            Pace.stop();
+            if (r.success) {
+                swal({
+                    title: "Exito!",
+                    text: r.message,
+                    type: "success",
+                }, function () {
+                    location.reload();
+                });
+            } else {
+                swal("Error!", r.message, "error");
+            }
+        });
+            });
+            HideLoader();
+        });
+
+    });
+</script>

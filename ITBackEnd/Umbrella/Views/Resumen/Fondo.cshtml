@@ -1,0 +1,487 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutR.cshtml";
+    decimal Acciones = (decimal)ViewBag.Acciones;
+    decimal AccionesTR = (decimal)ViewBag.AccionesTR;
+    decimal AccionesExistentes = (decimal)ViewBag.AccionesExistentes;
+    string[] _fechaNames = ViewBag.fechas;
+    decimal[] _capital = ViewBag.Capital;
+    decimal[] _valroaccionTR = ViewBag.ValorAccionTR;
+    decimal[] _valroaccion = ViewBag.ValorAccion;
+    //Umbrella.Controllers.HomeController.OperacionesActivas[] _operaciones = ViewBag.OperacionesActivas;
+    string _operaciones = ViewBag.OperacionesActivas;
+    string _movimientos = ViewBag.MovimientosCapital;
+    string _cobros = ViewBag.MovimientosCobro;
+    List<InstaTransfer.DataAccess.AE_Operacion> Operaciones = (List<InstaTransfer.DataAccess.AE_Operacion>)ViewBag.Opreaciones;
+    List<InstaTransfer.DataAccess.Commerce> Comercios = (List<InstaTransfer.DataAccess.Commerce>)ViewBag.Comercios;
+    List<Umbrella.Controllers.ResumenController.ComercioOrden> ComerciosOrden = (List<Umbrella.Controllers.ResumenController.ComercioOrden>)ViewBag.ComerciosOrden;
+    decimal rendimiento = ViewBag.RendimientoTotal;
+    decimal rendimientomes = ViewBag.RendimientoMes;
+    rendimiento = (rendimientomes / 100) + 1;
+    decimal elemento = 365 / DateTime.Now.DayOfYear;
+    DateTime inicio = DateTime.Parse("01-06-2019");
+    double RTYT = (Math.Pow(double.Parse(rendimiento.ToString()), double.Parse(elemento.ToString())) - 1) * 100;
+    DateTime dt = DateTime.Now;
+}
+@*<div class="row">
+        <div class="col-sm-6 col-lg-3">
+            <div class="widget-bg-color-icon card-box bg-purple">
+
+                <div class="text-right">
+                    <h3 class="text-white"><b class="counter">@_capital.LastOrDefault().ToString("N2") $</b></h3>
+                    <p class="text-white">Capital a la fecha @_fechaNames.LastOrDefault()</p>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="widget-bg-color-icon card-box bg-info">
+
+                <div class="text-right">
+                    <h3 class="text-white"><b class="counter">@(((decimal.Parse(AccionesTR.ToString()) - decimal.Parse("27,62")) * 100 / decimal.Parse(AccionesTR.ToString())).ToString("N2") ) %</b></h3>
+                    <p class="text-white">Rendimiento</p>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+            <div class="widget-bg-color-icon card-box bg-purple">
+
+                <div class="text-right">
+                    <h3 class="text-white"><b class="counter">@AccionesExistentes.ToString("N") </b></h3>
+                    <p class="text-white">Acciones Existentes</p>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-2">
+            <div class="widget-bg-color-icon card-box bg-info">
+
+                <div class="text-right">
+                    <h3 class="text-white"><b class="counter">@Acciones.ToString("N2") $</b></h3>
+                    <p class="text-white">Valor Estimado</p>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-2">
+            <div class="widget-bg-color-icon card-box bg-purple">
+
+                <div class="text-right">
+                    <h3 class="text-white"><b class="counter">@AccionesTR.ToString("N2") $</b></h3>
+                    <p class="text-white">Valor Acción</p>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>*@
+<div class="row" style="">
+    <div class="col-lg-8" style="height:160px; padding:10px; background-color:#e5e5e5; border-bottom:7px solid #0675c6;">
+
+        <div class="col-lg-3" style="background-color:#0675c6; color:white; padding:10px; margin-left:20px; margin-top:20px; text-align:center;">
+            @DateTime.Now.ToString("MMMM yyyy").ToUpper()
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:30px; text-align:left; margin-left:10px;">
+            <strong>RESUMEN FONDO</strong>
+        </div>
+
+    </div>
+    <div class="col-lg-4" style="border-bottom:7px solid #0675c6; height:160px;">
+        <div class="text-center">
+            <img src="@Url.Content("~/Content/images/transax-logo.png")" height="40" style="margin-top:45px;vertical-align:top !important" />
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:30px; margin-bottom:10px; text-align:left; margin-left:10px;">
+            <strong>DESTACADOS</strong>
+        </div>
+        <div class="col-lg-12">
+            <ul>
+                <li>El rendimiento del fondo desde el <strong>01 de Junio del 2019</strong> al @DateTime.Now.Day de @dt.ToString("MMMM") del @DateTime.Now.Year es de:  <strong>@ViewBag.RendimientoTotal.ToString("N2") %</strong></li>
+                <li>La operación promedio por cliente es de <strong>$7,185.00</strong> </li>
+                <li>La operación promedio dura 32 días con un <strong> rendimiento del 15% </strong>  en ese periodo.</li>
+                <li>Contamos con más de <strong> 25 clientes.</strong>  De estos clientes, <strong>  80% han realizado más de una operación</strong>  con nosotros.</li>
+                <li>Nuestra cartera de clientes está diversificada en <strong> 5 industrias (hoteleria, restaurantes, manufactura, etc).</strong>  </li>
+                <li>Se han realizado mas de <strong> 170 operaciones a la fecha.</strong>  </li>
+                <li>El fondo se opera con 5 personas. Gran parte de los procesos están automatizados. </li>
+                <li>Hemos distribuido más de <strong> $ @ViewBag.Repartido </strong> en rendimientos a nuestros inversionistas.</li>
+            </ul>
+        </div>
+
+        <div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:30px; margin-bottom:10px; text-align:left; margin-left:10px;">
+            <strong>HISTORICO MOVIMIENTO CAPITAL </strong>
+        </div>
+        <div class="col-lg-12">
+
+            <!-- Bar Chart-->
+            <div class="row">
+
+                <div class="portlet">
+                    <!-- /primary heading -->
+
+                    <div id="portlet4" class="panel-collapse collapse in">
+                        <div class="portlet-body">
+                            <canvas id="bar1" height="100px"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:30px; margin-bottom:10px; text-align:left; margin-left:10px;">
+            <strong>HISTORICO VALOR ACCIÓN </strong>
+        </div>
+        <div class="col-lg-12">
+            <div class="portlet">
+
+                <div id="portlet5" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <canvas id="bar2" height="100px"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:30px; margin-bottom:10px; text-align:left; margin-left:10px;">
+            <strong>COBRO DIARIO VS POR COBRAR (ULTIMOS 30 DÍAS)</strong>
+        </div>
+        <div class="col-lg-12" style="margin-bottom:50px;">
+            <div class="col-sm-12 text-center">
+
+                <div id="stacked"></div>
+            </div>
+
+        </div>
+        @*<div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:30px; margin-bottom:10px; text-align:left; margin-left:10px;">
+            <strong>HISTORICO DISTRIBUCIÓN</strong>
+        </div>
+        <div class="col-lg-12">
+            <div class="col-sm-12 text-center">
+                
+                <div id="area-chart"></div>
+            </div>
+
+        </div>*@
+
+    </div>
+    <div class="col-lg-4">
+        <div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:30px; margin-bottom:10px; text-align:left; margin-left:10px;">
+            <strong>SOBRE NOSOTROS</strong>
+        </div>
+        <div class="col-lg-12" style="padding:10px;">
+            <div class="col-lg-12" style="text-align:justify;">
+                Somos un fondo privado especializado en realizar préstamos en Dólares Americanos de corto plazo a negocios pequeños y medianos dentro de Venezuela.  Tenemos más de un año de operaciones y contamos contamos con una <strong>cartera activa de más de $80,000.</strong>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:30px; margin-bottom:10px; text-align:left; margin-left:10px;">
+            <strong>RENDIMIENTO</strong>
+        </div>
+        <div class="col-lg-6" style="padding:10px;">
+            <div class="col-lg-12">
+                <strong style="font-size:20px;">LM</strong>
+            </div>
+            <div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:5px; margin-bottom:5px; text-align:left;">
+                <strong>@ViewBag.RendimientoMes.ToString("N2") %</strong>
+            </div>
+        </div>
+        <div class="col-lg-6" style="padding:10px;">
+            <div class="col-lg-12">
+                <strong style="font-size:20px;">YTD</strong>
+            </div>
+            <div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:5px; margin-bottom:5px; text-align:left;">
+                <strong>@RTYT.ToString("N2") %</strong>
+            </div>
+        </div>
+        <div class="col-lg-6" style="padding:10px;">
+            <div class="col-lg-12">
+                <strong style="font-size:20px;">Valor Acción</strong>
+            </div>
+            <div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:5px; margin-bottom:5px; text-align:left;">
+                <strong>@ViewBag.AccionesTR.ToString("N2") $</strong>
+            </div>
+        </div>
+        <div class="col-lg-6" style="padding:10px;">
+            <div class="col-lg-12">
+                <strong style="font-size:20px;">Ganancia Repartida</strong>
+            </div>
+            <div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:5px; margin-bottom:5px; text-align:left;">
+                <strong>@ViewBag.Repartido $</strong>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:30px; margin-bottom:10px; text-align:left; margin-left:10px;">
+            <strong>ESTRATEGIA</strong>
+        </div>
+        <div class="col-lg-12" style="padding:10px; text-align:justify;">
+            El objetivo del fondo es capitalizar la brecha que existe actualmente entre el sistema financiero tradicional y los negocios pequeños/medianos dentro de Venezuela. Nuestra propuesta de valor para el cliente es simplicidad en el proceso y conveniencia en el financiamiento. Nuestra propuesta de valor para el inversionista es lograr rendimientos atractivos controlando los riesgos operativos y de mercado. Hacemos uso intenso de nuestra tecnología para generar eficiencias e invertimos en ella para lograr mejoras constantemente. Nuestra meta en el corto/mediano plazo es crecer nuestra cartera de clientes en el mercado Venezolano y consolidar nuestra operación. En el largo plazo deseamos expandir la operación en otros países de la región.
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:30px; margin-bottom:10px; text-align:left; margin-left:10px;">
+            <strong>TOP 10 COMERCIOS</strong>
+        </div>
+        <div class="col-lg-12" style="padding:10px;">
+            <div class="col-lg-12">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Razón Social</th>
+                                <th>Fondos Otorgados</th>
+                                <th></th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Comercios)
+                            {
+
+                                <tr>
+
+                                    <td>@item.SocialReasonName</td>
+                                    <td style="text-align:center;">@ComerciosOrden.Where(u => u.rif == item.Rif).FirstOrDefault().monto $</td>
+                                    <td> </td>
+
+                                </tr>
+
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-lg-12" style="color:#0675c6; font-size:25px; margin-top:30px; margin-bottom:10px; text-align:left; margin-left:10px;">
+            <strong>INFORMACION GENERAL</strong>
+        </div>
+        <div class="col-lg-12" style="padding:10px;">
+            <div class="col-lg-12">
+                <ul>
+                    <li>Avance Ejecutados:<strong> @ViewBag.AvancesEjecutados</strong></li>
+                    <li>Avance Activos:<strong> @ViewBag.AvancesActivos</strong></li>
+                    <li>Total Avances:<strong> @ViewBag.AvancesTotal</strong></li>
+                    <li>Avance Estimados Anual: <strong>74</strong></li>
+                    <li>Utilidad Neta : <strong>7.8 %</strong></li>
+                    <li>Mínimo Invertido: <strong>3,000.00 $</strong></li>
+                    <li>Máximo Invertido: <strong>27,000.00 $</strong></li>
+                    <li>Modelo de Negocio: <strong>50 / 50</strong></li>
+                    <li>Gastos de Operación: <strong>2.8 %</strong></li>
+                    <li>Gastos Fijos Mensuales: <strong>975 $</strong></li>
+                </ul>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+@section contents{
+    <link href="~/plugins/morris/morris.css" rel="stylesheet">
+}
+@section scripts { <!-- Chart JS -->
+    <script src="~/Scripts/Chart.min.js"></script>
+    <script src="~/Scripts/jquery.core.js"></script>
+    <script src="~/Scripts/jquery.app.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.0/morris.min.js"></script>
+
+    <script>
+        $(document).on('ready', function () {
+            var _operaciones = @Html.Raw(_operaciones);
+            var _movimientos = @Html.Raw(_movimientos);
+            var _cobros = @Html.Raw(_cobros);
+
+            //var config = {
+            //    data: _cobros,
+            //    xkey: 'y',
+            //    ykeys: ['b','a'],
+            //    labels: ['Cobrado', 'Por cobrar'],
+            //    fillOpacity: 0.6,
+            //    hideHover: 'auto',
+            //    behaveLikeLine: true,
+            //    resize: true,
+            //    pointFillColors:['#ffffff'],
+            //    pointStrokeColors: ['black'],
+            //    lineColors:['red','gray']
+            //};
+            //config.element = 'area-chart';
+            //Morris.Area(config);
+            //config.element = 'bar-chart';
+            //Morris.Bar(config);
+
+
+            Morris.Bar({
+                barColors:['#4b92c5','#cc2b07'],
+                element: 'stacked',
+                data: _cobros,
+                xkey: 'y',
+                ykeys: ['a', 'b'],
+                labels: ['Cobro Diario', 'Por Cobrar'],
+                options: {
+                    responsive: true,
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    }
+                }
+            });
+
+            //Morris.Bar({
+            //    barColors:['#4b92c5','#cc2b07'],
+            //    element: 'stacked2',
+            //    data: _cobros,
+            //    xkey: 'y',
+            //    ykeys: ['a','b'],
+            //    ymin: -65000,
+            //    ymax: 3000,
+            //    labels: ['Cobrado', 'Por cobrar']
+            //});
+            //Morris.Area({
+            //    barColors:['#4b92c5','#cc2b07'],
+            //    element: 'area-chart',
+            //    stacked: true,
+            //    data: _cobros,
+            //    xkey: 'y',
+            //    ykeys: ['a','b'],
+            //    labels: ['Cobrado', 'Por cobrar']
+            //});
+
+            var _fechaNames = @Html.Raw(Json.Encode(_fechaNames));
+            var _capital = @Html.Raw(Json.Encode(_capital));
+            var _valroaccion = @Html.Raw(Json.Encode(_valroaccion));
+            var _valroaccionTR = @Html.Raw(Json.Encode(_valroaccionTR));
+            var ctx = document.getElementById("bar1").getContext('2d');
+
+            var barChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: _fechaNames,
+                    datasets: [{
+                        label: "Capital",
+                        //backgroundColor: "#7266ba",
+                        //borderColor: "#7266ba",
+                        data: _capital,
+                        //fill: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    //title: {
+                    //    display: true,
+                    //    text: 'Historico Capital'
+
+                    //},
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Días'
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Dolares'
+
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var ctx = document.getElementById("bar2").getContext('2d');
+            var data = [
+                 '2014',
+                 '2015',
+                 '2016',
+                 '2017',
+                 '2018',
+                 '2019',
+                 '2020',
+                 '2021',
+                 '2022',
+                 '2023',
+                 '2024'];
+
+
+            var barChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: _fechaNames,
+                    datasets: [{
+                        label: "Valor Acción",
+                        //backgroundColor: "#22bdd6",
+                        //borderColor: "#22bdd6",
+                        data: _valroaccion,
+                        //fill: false,
+                    }]
+                    //},{
+                    //    label: "Valor al día",
+                    //    backgroundColor: "#7266ba",
+                    //    borderColor: "#7266ba",
+                    //    data: _valroaccionTR,
+                    //    fill: false,
+
+
+                    //}]
+
+                },
+                options: {
+                    responsive: true,
+                    //title: {
+                    //    display: true,
+                    //    text: 'Historico Valor Acción'
+                    //},
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    hover: {
+                        mode: 'nearest',
+                        intersect: true
+                    },
+                    scales: {
+                        xAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Días'
+                            }
+                        }],
+                        yAxes: [{
+                            display: true,
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Dolares'
+                            }
+                        }]
+                    }
+                }
+            });
+        });
+    </script>
+}
+
+
+

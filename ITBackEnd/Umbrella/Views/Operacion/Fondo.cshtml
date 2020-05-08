@@ -1,0 +1,290 @@
+﻿@model List<InstaTransfer.DataAccess.AE_Operacion>
+@{
+    ViewBag.Title = "Operaciones Avance de Efectivo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+@using System.Web.Mvc.Html
+@using InstaTransfer.ITResources.Constants
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = ViewBag.Title }); }
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-box table-responsive">
+            <div class="col-xs-12">
+                <h4 class="header-title"><b>Listado de Operaciones</b></h4>
+                <p class="text-muted font-13 m-b-30">
+                    Detalles de las operaciones registradas en Transax.
+                </p>
+            </div>
+            @if (User.IsInRole(UserRoleConstant.TransaXAdmin) || (User.IsInRole(UserRoleConstant.CommerceAdmin)))
+            {
+                    <a href="#" class="btn waves-effect waves-light btn-primary m-b-5 addcuser">
+                        Crear Operación &nbsp; <i class="fa fa-user-plus"></i>
+                    </a>
+            }
+            <div class="clearfix"></div>
+            <div class="clearfix"></div>
+            <table id="datatable-buttonsasd" class="dtinit table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Inversionista</th>
+                        <th>Fecha Inincio</th>
+                        <th>Fecha Fin</th>
+                        <th>Periodos</th>
+                        <th>Porcentaje</th>
+                        <th>Monto</th>
+                        <th>Participacion</th>
+                        <th>Estatus</th>
+                        <th>Retira Utilidad Mes?</th>
+                        <th>Se Retira del Fondo?</th>
+
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (InstaTransfer.DataAccess.AE_Operacion item in Model.Where(u => u.IdEstatus == 1).OrderBy(u => u.Monto))
+                    {
+                        <tr dtaction="@Url.Action("Details", "Operacion", new { id = item.Id })">
+                            <td>@item.CUser.Name @item.CUser.LastName</td>
+                            <td>@item.FechaInicioOperacion</td>
+                            <td>@item.FechaFinOperacion</td>
+                            <td>@(item.TipoPago == 1 ? "Bimensual" : item.TipoPago == 2 ? "Trimestral" : item.TipoPago == 3 ? "Semestral" : "Anual" )</td>
+                            <td>@item.PorcentajeGanancia %</td>
+                            <td>@item.Monto $</td>    
+                            <td>@item.RepresentacionFondo</td>
+                            <td>Activo</td>
+                            <td class="text-center">
+                                <input type="checkbox" class="js-switch mes" _target="@item.Id" @(item.RetiraUtilidadMes ? "checked" : "") />
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" class="js-switch fondo" _target="@item.Id" @(item.SeRetiraFondo ? "checked" : "") />
+                            </td>
+                    
+                  
+
+                            <td>
+                                <a href="@Url.Action("Details", "Operacion", new { id = item.Id })" class="btn btn-primary waves-effect waves-light btn-sm" commerceid="@item.Id">Detalles</a>
+                            </td>
+                            @*<td><input onclick="switchTestMode(this)" data-size="small" type="checkbox" data-plugin="switchery" data-color="#00b19d"></td>*@
+                        </tr>
+                    }
+
+                    @foreach (InstaTransfer.DataAccess.AE_Operacion item in Model.Where(u => u.IdEstatus == 2).OrderBy(u => u.Monto))
+                    {
+                        <tr>
+                            <td>@item.CUser.Name @item.CUser.LastName</td>
+                            <td>@item.FechaInicioOperacion</td>
+                            <td>@item.FechaFinOperacion</td>
+                            <td>@(item.TipoPago == 1 ? "Bimensual" : item.TipoPago == 2 ? "Trimestral" : item.TipoPago == 3 ? "Semestral" : "Anual" )</td>
+                            <td>@item.PorcentajeGanancia %</td>
+                            <td>@item.Monto $</td>
+                            <td>@item.RepresentacionFondo</td>
+
+                            <td style="color:red;" colspan="3">FINALIZADA</td>
+
+
+                            <td>
+                                <a href="@Url.Action("Details", "Operacion", new { id = item.Id })" class="btn btn-primary waves-effect waves-light btn-sm" commerceid="@item.Id">Detalles</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- details Modal -->
+<div id="details-modal" class="modal-demo">
+    <button type="button" class="close" onclick="Custombox.close();">
+        <span>&times;</span><span class="sr-only">Close</span>
+    </button>
+    <h4 class="custom-modal-title">Comercio</h4>
+    <div class="custom-modal-text">
+        <div id="modalbody"></div>
+    </div>
+</div>
+
+@section scripts{
+    <!--Garlic JS-->
+    <script src="~/plugins/garlicjs/garlic.min.js"></script>
+
+    <script type="text/javascript">
+        $(".fondo").on("change", function () {
+            Pace.start();
+            //alert(this.checked);
+            var switchStatus = $(this).is(':checked');
+            var _idoperacion = $(this).attr("_target");
+            alert(switchStatus);
+            var datos = { idoperacion: _idoperacion,  estatus: switchStatus }
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("ChangeStatusFondo", "Operacion")",
+                data: datos,
+                })
+      .done(function (r) {
+
+          if (r.success) {
+
+              toastr.success("Operacion modificada de manera correcta!", 'Éxito!');
+              //window.setTimeout(location.reload(), 2000);
+          } else {
+              // $.Notification.notify('error', 'top right', 'Error!', r.message)
+              toastr.error(r.message, 'Error!');
+          }
+      });
+        Pace.stop();
+        return false;
+        });
+        $(".mes").on("change", function () {
+            Pace.start();
+            //alert(this.checked);
+            var switchStatus = $(this).is(':checked');
+            var _idoperacion = $(this).attr("_target");
+            alert(switchStatus);
+            var datos = { idoperacion: _idoperacion,  estatus: switchStatus }
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("ChangeStatusMes", "Operacion")",
+                data: datos,
+                })
+        .done(function (r) {
+
+            if (r.success) {
+
+                toastr.success("Operacion modificada de manera correcta!", 'Éxito!');
+                //window.setTimeout(location.reload(), 2000);
+            } else {
+                // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                toastr.error(r.message, 'Error!');
+            }
+        });
+        Pace.stop();
+        return false;
+        });
+        // Agregar Usuario
+        var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch'));
+
+        elems.forEach(function (html) {
+            var switchery = new Switchery(html, { size: 'small', color: '#3DDCF7', disabled: true });
+            switchery.disable();
+        });
+        // Agregar Usuario
+        function addUser() {
+            ShowLoader();
+            $.ajax({
+                method: "POST",
+                url: "@Url.Action("AddOperacion", "Operacion")"
+            }).done(function (response) {
+                $("#rightsidebar-title").html("Agregar Usuario");
+                $("#rsidebar").html(response);
+                $('#wrapper').toggleClass('right-bar-enabled');
+                HideLoader();
+
+                // Switchery
+                var elems = Array.prototype.slice.call(document.querySelectorAll('.js-switch-side'));
+
+                elems.forEach(function (html) {
+                    var switchery = new Switchery(html, { size: 'small', color: '#3DDCF7', disabled: true });
+                });
+            }).fail(function (response) {
+                HideLoader();
+            });
+        }
+
+        function switchTestMode(element) {
+            alert(element.checked);
+        }
+
+        function getExportFileName(formato) {
+            var project = "Transax";
+            var filter = $('#filterRoles').val();
+            if (filter != "") {
+                console.log(project + "_" + filter);
+                return project + "_" + filter;
+            } else {
+                return project;
+            }
+        };
+
+        $(document).ready(function () {
+
+
+            // Tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
+
+
+            //$('.xeditable').editable({
+            //    send: 'never'
+            //}).on('save', function (e, params) {
+            //    $("#update-profile").prop("disabled", false);
+            //});
+            //$('#roleselect').editable({
+            //    emptytext: 'Seleccione un rol',
+            //    mode: 'inline',
+            //    //cargar a partir de una lista de roles
+            //    source: [
+            //    { value: 1, text: 'rol 1' },
+            //    { value: 2, text: 'rol 2' }
+            //    ],
+            //    //valor seleccionado
+            //    value: 2
+            //});
+            //$('#firstname').editable({
+            //    validate: function (value) {
+            //        if ($.trim(value) == '') return 'This field is required';
+            //    }
+            //});
+            $('#update-profile').click(function () {
+                $('.xeditable').editable('submit', {
+                    url: '@Url.Action("ModifyCUser", "CUser")',
+                    data: {
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').attr('value'),
+                        id: "@ViewBag.userid",
+                        Name: $(".username").innerText(),
+                        LastName: $('.userlastname').innerText(),
+                        TestMode: $("#testmodeswitch").prop("checked"),
+                        IsContact: $("#iscontactswitch").prop("checked"),
+                        //rol: $("#roleselect").text(),
+                    },
+                    ajaxOptions: {
+                        dataType: 'json',
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            $('.loggeduser').each(function () {
+                                $(this).html($(".profilename").text() + " " + $(".profilelastname").text())
+                            });
+                            toastr.success(response.message, 'Éxito!');
+
+                        } else {
+                            toastr.error(response.message, 'Error!');
+                        }
+                    },
+                    error: function (errors) {
+                        toastr.error(errors.message, 'Error!');
+                    }
+                });
+            });
+            var sideuserswitchery = Array.prototype.slice.call(document.querySelectorAll('.sideuserswitchery'));
+
+            sideuserswitchery.forEach(function (html) {
+                var switchery = new Switchery(html, { size: 'small', color: '#00b19d' });
+            });
+
+            // Agregar Usuario
+            $(".addcuser").on("click", function (e) {
+                e.preventDefault();
+                checkSession(addUser);
+            });
+
+            // Tabla de Usuarios
+            @Html.Partial("_InitUserTable")
+            var oTable;
+            oTable = $('#users-table').dataTable();
+        });
+
+    </script>
+}
+
+

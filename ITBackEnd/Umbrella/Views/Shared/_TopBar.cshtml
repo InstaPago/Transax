@@ -1,0 +1,145 @@
+﻿@{
+    var isTransaXUser = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.TransaXUser);
+    var isTransaXAdmin = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.TransaXAdmin);
+    var isCommerceAdmin = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.CommerceAdmin);
+    var isCommerceUser = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.CommerceUser);
+    var isInversionista = User.IsInRole(InstaTransfer.ITResources.Constants.UserRoleConstant.Inversionista);
+}
+<div class="topbar">
+    <!-- Navbar -->
+    <div class="navbar navbar-default" role="navigation">
+        <div class="container">
+            <div class="">
+                <div class="pull-left">
+                    <a class="navbar-toggle visible-xs">
+                        <div class="lines">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </a>
+                </div>
+
+                <ul class="nav navbar-nav navbar-right pull-right">
+
+                    <li class="dropdown">
+                        <div class="user-detail">
+                            <div class="dropdown" style="float: right;">
+                                <a href="" class="dropdown-toggle profile" data-toggle="dropdown" aria-expanded="true">
+                                    <img src="/Content/images/user-default.png" alt="user-img" class="img-circle">
+                                    <span class="user-info-span">
+                                        <p class="text-muted m-b-0">
+                                            <small><i class="fa fa-circle text-success"></i> <span>En línea</span></small>
+                                        </p>
+                                    </span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="/Profile/Index"><i class="md md-face-unlock"></i> Perfil</a></li>
+                                    <li><a href="/Account/LogOff"><i class="md md-settings-power"></i> Cerrar sesión </a></li>
+                                </ul>
+
+                            </div>
+                        </div>
+                    </li>
+
+
+                </ul>
+            </div>
+            <div class="text-center col-md-offset-1">
+                <a href="@Url.Action("Index","Home")" class="logo"><span><img src="@Url.Content("~/Content/images/transax-logo.png")" height="40" style="margin-top:15px;vertical-align:top !important" /></span> </a>
+            </div>
+            <!--/.nav-collapse -->
+        </div>
+    </div>
+
+    <!-- Navbar Start -->
+    <div class="navbar-custom visible-xs">
+        <div class="container">
+            <div id="navigation">
+                <!-- Navigation Menu-->
+                <ul class="navigation-menu">
+                    <li class="has-submenu">
+                        <a href="@Url.Action("DashboardFondo", "Home")" class="waves-effect waves-primary">
+                            <i class="md md-adjust"></i><span> Fondo </span>
+                        </a>
+                    </li>
+                    <li class="has-submenu">
+                        <a href="@Url.Action("Index", "Home")"><i class="md md-dashboard"></i>Inicio</a>
+                    </li>
+
+                    @if (isInversionista)
+                    {
+                        <li class="has-submenu">
+                            <a href="@Url.Action("Index", "Operacion")" class="waves-effect waves-primary">
+                                <i class="md  md-format-list-numbered"></i><span> Operaciones </span>
+                            </a>
+                        </li>
+                    }
+                    @if (isTransaXUser || isTransaXAdmin)
+                    {
+
+                        <li class="has-submenu">
+                            <a href="@Url.Action("Index", "Avance")" class="waves-effect waves-primary">
+                                <i class="md  md-attach-money"></i><span> Avances </span>
+                            </a>
+                        </li>
+                        <li class="has-submenu">
+                            <a href="@Url.Action("Fondo", "Operacion")" class="waves-effect waves-primary">
+                                <i class="md  md-format-list-numbered"></i><span> Operaciones </span>
+                            </a>
+                        </li>
+                        <li class="has-submenu">
+                            <a href="@Url.Action("Configuracion", "Home")" class="waves-effect waves-primary">
+                                <i class="md  md-account-balance"></i><span> Balances </span>
+                            </a>
+                        </li>
+                        <li class="has-submenu">
+                            <a href="@Url.Action("Index", "Commerce")" class="waves-effect waves-primary">
+                                <i class="md  md-home"></i><span> Comercios </span>
+                            </a>
+                        </li>
+                        <li class="has-submenu">
+                            <a href="@Url.Action("Index", "CUser")" class="waves-effect waves-primary">
+                                <i class="md  md-contacts"></i><span> Usuarios </span>
+                            </a>
+                        </li>
+                        @*<li class="has-submenu">
+                            <a href="@Url.Action("Index", "Statement")"><i class="md md-settings-input-component"></i>Movimientos</a>
+                        </li>
+
+                        <li class="has-submenu">
+                            <a href="@Url.Action("Index", "Commerce")"><i class="md md-home"></i>Comercios</a>
+                        </li>
+
+                        <li class="has-submenu">
+                            <a href="@Url.Action("Index", "Declaration")"><i class="md md-rate-review"></i>Declaraciones</a>
+                        </li>*@
+                    }
+                    @*<li class="has-submenu">
+                        <a href="@Url.Action("Index", "Order")"><i class="md md-speaker-notes"></i>Órdenes de Compra</a>
+                    </li>
+
+                    <li class="has-submenu">
+                        <a href="@Url.Action("Index", "Cashout")"><i class="md md-account-balance-wallet"></i>Retiros en Cuenta</a>
+                    </li>*@
+                    @if (isCommerceAdmin || isCommerceUser)
+                    {
+                        @*<li class="has-submenu">
+                            <a href="@Url.Action("Index", "PaymentRequest")"><i class="md md-assignment"></i>Solicitudes de Pago</a>
+                        </li>*@
+                    }
+                    @*<li class="has-submenu">
+                        <a href="@Url.Action("Index", "CUser")"><i class="md md-contacts"></i>Usuarios</a>
+                    </li>*@
+                    @if (isTransaXUser || isTransaXAdmin)
+                    {
+                        @*<li class="has-submenu">
+                            <a href="@Url.Action("Index", "Avance")"><i class="md md-attach-money"></i>Avances</a>
+                        </li>*@
+                    }
+                </ul>
+                <!-- End navigation menu -->
+            </div> <!-- end #navigation -->
+        </div> <!-- end container -->
+    </div> <!-- end navbar-custom -->
+</div>

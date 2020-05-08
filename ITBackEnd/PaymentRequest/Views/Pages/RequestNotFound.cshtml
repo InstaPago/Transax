@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "Solicitud de Pago";
+    Layout = "~/Views/Shared/_LayoutError.cshtml";
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="page-title-box">
+            <h4 class="page-title">Solicitud de Pago</h4>
+        </div>
+    </div>
+</div>
+<div class="col-lg-12">
+    <div class="panel panel-border panel-warning">
+        <div class="panel-heading">
+            <h3 class="panel-title"><i class="md md-warning"></i> La solicitud no pudo ser encontrada.</h3>
+        </div>
+        <div class="panel-body">
+            <p>
+                Por favor contacte al comercio para generar una solicitud.
+            </p>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundle/core-app")
+}

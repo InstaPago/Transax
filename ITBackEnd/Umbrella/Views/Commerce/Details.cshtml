@@ -1,0 +1,22 @@
+﻿@model InstaTransfer.DataAccess.Commerce
+@{
+    var Header = string.Format("{0} ({1})", Model.SocialReasonName.Trim(), Model.BusinessName.Trim());
+    var commerceRif = ViewBag.commerceRif;
+    //InstaTransfer.DataAccess.CUser cUser = ViewBag.cUser;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Detalles del Comercio";
+}
+
+<!-- Page-Title -->
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { header = @Header, title = ViewBag.Title }); }
+
+<!-- Page-body -->
+<div class="row">
+    <div class="col-md-12">
+        @{Html.RenderPartial("~/Views/Commerce/_CommerceDetailsTabs.cshtml", new Umbrella.Models.cDetailsTabs { RifCommerce = commerceRif, isProfile = false }); }
+    </div> <!-- end col -->
+</div>
+@section scripts{
+
+@{Html.RenderPartial("~/Views/Shared/_ScriptsCDetailsTabs.cshtml", new Umbrella.Models.cDetailsTabs { RifCommerce = commerceRif, isProfile = false }); }
+}

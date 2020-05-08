@@ -1,0 +1,212 @@
+﻿@model List<InstaTransfer.DataAccess.UDeclaration>
+@{
+    ViewBag.Title = "Declaraciones";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<Microsoft.AspNet.Identity.EntityFramework.IdentityRole> roles = ViewBag.Roles;
+    List<string[]> declarations = ViewBag.Declarations;
+    List<InstaTransfer.DataAccess.UDeclarationStatus> statusList = ViewBag.statusList;
+    var isApproved = ViewBag.isApproved;
+
+}
+@using InstaTransfer.ITResources.Constants
+@*// Todo: enviar styles a archivo css*@
+<style>
+    .unfocused {
+        color: rgba(0,0,0,0.4);
+    }
+
+    .selected {
+        background-color: rgba(59, 175, 218, 0.74) !important;
+        color: white;
+    }
+</style>
+<!-- #region Page Title -->
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = ViewBag.Title }); }
+<!-- #endregion -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card-box table-responsive">
+
+            <div class="row">
+                <div class="col-lg-10">
+                    <h4 class="header-title"><b>Listado de Declaraciones</b></h4>
+                    <p class="text-muted font-13 m-b-30">
+                        Declaraciones realizadas por los comercios asociados a Transax.
+                    </p>
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="toolbar">
+                        <select id="filterRoles" class="form-control">
+                            <option value="">Todas</option>
+                            @if (statusList.Count > 0)
+                            {
+                                foreach (var status in statusList)
+                                {
+                                    <text>
+                                        <option value="@status.Description.ToString().Trim()">@status.Description.ToString().Trim()</option>
+                                    </text>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            @{Html.RenderPartial("_DeclarationsTable", Model); }
+
+        </div>
+    </div>
+</div>
+
+<!-- #region approve modal -->
+<div id="approve-modal" class="modal-demo" style="height:auto !important; overflow: visible !important;">
+    <button type="button" class="close" onclick="Custombox.close();">
+        <span>&times;</span><span class="sr-only">Close</span>
+    </button>
+    <h4 class="custom-modal-title" id="approvetitle"></h4>
+    <div id="modalbody" class="custom-modal-text" style="height:auto !important; overflow-y: visible !important;">
+    </div>
+</div>
+<!-- #endregion -->
+
+
+@section scripts{
+    <!--jquery mask-->
+    <script src="@Url.Content("~/plugins/jquery-mask/jquery.mask.min.js")"></script>
+    <script src="@Url.Content("~/plugins/jquery-validate/jquery.validate.min.js")"></script>
+    <script src="@Url.Content("~/plugins/jquery-validate/localization/messages_es.js")"></script>
+    <script src="@Url.Content("~/Scripts/bootstrap3-typeahead/bootstrap3-typeahead.min.js")"></script>
+
+    <script type="text/javascript">
+        function switchTestMode(element) {
+            alert(element.checked);
+        }
+
+        function getExportFileName(formato) {
+            var project = "Transax";
+            var filter = $('#filterRoles').val();
+            if (filter != "") {
+                console.log(project + "_" + filter);
+                return project + "_" + filter;
+            } else {
+                return project;
+            }
+        };
+        $(document).ready(function () {
+            @*function InitPage() {
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("TabCommerceData", "Commerce", new { rif = Model.RifCommerce })"
+                })
+            .success(function (data) {
+                $("#datos").html(data);
+                switcheryInit();
+                Pace.stop();
+            });
+            };
+            InitPage();*@
+
+            @if(isApproved != null){
+                if(isApproved == true){
+                   <text>
+            // $.Notification.notify('success', 'top right', 'Éxito!', "Aprobación exitosa.")
+            toastr.success("Aprobación exitosa.", 'Éxito!')
+            </text>
+            }else{
+                if(isApproved == false){
+                        <text>
+            // $.Notification.notify('error', 'top right', 'Error!', "Aprobación fallida.")
+            toastr.error("Aprobación fallida.", 'Error!')
+            </text>
+                }
+            }
+        }
+            function aDeclarationBtnState() {
+                if ($("#myTable").find(".active").length < 1) {
+                    $('#approveformsubmit').prop('disabled', function (i, v) { return !v; });
+                }
+            }
+
+            @*///////*@
+            $(document).on('click', '#myTable .clickable-row', function (event) {
+                aDeclarationBtnState();
+                $(this).addClass('active').siblings().removeClass('active');
+                //console.log($(this).attr("entryid"));
+                $("#entryid").val($(this).attr("entryid"));
+            });
+            $(document).on('submit', '#formApprove', function (e) {
+                e.preventDefault();
+                var declarationId = $("#declarationId").val();
+                var entryid = $("#entryid").val();
+
+                $.ajax({
+                    method: "POST",
+                    url: $("#formApprove").attr("action"),
+                    //data: { fecha: rowdata[0], ref: rowdata[1], monto: rowdata[2], usuario: rowdata[3], comercio: rowdata[4], status: rowdata[4] }
+                    data: { declarationId: declarationId, ubseId: entryid }
+                })
+                  .done(function (response) {
+                      Custombox.close();
+                      window.location.replace(response.url);
+
+                  });
+
+            });
+
+
+
+            var projectname = "Transax";
+
+            // Bug (RightSideBar): La ventana no carga en responsive
+
+            // #region Botones right side bar
+
+
+            //<option value="Transdestino">Transdestino</option><option value="BFI">BFI</option><option value="Tecnologia Instapago, C.A.">Tecnologia Instapago, C.A.</option></select>');
+            var oTable = $('#declarations-table').DataTable();
+            $('#filterRoles').change(function () {
+                var val = $(this).val();
+                oTable.search('');
+                oTable.column(6).search(val).draw();
+
+            });
+            //oTable.fnFilter($(this).val());
+
+
+
+            //setInterval(function () {
+            //    table.ajax.reload(null, false);
+            //}, 30000);
+
+
+        });
+
+        //$('#declarations-table tbody').on('click', 'tr', function () {
+        //    if ($(this).hasClass('selected')) {
+        //        $("#declarations-table tr").each(function () {
+        //            $(this).removeClass("unfocused");
+        //            $(this).removeClass('selected');
+        //        });
+        //    } else {
+        //        $("#declarations-table tr").each(function () {
+        //            $(this).addClass("unfocused");
+        //            $(this).removeClass('selected');
+        //        });
+
+        //        $(this).toggleClass('selected');
+        //    }
+
+        //});
+
+
+
+
+
+
+    </script>
+}
