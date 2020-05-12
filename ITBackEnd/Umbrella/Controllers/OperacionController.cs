@@ -49,6 +49,7 @@ namespace Umbrella.Controllers
         URepository<AE_OperacionPago> AE_OperacionPagoREPO = new URepository<AE_OperacionPago>();
         URepository<AE_AdministradorPago> AE_AdministradorPagoREPO = new URepository<AE_AdministradorPago>();
         URepository<AE_GastoFondo> AE_GastoFondoREPO = new URepository<AE_GastoFondo>();
+        URepository<AE_Cierre> AE_CierreREPO = new URepository<AE_Cierre>();
 
         // GET: Avance
         public ActionResult Index()
@@ -63,6 +64,8 @@ namespace Umbrella.Controllers
             
             ViewBag.BalanceAcciones = AE_BalanceAccioneREPO.GetAllRecords().OrderByDescending(u => u.Id).ToList();
             ViewBag.GastoFondo = AE_GastoFondoREPO.GetAllRecords().OrderByDescending(u => u.Id).ToList();
+            List<AE_Cierre> Lista = AE_CierreREPO.GetAllRecords().OrderByDescending(u => u.Id).ToList();
+            ViewBag.Cierres = Lista;
             return View();
         }
         public JsonResult _GuardarGasto(decimal gastousd,  DateTime gastofecha, string gastodescripcion)
@@ -457,5 +460,7 @@ namespace Umbrella.Controllers
 
             return View(Operacion);
         }
+
+
     }
 }

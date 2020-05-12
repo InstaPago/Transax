@@ -34,6 +34,7 @@
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
     <TargetFrameworkProfile />
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -247,6 +248,7 @@
     <Compile Include="Controllers\OperacionController.cs" />
     <Compile Include="Controllers\PagesController.cs" />
     <Compile Include="Controllers\PaymentRequestController.cs" />
+    <Compile Include="Controllers\ReporteController.cs" />
     <Compile Include="Controllers\ResumenController.cs" />
     <Compile Include="Models\ChartModels.cs" />
     <Compile Include="Controllers\CommerceController.cs" />
@@ -2900,6 +2902,7 @@
     <Content Include="Views\Commerce\_TabDocumentos.cshtml" />
     <Content Include="Views\Commerce\_Documentos.cshtml" />
     <Content Include="Views\Nativa\ListAvance.cshtml" />
+    <Content Include="Views\Reporte\Cierre.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

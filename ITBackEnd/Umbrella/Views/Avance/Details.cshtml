@@ -15,7 +15,9 @@
     decimal totalpagado = ViewBag.totalpagado;
     decimal totalintereses = ViewBag.totalintereses;
     decimal porcentaje = ViewBag.porcentaje;
+    decimal sugeridointereses = ViewBag.sugeridointereses;
     decimal saldoinicial = 0;
+    List<Umbrella.Controllers.AvanceController.Interes> ListInteres =  (List<Umbrella.Controllers.AvanceController.Interes>)ViewBag.InteresesList;
     if (Model.Modalidad)
     {
         saldoinicial = Model.Avance - totalpagado;
@@ -100,13 +102,13 @@
                     @if (!Model.Modalidad)
                     {
                         <h4 class="text-dark" style="font-size:15px;"> Tasa Interes: <strong> @( ((Model.Reembolso - Model.Avance) * 100 / Model.Avance ).ToString("N2")) % </strong></h4>
-                        <h4 class="text-dark" style="font-size:15px;"> Cobro Minimo Esperado: <strong> @Model.Reembolso @moneda </strong></h4>
+                        <h4 class="text-dark" style="font-size:15px;"> Cobro Minimo Esperado: <strong>@moneda @Model.Reembolso.ToString("N2") </strong></h4>
                         <hr />
 
                         <div class="col-lg-6" style="padding:0px;">
 
-                            <h4 class="text-dark" style="font-size:15px;"> Monto Cobrado: <strong> @totalpagado.ToString("N2") @moneda </strong></h4>
-                            <h4 class="text-dark" style="font-size:15px;"> Monto Por Cobrar: <strong> @((Model.Reembolso - totalpagado).ToString("N2")) @moneda </strong> </h4>
+                            <h4 class="text-dark" style="font-size:15px;"> Monto Cobrado: <strong>@moneda @totalpagado.ToString("N2")  </strong></h4>
+                            <h4 class="text-dark" style="font-size:15px;"> Monto Por Cobrar: <strong>@moneda @((Model.Reembolso - totalpagado).ToString("N2")) </strong> </h4>
 
 
                         </div>
@@ -123,19 +125,67 @@
                     else
                     {
                         <h4 class="text-dark" style="font-size:15px;"> Tasa Interes: <strong> @( ((Model.Reembolso - Model.Avance) * 100 / Model.Avance).ToString("N2") ) % </strong></h4>
-                        <h4 class="text-dark" style="font-size:15px;"> Cobro Minimo Esperado: <strong> @Model.Reembolso @moneda </strong></h4>
+                        <h4 class="text-dark" style="font-size:15px;"> Cobro Minimo Esperado: <strong>@moneda @Model.Reembolso  </strong></h4>
                         <hr />
                       
                         <div class="col-lg-6" style="padding:0px;">
 
-                            <h4 class="text-dark" style="font-size:15px;"> Capital Cobrado: <strong> @totalpagado.ToString("N2") @moneda </strong></h4>
-                            <h4 class="text-dark" style="font-size:15px;"> Capital Por Cobrar: <strong> @((Model.Avance - totalpagado).ToString("N2")) @moneda </strong> </h4>
+                            <h4 class="text-dark" style="font-size:15px;"> Capital Cobrado: <strong>@moneda @totalpagado.ToString("N2")  </strong></h4>
+                            <h4 class="text-dark" style="font-size:15px;"> Capital Por Cobrar: <strong>@moneda @((Model.Avance - totalpagado).ToString("N2"))  </strong> </h4>
                             
                            
                         </div>
                         <div class="col-lg-6">
-                            <h4 class="text-dark" style="font-size:15px;"> Intereses Cobrado: <strong> @totalintereses.ToString("N2") @moneda </strong> </h4>
-                            <h4 class="text-dark" style="font-size:15px;"> Intereses Generados: <strong> por definir </strong> </h4>
+                            <h4 class="text-dark" style="font-size:15px;"> Intereses Cobrado: <strong>@moneda @totalintereses.ToString("N2")  </strong> </h4>
+                            <h4 class="text-dark" style="font-size:15px;"> Intereses Generados: <strong style="color:red">  @moneda @sugeridointereses.ToString("N2") </strong> </h4>
+                            <input type="button" class="btn btn-default " data-toggle="modal" data-target="#interes" value="Detalle" />
+                            <div id="interes" class="modal fade" role="dialog">
+                                <div class="modal-dialog modal-lg" style="min-width:1000px;">
+
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h4 class="modal-title">Detalle</h4>
+                                        </div>
+
+                                        <div class="modal-body">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+
+                                                        <th>Fecha</th>
+                                                        <th>Capital Evaluado</th>
+                                                        <th>Interes Generado</th>
+                                                      
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                    @foreach (var _item in ListInteres)
+                                                    {
+                                                        <tr>
+                                                            <td>@(_item.fecha == null ? "No Definido" : _item.fecha.ToShortDateString())</td>
+                                                            <td>@_item.capital.ToString("N2") </td>
+                                                            <td>@_item.monto.ToString("N2") </td>
+                                              
+
+                                                        </tr>
+                                                    }
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="modal-footer">
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
                         </div>
                         
                         <div class="col-lg-12" style="padding:0px;">
@@ -245,11 +295,16 @@
                                 <br />
                                 <input type="button" value="Generar Cobro" id="btncobro" class="btn btn-default" />
                             </div>*@
-                        <div class="col-lg-4 col-lg-offset-4 text-right">
+                    <div class="col-lg-12 col-lg-offset-0 text-center">
+                        @if (Model.IdEstatus == 1)
+                        {
+                        <input type="button" value="Finalizar Operación" id="finalizarope" Target="@Model.Id"  class="btn btn-danger"  />
 
-                            <input type="button" value="Agregar Movimiento" id="addmovimiento" class="btn btn-success" data-toggle="modal" data-target="#modaladdmovimiento" />
-
-                        </div>
+                        <input type="button" value="Agregar Movimiento" id="addmovimiento" class="btn btn-success" data-toggle="modal" data-target="#modaladdmovimiento" />
+                        }else {
+                            <label>Operación Finalizada!</label>
+                        }
+                    </div>
                         <!-- Modal -->
                         <div id="modaladdmovimiento" class="modal fade" role="dialog">
                             <div class="modal-dialog">
@@ -406,41 +461,45 @@
                             {
                                 if (item.Monto != 0)
                                 {
-                                    <tr dtaction="@Url.Action("Details", "Avance")">
+                            <tr dtaction="@Url.Action("Details", "Avance")">
 
-                                        <td>@item.FechaOperacion.ToString("dd/MM/yyyy")</td>
+                                <td>@item.FechaOperacion.ToString("dd/MM/yyyy")</td>
 
-                                        <td>@(item.Lote == null ? "-" : item.Lote.Value.ToString() ) </td>
+                                <td>@(item.Lote == null ? "-" : item.Lote.Value.ToString() ) </td>
 
 
-                                        @if (item.Abono)
-                                        {
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td>@item.Monto.ToString("N2") @moneda</td>
-                                            if (Model.Modalidad)
-                                            {
-                                                <td>@item.Monto.ToString("N2") @moneda</td>
-                                            }
-                                            else
-                                            {
-                                                <td>@item.SaldoFinal.ToString("N2") @moneda</td>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <td>@(item.MontoBs == null ? item.Monto.ToString("N2") + " Bs" : item.MontoBs.Value.ToString("N2") + " Bs")</td>
-                                            <td>@(item.Tasa == null ? "-" : item.Tasa.Value.ToString("N2"))</td>
-                                            <td>@item.Monto.ToString("N2") @moneda</td>
-                                            <td></td>
-                                            <td>@((saldoinicial).ToString("N2")) @moneda</td>
-                                        }
-                                        @if (isTransaXUser || isTransaXAdmin)
-                                        {
-                                            <td><input type="button" class="btn btn-success-alert modificando" value="Modificar" _target="@item.Id" _id="@item.Id" _monto="@(item.MontoBs == null ? 0 : item.MontoBs.Value  )" _tasa="@(item.Tasa == null ? 0 : item.Tasa)" _fecha="@item.FechaOperacion.ToString("yyyy-MM-dd")" _lote="@(item.Lote == null ? 0 : item.Lote)" /></td>
-                                        }
-                                    </tr>
+                                @if (item.Abono)
+                                {
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>@item.Monto.ToString("N2") @moneda</td>
+                                    if (Model.Modalidad)
+                                    {
+                                        <td>@item.Monto.ToString("N2") @moneda</td>
+                                    }
+                                    else
+                                    {
+                                        <td>@item.SaldoFinal.ToString("N2") @moneda</td>
+                                    }
+                                }
+                                else
+                                {
+                                    <td>@(item.MontoBs == null ? item.Monto.ToString("N2") + " Bs" : item.MontoBs.Value.ToString("N2") + " Bs")</td>
+                                    <td>@(item.Tasa == null ? "-" : item.Tasa.Value.ToString("N2"))</td>
+                                    <td>@item.Monto.ToString("N2") @moneda</td>
+                                    <td></td>
+                                    <td>@((saldoinicial).ToString("N2")) @moneda</td>
+                                }
+                                @if (isTransaXUser || isTransaXAdmin)
+                                {
+                                    if (Model.IdEstatus == 1)
+                                    {
+                                        <td><input type="button" class="btn btn-success-alert modificando" value="Modificar" _target="@item.Id" _id="@item.Id" _monto="@(item.MontoBs == null ? 0 : item.MontoBs.Value  )" _tasa="@(item.Tasa == null ? 0 : item.Tasa)" _fecha="@item.FechaOperacion.ToString("yyyy-MM-dd")" _lote="@(item.Lote == null ? 0 : item.Lote)" /></td>
+                                    }
+                                    else {<td></td> }
+                                }
+                                </tr>
                                 }
                                 if (!item.Abono)
                                 {
@@ -459,7 +518,7 @@
                                 <th>Lote</th>
                                 <th>Monto Bs</th>
                                 <th>Tasa</th>
-                                <th> @moneda</th>
+                                <th>@moneda</th>
                                 <th>Abono</th>
 
                                 <th>Saldo </th>
@@ -696,8 +755,48 @@
     <script src="~/Scripts/jquery.app.js"></script>
     @*
         <script src="~/Scripts/pages/jquery.chartjs.init.js"></script>*@
-    <script>
-        $(document).on('ready', function () {
+<script>
+    $(document).on('ready', function () {
+
+        $("#finalizarope").on("click", function () {
+            FinalizarOperacion();
+        });
+
+              function FinalizarOperacion(){
+        swal({
+            title: "¿Seguro desea finalizar esta operación",
+            text: "No podrá revertir esta operación",
+            type: "info",
+            showCancelButton: true,
+            cancelButtonText: "Cancelar",
+            confirmButtonText: "Si, finalizar",
+            closeOnConfirm: false
+        }, function () {
+                ShowLoader();
+                var id = $("#finalizarope").attr("Target");
+                var datos = { id : id };
+            $.ajax({
+                method: "POST",
+                url: '@Url.Action("FinalizarOperacion", "Avance")',
+                data: datos
+            })
+    .done(function (r) {
+        HideLoader();
+        if (r.success) {
+            swal({
+                title: "Exito!",
+                text: r.message,
+                type: "success",
+            }, function () {
+                location.reload();
+            });
+        } else {
+            swal("Error!", r.message, "error");
+        }
+    });
+        });
+        HideLoader();
+    }
 
             $(document).on('submit', '#formupdateconfig', function (e) {
 
@@ -783,6 +882,8 @@
                 Pace.stop();
                 return false;
             });
+
+
             $("#foraddmovimiento").on("submit", function () {
                 Pace.start();
                 $.ajax({
@@ -969,7 +1070,7 @@
 
 
         });
-    </script>
+</script>
 }
 
 

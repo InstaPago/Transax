@@ -75,6 +75,48 @@ namespace Umbrella.Controllers
             List<string> _fechas = new List<string>();
             List<decimal> _montos = new List<decimal>();
             List<decimal> _montobase = new List<decimal>();
+            decimal montointereses = _item.Reembolso - _item.Avance;
+            decimal porcentajeoperacion = (_item.Reembolso - _item.Avance) * 100 / _item.Avance;
+            List<AvanceController.Interes> Interes = new List<Interes>();
+            Interes _interes = new Interes();
+            _interes.capital = _item.Avance;
+            _interes.monto = montointereses;
+            DateTime FI;
+            if (_item.FechaInicioCobro == null)
+            {
+                montointereses = _item.Reembolso - _item.Avance;
+                Interes.Add(_interes);
+            }
+            else
+            {
+                
+                FI = _item.FechaInicioCobro.Value;
+                _interes.fecha = FI;
+                Interes.Add(_interes);
+                if (_item.FechaInicioCobro.Value > DateTime.Now)
+                {
+                    montointereses = _item.Reembolso - _item.Avance;
+                }
+                else
+                {
+                    montointereses = _item.Reembolso - _item.Avance;
+                    FI = FI.AddMonths(1);
+
+                    while (FI < DateTime.Now)
+                    {
+                        List<AE_EstadoCuenta> EstadoCuenta = estadocuenta.Where(u => u.Abono == false && u.SoloUtilidad == false && u.FechaOperacion < FI).ToList();
+                        decimal montoactualcapital = _item.Avance - EstadoCuenta.Sum(u => u.Monto);
+                        decimal nuevosinteres = montoactualcapital * porcentajeoperacion / 100;
+                        Interes item = new Interes();
+                        item.capital = montoactualcapital;
+                        item.fecha = FI;
+                        item.monto = nuevosinteres;
+                        Interes.Add(item);
+                        FI = FI.AddMonths(1);
+                        montointereses = montointereses + nuevosinteres;
+                    }
+                }
+            }
 
             DateTime _fechainicio = estadocuenta.First().FechaOperacion;
             if (_fechainicio > DateTime.Now)
@@ -113,11 +155,11 @@ namespace Umbrella.Controllers
                 }
                 _fechainicio = _fechainicio.AddDays(1);
             }
-
+            ViewBag.InteresesList = Interes;
             ViewBag.fechas = _fechas.ToArray();
             ViewBag.montos = _montos.ToArray();
             ViewBag.montobase = _montobase.ToArray();
-
+            ViewBag.sugeridointereses = montointereses;
             decimal totalpagado = estadocuenta.Where(u => u.Abono == false && u.SoloUtilidad == false).Sum(u => u.Monto);
             decimal totalintereses = estadocuenta.Where(u => u.Abono == false && u.SoloUtilidad == true).Sum(u => u.Monto);
             ViewBag.totalpagado = totalpagado;
@@ -636,14 +678,14 @@ namespace Umbrella.Controllers
 
         }
 
-        public JsonResult _UpdateConfigPropuesta(int __id, string __avance1, string __reembolso1 , string __maximo1, string __avance2, string __reembolso2, string __maximo2, string __avance3, string __reembolso3, string __maximo3)
+        public JsonResult _UpdateConfigPropuesta(int __id, string __avance1, string __reembolso1, string __maximo1, string __avance2, string __reembolso2, string __maximo2, string __avance3, string __reembolso3, string __maximo3)
         {
             try
             {
                 var item = AE_PropuestaREPO.GetAllRecords().Where(u => u.Id == __id).FirstOrDefault();
-                item.MaximoCobroOpcion1 = decimal.Parse(__maximo1); 
-                item.MaximoCobroOpcion2 = decimal.Parse(__maximo2); 
-                item.MaximoCobroOpcion3 = decimal.Parse(__maximo3); 
+                item.MaximoCobroOpcion1 = decimal.Parse(__maximo1);
+                item.MaximoCobroOpcion2 = decimal.Parse(__maximo2);
+                item.MaximoCobroOpcion3 = decimal.Parse(__maximo3);
                 item.ReembolsoOpcion1 = decimal.Parse(__reembolso1);
                 item.ReembolsoOpcion2 = decimal.Parse(__reembolso2);
                 item.ReembolsoOpcion3 = decimal.Parse(__reembolso3);
@@ -804,6 +846,30 @@ namespace Umbrella.Controllers
 
         }
 
+        public JsonResult FinalizarOperacion(int id)
+        {
+            AE_Avance avance = AE_AvanceREPO.GetAllRecords().Where(u => u.Id == id).FirstOrDefault();
+            try
+            {
+
+                avance.IdEstatus = 2;
+                AE_AvanceREPO.SaveChanges();
+
+            }
+            catch (Exception e)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = e.Message
+                }, JsonRequestBehavior.DenyGet);
+            }
+            return Json(new
+            {
+                success = true,
+                message = "Operacion finalizada de forma corrcta!"
+            }, JsonRequestBehavior.DenyGet);
+        }
 
         public bool _GenerarArchivo(List<AE_EstadoCuenta> Cobros)
         {
@@ -922,6 +988,12 @@ namespace Umbrella.Controllers
             archivoREPO.SaveChanges();
 
             return true;
+        }
+
+        public class Interes { 
+            public decimal monto { get; set; }
+            public DateTime fecha { get; set; }
+            public decimal capital { get; set; }
         }
 
     }

@@ -22,7 +22,7 @@ namespace InstaTransfer.DataAccess
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="InstaTransfer_Source")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="InstaTransfer_SourceTest")]
 	public partial class DataAccessDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -228,10 +228,13 @@ namespace InstaTransfer.DataAccess
     partial void InsertCP_ArchivoEstadoCuenta(CP_ArchivoEstadoCuenta instance);
     partial void UpdateCP_ArchivoEstadoCuenta(CP_ArchivoEstadoCuenta instance);
     partial void DeleteCP_ArchivoEstadoCuenta(CP_ArchivoEstadoCuenta instance);
+    partial void InsertAE_Cierre(AE_Cierre instance);
+    partial void UpdateAE_Cierre(AE_Cierre instance);
+    partial void DeleteAE_Cierre(AE_Cierre instance);
     #endregion
 		
 		public DataAccessDataContext() : 
-				base(global::InstaTransfer.DataAccess.Properties.Settings.Default.InstaTransfer_SourceConnectionString4, mappingSource)
+				base(global::InstaTransfer.DataAccess.Properties.Settings.Default.InstaTransfer_SourceTestConnectionString, mappingSource)
 		{
 			OnCreated();
 		}
@@ -785,6 +788,14 @@ namespace InstaTransfer.DataAccess
 			get
 			{
 				return this.GetTable<CP_ArchivoEstadoCuenta>();
+			}
+		}
+		
+		public System.Data.Linq.Table<AE_Cierre> AE_Cierres
+		{
+			get
+			{
+				return this.GetTable<AE_Cierre>();
 			}
 		}
 	}
@@ -19980,6 +19991,332 @@ namespace InstaTransfer.DataAccess
 					this._ArchivoCobroBanesco = value;
 					this.SendPropertyChanged("ArchivoCobroBanesco");
 					this.OnArchivoCobroBanescoChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.AE_Cierre")]
+	public partial class AE_Cierre : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private decimal _CapitalPrimeroMes;
+		
+		private decimal _CapitalFInalMes;
+		
+		private string _Mes;
+		
+		private decimal _ValorAccionInicio;
+		
+		private decimal _ValorAccionFin;
+		
+		private decimal _Rendimiento;
+		
+		private decimal _MontoAdministrador;
+		
+		private decimal _MontoInversionista;
+		
+		private decimal _RetiroCapital;
+		
+		private decimal _PagoUtilida;
+		
+		private System.DateTime _Date;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnCapitalPrimeroMesChanging(decimal value);
+    partial void OnCapitalPrimeroMesChanged();
+    partial void OnCapitalFInalMesChanging(decimal value);
+    partial void OnCapitalFInalMesChanged();
+    partial void OnMesChanging(string value);
+    partial void OnMesChanged();
+    partial void OnValorAccionInicioChanging(decimal value);
+    partial void OnValorAccionInicioChanged();
+    partial void OnValorAccionFinChanging(decimal value);
+    partial void OnValorAccionFinChanged();
+    partial void OnRendimientoChanging(decimal value);
+    partial void OnRendimientoChanged();
+    partial void OnMontoAdministradorChanging(decimal value);
+    partial void OnMontoAdministradorChanged();
+    partial void OnMontoInversionistaChanging(decimal value);
+    partial void OnMontoInversionistaChanged();
+    partial void OnRetiroCapitalChanging(decimal value);
+    partial void OnRetiroCapitalChanged();
+    partial void OnPagoUtilidaChanging(decimal value);
+    partial void OnPagoUtilidaChanged();
+    partial void OnDateChanging(System.DateTime value);
+    partial void OnDateChanged();
+    #endregion
+		
+		public AE_Cierre()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CapitalPrimeroMes", DbType="Decimal(18,2) NOT NULL")]
+		public decimal CapitalPrimeroMes
+		{
+			get
+			{
+				return this._CapitalPrimeroMes;
+			}
+			set
+			{
+				if ((this._CapitalPrimeroMes != value))
+				{
+					this.OnCapitalPrimeroMesChanging(value);
+					this.SendPropertyChanging();
+					this._CapitalPrimeroMes = value;
+					this.SendPropertyChanged("CapitalPrimeroMes");
+					this.OnCapitalPrimeroMesChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_CapitalFInalMes", DbType="Decimal(18,2) NOT NULL")]
+		public decimal CapitalFInalMes
+		{
+			get
+			{
+				return this._CapitalFInalMes;
+			}
+			set
+			{
+				if ((this._CapitalFInalMes != value))
+				{
+					this.OnCapitalFInalMesChanging(value);
+					this.SendPropertyChanging();
+					this._CapitalFInalMes = value;
+					this.SendPropertyChanged("CapitalFInalMes");
+					this.OnCapitalFInalMesChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Mes", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		public string Mes
+		{
+			get
+			{
+				return this._Mes;
+			}
+			set
+			{
+				if ((this._Mes != value))
+				{
+					this.OnMesChanging(value);
+					this.SendPropertyChanging();
+					this._Mes = value;
+					this.SendPropertyChanged("Mes");
+					this.OnMesChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ValorAccionInicio", DbType="Decimal(18,2) NOT NULL")]
+		public decimal ValorAccionInicio
+		{
+			get
+			{
+				return this._ValorAccionInicio;
+			}
+			set
+			{
+				if ((this._ValorAccionInicio != value))
+				{
+					this.OnValorAccionInicioChanging(value);
+					this.SendPropertyChanging();
+					this._ValorAccionInicio = value;
+					this.SendPropertyChanged("ValorAccionInicio");
+					this.OnValorAccionInicioChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_ValorAccionFin", DbType="Decimal(18,2) NOT NULL")]
+		public decimal ValorAccionFin
+		{
+			get
+			{
+				return this._ValorAccionFin;
+			}
+			set
+			{
+				if ((this._ValorAccionFin != value))
+				{
+					this.OnValorAccionFinChanging(value);
+					this.SendPropertyChanging();
+					this._ValorAccionFin = value;
+					this.SendPropertyChanged("ValorAccionFin");
+					this.OnValorAccionFinChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Rendimiento", DbType="Decimal(18,2) NOT NULL")]
+		public decimal Rendimiento
+		{
+			get
+			{
+				return this._Rendimiento;
+			}
+			set
+			{
+				if ((this._Rendimiento != value))
+				{
+					this.OnRendimientoChanging(value);
+					this.SendPropertyChanging();
+					this._Rendimiento = value;
+					this.SendPropertyChanged("Rendimiento");
+					this.OnRendimientoChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MontoAdministrador", DbType="Decimal(18,2) NOT NULL")]
+		public decimal MontoAdministrador
+		{
+			get
+			{
+				return this._MontoAdministrador;
+			}
+			set
+			{
+				if ((this._MontoAdministrador != value))
+				{
+					this.OnMontoAdministradorChanging(value);
+					this.SendPropertyChanging();
+					this._MontoAdministrador = value;
+					this.SendPropertyChanged("MontoAdministrador");
+					this.OnMontoAdministradorChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_MontoInversionista", DbType="Decimal(18,2) NOT NULL")]
+		public decimal MontoInversionista
+		{
+			get
+			{
+				return this._MontoInversionista;
+			}
+			set
+			{
+				if ((this._MontoInversionista != value))
+				{
+					this.OnMontoInversionistaChanging(value);
+					this.SendPropertyChanging();
+					this._MontoInversionista = value;
+					this.SendPropertyChanged("MontoInversionista");
+					this.OnMontoInversionistaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RetiroCapital", DbType="Decimal(18,2) NOT NULL")]
+		public decimal RetiroCapital
+		{
+			get
+			{
+				return this._RetiroCapital;
+			}
+			set
+			{
+				if ((this._RetiroCapital != value))
+				{
+					this.OnRetiroCapitalChanging(value);
+					this.SendPropertyChanging();
+					this._RetiroCapital = value;
+					this.SendPropertyChanged("RetiroCapital");
+					this.OnRetiroCapitalChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_PagoUtilida", DbType="Decimal(18,2) NOT NULL")]
+		public decimal PagoUtilida
+		{
+			get
+			{
+				return this._PagoUtilida;
+			}
+			set
+			{
+				if ((this._PagoUtilida != value))
+				{
+					this.OnPagoUtilidaChanging(value);
+					this.SendPropertyChanging();
+					this._PagoUtilida = value;
+					this.SendPropertyChanged("PagoUtilida");
+					this.OnPagoUtilidaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Date", DbType="DateTime NOT NULL")]
+		public System.DateTime Date
+		{
+			get
+			{
+				return this._Date;
+			}
+			set
+			{
+				if ((this._Date != value))
+				{
+					this.OnDateChanging(value);
+					this.SendPropertyChanging();
+					this._Date = value;
+					this.SendPropertyChanged("Date");
+					this.OnDateChanged();
 				}
 			}
 		}

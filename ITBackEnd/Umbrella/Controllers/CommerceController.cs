@@ -1656,7 +1656,11 @@ namespace Umbrella.Controllers
             //MOVIMIENTO
             AE_EstadoCuenta Estadocuenta = new AE_EstadoCuenta();
             Estadocuenta.IdAvance = avance.Id;
-            Estadocuenta.Monto = avance.Reembolso;
+            if (avance.Modalidad)
+                Estadocuenta.Monto = avance.Avance;
+            else
+                Estadocuenta.Monto = avance.Reembolso;
+
             Estadocuenta.Abono = true;
             Estadocuenta.Estatus = 1;
             Estadocuenta.FechaOperacion = DateTime.Now;
