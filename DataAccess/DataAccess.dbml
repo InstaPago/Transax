@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?><Database Name="InstaTransfer_SourceTest" Class="DataAccessDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
-  <Connection Mode="AppSettings" ConnectionString="Data Source=169.54.211.86\LEGENDINSTANCE;Initial Catalog=InstaTransfer_SourceTest;Persist Security Info=True;User ID=dbatech" SettingsObjectName="InstaTransfer.DataAccess.Properties.Settings" SettingsPropertyName="InstaTransfer_SourceTestConnectionString" Provider="System.Data.SqlClient" />
+  <Connection Mode="AppSettings" ConnectionString="Data Source=169.54.211.86\LEGENDINSTANCE;Initial Catalog=InstaTransfer_SourceTest;User ID=dbatech" SettingsObjectName="InstaTransfer.DataAccess.Properties.Settings" SettingsPropertyName="InstaTransfer_SourceTestConnectionString1" Provider="System.Data.SqlClient" />
   <Table Name="dbo.UUserType" Member="UUserTypes">
     <Type Name="UUserType">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -859,32 +859,6 @@
       <Association Name="Commerce_AE_Avance1" Member="Commerce1" ThisKey="RifCommerce" OtherKey="Rif" Type="Commerce" IsForeignKey="true" />
     </Type>
   </Table>
-  <Table Name="dbo.CP_Beneficiarios" Member="CP_Beneficiarios">
-    <Type Name="CP_Beneficiario">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Rif" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Departamento" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Contrato" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="TipoPagador" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Cuenta" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="TitularCuenta" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="Registro" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="Actualizacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-    </Type>
-  </Table>
-  <Table Name="dbo.CP_Archivo" Member="CP_Archivos">
-    <Type Name="CP_Archivo">
-      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="Nombre" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="Ruta" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
-      <Column Name="Registro" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Contenido" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
-      <Column Name="FechaLectura" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
-      <Column Name="Tipo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Descripcion" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
-      <Column Name="ReferenciaOrigen" Type="System.String" DbType="NVarChar(100)" CanBeNull="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.CP_ArchivoEstadoCuenta" Member="CP_ArchivoEstadoCuentas">
     <Type Name="CP_ArchivoEstadoCuenta">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -915,6 +889,53 @@
       <Column Name="RetiroCapital" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
       <Column Name="PagoUtilida" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
       <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CP_Beneficiarios" Member="CP_Beneficiarios">
+    <Type Name="CP_Beneficiario">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="TipoIdentificacion" Type="System.String" DbType="NVarChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="Identificacion" Type="System.String" DbType="NVarChar(9) NOT NULL" CanBeNull="false" />
+      <Column Name="CodigoCliente" Type="System.String" DbType="NVarChar(8) NOT NULL" CanBeNull="false" />
+      <Column Name="CodigoMaster" Type="System.String" DbType="NVarChar(8) NOT NULL" CanBeNull="false" />
+      <Column Name="PermisoMaster" Type="System.String" DbType="NVarChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="RazonSocial" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="IdentificacionPagador" Type="System.String" DbType="NVarChar(9) NOT NULL" CanBeNull="false" />
+      <Column Name="Region" Type="System.String" DbType="NVarChar(90) NOT NULL" CanBeNull="false" />
+      <Column Name="CorreoElectronico" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Telefono" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="CodigoEstatus" Type="System.String" DbType="NVarChar(1) NOT NULL" CanBeNull="false" />
+      <Column Name="PorcentajeIR_IVA" Type="System.String" DbType="NVarChar(10) NOT NULL" CanBeNull="false" />
+      <Column Name="CodigoDepartamento" Type="System.String" DbType="NChar(4) NOT NULL" CanBeNull="false" />
+      <Column Name="FechaCreacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="FechaUltimaActualizacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Cuenta" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CP_Empresa" Member="CP_Empresas">
+    <Type Name="CP_Empresa">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="NVarChar(150) NOT NULL" CanBeNull="false" />
+      <Column Name="Rif" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Cuenta" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="RegistroBanesco" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CP_Archivo" Member="CP_Archivos">
+    <Type Name="CP_Archivo">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Nombre" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Ruta" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Registro" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Contenido" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
+      <Column Name="FechaLectura" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Tipo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="ReferenciaOrigen" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="IdCP_Archivo" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
+      <Column Name="IdEmpresa" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="FechaCreacion" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
     </Type>
   </Table>
 </Database>

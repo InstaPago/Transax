@@ -2903,6 +2903,7 @@
     <Content Include="Views\Commerce\_Documentos.cshtml" />
     <Content Include="Views\Nativa\ListAvance.cshtml" />
     <Content Include="Views\Reporte\Cierre.cshtml" />
+    <Content Include="Views\Avance\Masivo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -42,13 +42,111 @@ namespace Umbrella.Controllers
         URepository<AE_EstadoCuenta> AE_EstadoCuentaREPO = new URepository<InstaTransfer.DataAccess.AE_EstadoCuenta>();
         URepository<AE_Archivo> AE_ArchivoREPO = new URepository<InstaTransfer.DataAccess.AE_Archivo>();
         URepository<AE_Dolar> AE_DolarREPO = new URepository<AE_Dolar>();
+        URepository<CP_Archivo> CP_ArchivoREPO = new URepository<CP_Archivo>();
         // GET: Avance
         public ActionResult Index()
         {
             List<AE_Avance> ListAvance = new List<AE_Avance>();
             ListAvance = AE_AvanceREPO.GetAllRecords().Where(u => u.IdEstatus == 1 || u.IdEstatus == 2 || u.IdEstatus == 4).OrderByDescending(u => u.Id).ToList();
-
             return View(ListAvance);
+        }
+
+        public ActionResult Masivo()
+        {
+            DateTime fecha = DateTime.Now;
+            List<CP_Archivo> List = new List<CP_Archivo>();
+            List = CP_ArchivoREPO.GetAllRecords().OrderByDescending(u => u.Id).ToList();
+            ViewBag.CP_Archivo = List;
+      
+            List<AE_EstadoCuenta> ListaEstadoCuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.AE_Avance.IdEstatus == 1 && u.FechaOperacion.Day == fecha.Day && u.FechaOperacion.Month == fecha.Month && u.FechaOperacion.Year == fecha.Year && !u.Abono).ToList();
+            ViewBag.CobroDiarios = ListaEstadoCuenta;
+
+            return View();
+        }
+
+        public JsonResult GenerarArchivoMasivoCobroBanesco(List<int> ids)
+        {
+            List<AE_EstadoCuenta> Registros = new List<AE_EstadoCuenta>();
+            var RegistrosBD = AE_EstadoCuentaREPO.GetAllRecords();
+            foreach (var item in ids)
+            {
+                AE_EstadoCuenta _item = RegistrosBD.Where(u => u.Id == item).FirstOrDefault();
+                Registros.Add(_item);
+            }
+
+            try
+            { 
+                bool win = _GenerarArchivoBANPOL(Registros);
+                            
+                if (win)
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Operacion realizada de forma correcta!"
+                    }, JsonRequestBehavior.DenyGet);
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Error Generando el archivo"
+                    }, JsonRequestBehavior.DenyGet); ;
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = e.Message
+                }, JsonRequestBehavior.DenyGet);
+            }
+        }
+
+        public JsonResult GenerarVerificacionMasivoCobroBanesco(List<int> ids)
+        {
+            List<AE_EstadoCuenta> Registros = new List<AE_EstadoCuenta>();
+            var RegistrosBD = AE_EstadoCuentaREPO.GetAllRecords();
+            foreach (var item in ids)
+            {
+                AE_EstadoCuenta _item = RegistrosBD.Where(u => u.Id == item).FirstOrDefault();
+                Registros.Add(_item);
+            }
+
+            try
+            {
+                bool win = GenerarValidacionCobroBanesco(Registros);
+                if (win)
+                {
+                    return Json(new
+                    {
+                        success = true,
+                        message = "Operacion realizada de forma correcta!"
+                    }, JsonRequestBehavior.DenyGet);
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "Error Generando el archivo"
+                    }, JsonRequestBehavior.DenyGet); ;
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = e.Message
+                }, JsonRequestBehavior.DenyGet);
+            }
         }
 
         public ActionResult List()
@@ -89,7 +187,7 @@ namespace Umbrella.Controllers
             }
             else
             {
-                
+
                 FI = _item.FechaInicioCobro.Value;
                 _interes.fecha = FI;
                 Interes.Add(_interes);
@@ -169,7 +267,8 @@ namespace Umbrella.Controllers
             {
                 porcentaje = (totalpagado / ListAvance.FirstOrDefault().Avance) * 100;
             }
-            else {
+            else
+            {
                 porcentaje = (totalpagado / ListAvance.FirstOrDefault().Reembolso) * 100;
             }
             //decimal porcentaje = (totalpagado / ListAvance.FirstOrDefault().Reembolso) * 100;
@@ -990,7 +1089,248 @@ namespace Umbrella.Controllers
             return true;
         }
 
-        public class Interes { 
+        public bool _GenerarArchivoBANPOL(List<AE_EstadoCuenta> Cobros)
+        {
+            int cantidadmovimientos = Cobros.Count();
+            //string comercio = Cobros.First().AE_Avance.Id;
+            string rif = Cobros.First().AE_Avance.RifCommerce;
+            string fechaarchivo = DateTime.Now.AddDays(0).ToString("ddMMyy.hhmm");
+            string id = Cobros.FirstOrDefault().Id.ToString();
+            if (id.Length > 4)
+            {
+                id = id.Substring((id.Length - 4), 4);
+            }
+            else if (id.Length < 4)
+            {
+                id = id.PadLeft(4, '0');
+            }
+            string numeroorden = DateTime.Now.AddDays(0).ToString("yyMMdd");
+            string _fecha = DateTime.Now.AddDays(0).ToString("yyyyMMdd");
+            numeroorden = numeroorden + id;
+            //datos fijos
+            string registro = "00";
+            //string idtransaccion = "2020040801";
+            string asociado = "208515428";
+            string ordencobroreferencia = numeroorden;
+            string documento = "DIRDEB";
+            string banco = "01";
+            string fecha = DateTime.Now.AddDays(0).ToString("yyyyMMddhhmmss");
+            string registrodecontrol = registro + asociado.PadRight(35) + ordencobroreferencia.PadRight(30) + documento + fecha.PadRight(14) + banco;
+            //encabezado
+            string tiporegistro = "01";
+            string transaccion = "DMI";
+            string condicion = "9";
+
+
+            //string fecha = DateTime.Now.ToString("yyyyMMddhhmmss");
+            string encabezado = tiporegistro + transaccion.PadRight(35) + condicion.PadRight(3) + ordencobroreferencia.PadRight(35) + _fecha;
+
+            decimal total = 0;
+            //debitos
+            //decimal total = 0;
+            List<string> _cobros = new List<string>();
+            foreach (var cobro in Cobros)
+            {
+                string tipo = "03";
+                string recibo = cobro.Id.ToString().PadLeft(8, '0');
+                decimal _cambio = Math.Round(cobro.Monto, 2);
+                _cambio = _cambio * 100;
+                total = total + _cambio;
+                string montoacobrar = _cambio.ToString().Split(',')[0];
+                string moneda = "VES";
+                string numerocuenta = Cobros.FirstOrDefault().AE_Avance.NumeroCuenta;
+                string swift = "UNIOVECA";
+                //string _rif = Cobros.FirstOrDefault().AE_Avance.Commerce.Rif;
+                string nombre = Cobros.FirstOrDefault().AE_Avance.Commerce.SocialReasonName.Replace(".", " ").Replace(",", " ").ToUpper().TrimEnd();
+                string libre = "423";
+                string contrato = rif;
+                string fechavencimiento = "      ";
+                string debito = tipo + recibo.PadRight(30)
+                    + montoacobrar.PadLeft(15, '0') + moneda + numerocuenta.PadRight(30)
+                    + swift.PadRight(11) + rif.PadRight(17) + nombre.PadRight(35)
+                    + libre + contrato.PadRight(35) + fechavencimiento;
+                _cobros.Add(debito);
+
+            }
+
+            //registro credito
+            string _tipo2 = "02";
+            string _recibo = Cobros.First().Id.ToString().PadLeft(8, '0');
+            string _rif = "J401878105";
+            string ordenante = "TECNOLOGIA INSTAPAGO C A";
+            string _montoabono = total.ToString().Split(',')[0];
+            string _moneda = "VES";
+            string _numerocuenta = "01340031810311158627";
+            string _swift = "UNIOVECA";
+            //string _fecha = DateTime.Now.ToString("yyyyMMdd");
+            string formadepago = "423";
+            string instruordenante = " ";
+            string credito = _tipo2 + _recibo.PadRight(30) + _rif.PadRight(17) + ordenante.PadRight(35)
+                + _montoabono.PadLeft(15, '0') + _moneda + instruordenante + _numerocuenta.PadRight(35)
+                + _swift.PadRight(11) + _fecha + formadepago;
+
+            //_cobros
+            string[] lines = { registrodecontrol, encabezado, credito };
+            foreach (var _item in _cobros)
+            {
+                Array.Resize(ref lines, lines.Length + 1);
+                lines[lines.Length - 1] = _item;
+            }
+
+            //totalizador
+            string _tipo = "04";
+            string totalcreditos = "1";
+            string debitos = Cobros.Count().ToString();
+            string montototal = total.ToString().Split(',')[0];
+            string totales = _tipo + totalcreditos.PadLeft(15, '0') + debitos.PadLeft(15, '0') + montototal.PadLeft(15, '0');
+            Array.Resize(ref lines, lines.Length + 1);
+            lines[lines.Length - 1] = totales;
+
+
+            // WriteAllLines creates a file, wregistrodecontrolrites a collection of strings to the file,
+            // and then closes the file.  You do NOT need to call Flush() or Close().
+            //string ruta = ConfigurationManager.AppSettings["RutaCargoCuenta"].ToString() + rif + "_" + comercio + "_" + fechaarchivo + ".txt";
+            string ruta = @"C:\Users\carmelo\Desktop\POLAR\CargoCuentaBanesco\" + "I0005.208515428." + fechaarchivo + ".txt";
+            System.IO.File.WriteAllLines(ruta, lines);
+
+
+            CP_Archivo archivo = new CP_Archivo();
+            archivo.IdEmpresa = 1;
+            archivo.Nombre = "I0005.208515428." + fechaarchivo + ".txt";
+            archivo.Ruta = ruta;
+            archivo.Tipo = 1;
+            string contenido = "";
+            foreach (var item in lines)
+            {
+                contenido = item + "</br>";
+            }
+            archivo.Contenido = contenido;
+            archivo.Registro = cantidadmovimientos;
+            archivo.FechaLectura = DateTime.Now;
+            archivo.FechaCreacion = DateTime.Now;
+            archivo.Descripcion = "[CARGO EN CUENTA] Cargo cuenta masivo de la empresa Fin Pagos.";
+            archivo.IdCP_Archivo = null;
+            archivo.ReferenciaOrigen = "Estado de cuenta operaciones de prestamos";
+            CP_ArchivoREPO.AddEntity(archivo);
+            CP_ArchivoREPO.SaveChanges();
+
+            return true;
+        }
+
+        public bool GenerarValidacionCobroBanesco(List<AE_EstadoCuenta> Cobros)
+        {
+            int cantidadmovimientos = Cobros.Count();
+            string fechaarchivo = DateTime.Now.AddDays(0).ToString("ddMMyy.hhmm");
+
+            string _fecha = DateTime.Now.AddDays(0).ToString("yyyyMMdd");
+            //datos fijos
+            string registro = "00";
+            //BUSCAR RIF BASE DE DATOS
+            string rif = "J401878105";
+            string Filler = "                          ";
+            string Referencia = DateTime.Now.AddDays(0).ToString("yyyyMMddhhmm"); ;
+            string documento = "AFILIA";
+            string registrodecontrol = registro + rif + Filler + Referencia.PadRight(30) + documento;
+
+            int k = 0;
+            //decimal total = 0;
+            List<string> _cobros = new List<string>();
+            foreach (var cobro in Cobros)
+            {
+                //CP_Beneficiario beneficiario = CP_Beneficiario.GetAllRecords().Where(u => u.CodigoCliente == cobro.CodigoComercio).FirstOrDefault();
+
+                //if (beneficiario != null && beneficiario.Id > 0)
+                //{
+                //string _tipodocumento = cobro.AE_Avance.RifCommerce.Substring(0,1);
+                string _documento = cobro.AE_Avance.RifCommerce.PadLeft(10, '0');
+                string digito = "0";
+                string tipocuenta = "01";
+                string numerocuenta = Cobros.FirstOrDefault().AE_Avance.NumeroCuenta;
+                string nombre = cobro.AE_Avance.Commerce.SocialReasonName.Replace(".", " ").Replace(",", " ").ToUpper().TrimEnd();
+                string _referencia = cobro.Id.ToString().PadLeft(8, '0');
+                string debito = _documento + digito + tipocuenta + numerocuenta.PadLeft(35, '0') + nombre.PadRight(59) + _referencia;
+                _cobros.Add(debito);
+                //}
+                //else
+                //{
+                //if (k == 0)
+                //{
+                //    _cuenta = "01340373233733019371";
+                //    _nombrecomercial = "Carmelo Larez";
+                //    _rifc = "V018601098";
+                //}
+                //else if (k == 1)
+                //{
+                //    _cuenta = "01340874278743016046";
+                //    _nombrecomercial = "Alexyomar Istruriz";
+                //    _rifc = "V017302339";
+                //}
+                //else
+                //{
+                //    _cuenta = "01340373233733019371";
+                //    _nombrecomercial = "Carmelo Larez";
+                //    _rifc = "V018601098";
+
+                //}
+                //k++;
+                //}
+
+            }
+
+            string[] lines = { registrodecontrol };
+            foreach (var _item in _cobros)
+            {
+                Array.Resize(ref lines, lines.Length + 1);
+                lines[lines.Length - 1] = _item;
+            }
+
+            // WriteAllLines creates a file, wregistrodecontrolrites a collection of strings to the file,
+            // and then closes the file.  You do NOT need to call Flush() or Close().
+            string ruta = @"C:\Users\carmelo\Desktop\POLAR\CargoCuentaVerificacionBanesco\" + "afilia.txt." + fechaarchivo;
+            System.IO.File.WriteAllLines(ruta, lines);
+
+            CP_Archivo archivo = new CP_Archivo();
+            archivo.IdEmpresa = 1;
+            archivo.Nombre = "afilia.txt";
+            archivo.Ruta = ruta;
+            archivo.Tipo = 2;
+            string contenido = "";
+            foreach (var item in lines)
+            {
+                contenido = item + "</br>";
+            }
+            archivo.Contenido = contenido;
+            archivo.Registro = cantidadmovimientos;
+            archivo.FechaLectura = DateTime.Now;
+            archivo.FechaCreacion = DateTime.Now;
+            archivo.Descripcion = "[VERIFICACIÓN] verificacón de cobros la empresa Fin Pagos.";
+            archivo.IdCP_Archivo = null;
+            archivo.ReferenciaOrigen = "Estado de cuenta operaciones de prestamos";
+            CP_ArchivoREPO.AddEntity(archivo);
+            CP_ArchivoREPO.SaveChanges();
+
+            //Thread.CurrentThread.CurrentCulture = new CultureInfo("es-VE");
+            //InstaTransfer.BLL.Concrete.URepository<AE_Archivo> archivoREPO = new InstaTransfer.BLL.Concrete.URepository<AE_Archivo>();
+            //AE_Archivo _nuevo = new AE_Archivo();
+            //_nuevo.FechaCreacion = DateTime.Now;
+            //_nuevo.IdAE_avance = Cobros.FirstOrDefault().AE_Avance.Id;
+            //_nuevo.Monto = Math.Round(Cobros.Sum(y => y.Monto), 2);
+            //_nuevo.FechaEjecucion = DateTime.Now;
+            //_nuevo.Ruta = ruta;
+            //_nuevo.Valores = numeroorden;
+            //_nuevo.ConsultaExitosa = false;
+            //_nuevo.CorreoSoporteEnviado = false;
+            //_nuevo.IdAE_ArchivosStatus = 1;
+            //_nuevo.StatusChangeDate = DateTime.Now;
+            //_nuevo.RutaRespuesta = "nada - escribo servicio COBRO DIARIO";
+            //archivoREPO.AddEntity(_nuevo);
+            //archivoREPO.SaveChanges();
+
+            return true;
+        }
+
+        public class Interes
+        {
             public decimal monto { get; set; }
             public DateTime fecha { get; set; }
             public decimal capital { get; set; }
