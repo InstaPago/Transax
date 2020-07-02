@@ -1715,6 +1715,133 @@ namespace Umbrella.Controllers
             return true;
         }
 
+        public bool _GenerarArchivoBANPOLFINPAGO(List<AE_EstadoCuenta> Cobros)
+        {
+            int cantidadmovimientos = Cobros.Count();
+            //string comercio = Cobros.First().AE_Avance.Id;
+            string rif = Cobros.First().AE_Avance.RifCommerce;
+            string fechaarchivo = DateTime.Now.AddDays(0).ToString("ddMMyy.hhmm");
+            string id = Cobros.FirstOrDefault().Id.ToString();
+            if (id.Length > 4)
+            {
+                id = id.Substring((id.Length - 4), 4);
+            }
+            else if (id.Length < 4)
+            {
+                id = id.PadLeft(4, '0');
+            }
+            string numeroorden = DateTime.Now.AddDays(0).ToString("yyMMdd");
+            string _fecha = DateTime.Now.AddDays(0).ToString("yyyyMMdd");
+            numeroorden = numeroorden + id;
+            //datos fijos
+            string registro = "00";
+            //string idtransaccion = "2020040801";
+            string asociado = "208515428";
+            string ordencobroreferencia = numeroorden;
+            string documento = "DIRDEB";
+            string banco = "01";
+            string fecha = DateTime.Now.AddDays(0).ToString("yyyyMMddhhmmss");
+            string registrodecontrol = registro + asociado.PadRight(35) + ordencobroreferencia.PadRight(30) + documento + fecha.PadRight(14) + banco;
+            //encabezado
+            string tiporegistro = "01";
+            string transaccion = "DMI";
+            string condicion = "9";
+
+
+            //string fecha = DateTime.Now.ToString("yyyyMMddhhmmss");
+            string encabezado = tiporegistro + transaccion.PadRight(35) + condicion.PadRight(3) + ordencobroreferencia.PadRight(35) + _fecha;
+
+            decimal total = 0;
+            //debitos
+            //decimal total = 0;
+            List<string> _cobros = new List<string>();
+            foreach (var cobro in Cobros)
+            {
+                string tipo = "03";
+                string recibo = cobro.Id.ToString().PadLeft(8, '0');
+                decimal _cambio = Math.Round(cobro.Monto, 2);
+                _cambio = _cambio * 100;
+                total = total + _cambio;
+                string montoacobrar = _cambio.ToString().Split(',')[0];
+                string moneda = "VES";
+                string numerocuenta = Cobros.FirstOrDefault().AE_Avance.NumeroCuenta;
+                string swift = "UNIOVECA";
+                //string _rif = Cobros.FirstOrDefault().AE_Avance.Commerce.Rif;
+                string nombre = Cobros.FirstOrDefault().AE_Avance.Commerce.SocialReasonName.Replace(".", " ").Replace(",", " ").ToUpper().TrimEnd();
+                string libre = "423";
+                string contrato = rif;
+                string fechavencimiento = "      ";
+                string debito = tipo + recibo.PadRight(30)
+                    + montoacobrar.PadLeft(15, '0') + moneda + numerocuenta.PadRight(30)
+                    + swift.PadRight(11) + rif.PadRight(17) + nombre.PadRight(35)
+                    + libre + contrato.PadRight(35) + fechavencimiento;
+                _cobros.Add(debito);
+
+            }
+
+            //registro credito
+            string _tipo2 = "02";
+            string _recibo = Cobros.First().Id.ToString().PadLeft(8, '0');
+            string _rif = "J410066105";
+            string ordenante = "FINPAGOS TECNOLOGIA C A";
+            string _montoabono = total.ToString().Split(',')[0];
+            string _moneda = "VES";
+            string _numerocuenta = "01340031870311158436";
+            string _swift = "BANSVECA";
+            //string _fecha = DateTime.Now.ToString("yyyyMMdd");
+            string formadepago = "423";
+            string instruordenante = " ";
+            string credito = _tipo2 + _recibo.PadRight(30) + _rif.PadRight(17) + ordenante.PadRight(35)
+                + _montoabono.PadLeft(15, '0') + _moneda + instruordenante + _numerocuenta.PadRight(35)
+                + _swift.PadRight(11) + _fecha + formadepago;
+
+            //_cobros
+            string[] lines = { registrodecontrol, encabezado, credito };
+            foreach (var _item in _cobros)
+            {
+                Array.Resize(ref lines, lines.Length + 1);
+                lines[lines.Length - 1] = _item;
+            }
+
+            //totalizador
+            string _tipo = "04";
+            string totalcreditos = "1";
+            string debitos = Cobros.Count().ToString();
+            string montototal = total.ToString().Split(',')[0];
+            string totales = _tipo + totalcreditos.PadLeft(15, '0') + debitos.PadLeft(15, '0') + montototal.PadLeft(15, '0');
+            Array.Resize(ref lines, lines.Length + 1);
+            lines[lines.Length - 1] = totales;
+
+
+            // WriteAllLines creates a file, wregistrodecontrolrites a collection of strings to the file,
+            // and then closes the file.  You do NOT need to call Flush() or Close().
+            //string ruta = ConfigurationManager.AppSettings["RutaCargoCuenta"].ToString() + rif + "_" + comercio + "_" + fechaarchivo + ".txt";
+            string ruta = @"C:\Users\carmelo\Desktop\POLAR\CargoCuentaBanesco\" + "I0005.208515428." + fechaarchivo + ".txt";
+            System.IO.File.WriteAllLines(ruta, lines);
+
+
+            CP_Archivo archivo = new CP_Archivo();
+            archivo.IdEmpresa = 1;
+            archivo.Nombre = "I0005.208515428." + fechaarchivo + ".txt";
+            archivo.Ruta = ruta;
+            archivo.Tipo = 1;
+            string contenido = "";
+            foreach (var item in lines)
+            {
+                contenido = item + "</br>";
+            }
+            archivo.Contenido = contenido;
+            archivo.FechaLectura = DateTime.Now;
+            archivo.FechaCreacion = DateTime.Now;
+            archivo.Descripcion = "Cargo cuenta masivo de la empresa Fin Pagos.";
+            archivo.IdCP_Archivo = null;
+            archivo.ReferenciaOrigen = "Estado de cuenta operaciones de prestamos";
+            CP_ArchivoREPO.AddEntity(archivo);
+            CP_ArchivoREPO.SaveChanges();
+
+            return true;
+        }
+
         public bool LecturaArchivoSalidaBanesco()
         {
             DirectoryInfo d = new DirectoryInfo(@"C:\Users\carmelo\Desktop\POLAR\Salida");//Assuming Test is your Folder
@@ -2107,7 +2234,8 @@ namespace Umbrella.Controllers
             //int skip = 0;
             //List<CP_ArchivoEstadoCuenta> Segmento = Lista.Skip(skip).Take(50).ToList();
             //bool win = GenerarCobroBanesco(Lista.Take(50).ToList());
-            bool win = GenerarCobroBanesco(Lista.ToList());
+            //bool win = GenerarCobroBanesco(Lista.ToList());
+            bool win = GenerarCobroBanescoFinPago(Lista.ToList());
             bool winv = GenerarValidacionCobroBanesco(Lista.ToList());
             if (win && winv)
             {
@@ -2127,7 +2255,7 @@ namespace Umbrella.Controllers
             int cantidadmovimientos = Cobros.Count();
             //string comercio = Cobros.First().AE_Avance.Id;
             //string rif = Cobros.First().AE_Avance.RifCommerce;
-            string fechaarchivo = DateTime.Now.AddDays(0).ToString("ddMMyy.hhmm");
+            string fechaarchivo = DateTime.Now.AddDays(1).ToString("ddMMyy.hhmm");
             string id = Cobros.FirstOrDefault().Id.ToString();
             if (id.Length > 4)
             {
@@ -2137,8 +2265,8 @@ namespace Umbrella.Controllers
             {
                 id = id.PadLeft(4, '0');
             }
-            string numeroorden = DateTime.Now.AddDays(0).ToString("yyMMdd");
-            string _fecha = DateTime.Now.AddDays(0).ToString("yyyyMMdd");
+            string numeroorden = DateTime.Now.AddDays(1).ToString("yyMMdd");
+            string _fecha = DateTime.Now.AddDays(1).ToString("yyyyMMdd");
             numeroorden = numeroorden + id;
             //datos fijos
             string registro = "00";
@@ -2147,7 +2275,7 @@ namespace Umbrella.Controllers
             string ordencobroreferencia = numeroorden;
             string documento = "DIRDEB";
             string banco = "01";
-            string fecha = DateTime.Now.AddDays(0).ToString("yyyyMMddhhmmss");
+            string fecha = DateTime.Now.AddDays(1).ToString("yyyyMMddhhmmss");
             string registrodecontrol = registro + asociado.PadRight(35) + ordencobroreferencia.PadRight(30) + documento + fecha.PadRight(14) + banco;
             //encabezado
             string tiporegistro = "01";
@@ -2230,6 +2358,163 @@ namespace Umbrella.Controllers
             string _moneda = "VES";
             string _numerocuenta = "01340031810311158627";
             string _swift = "UNIOVECA";
+            //string _fecha = DateTime.Now.ToString("yyyyMMdd");
+            string formadepago = "423";
+            string instruordenante = " ";
+            string credito = _tipo2 + _recibo.PadRight(30) + _rif.PadRight(17) + ordenante.PadRight(35)
+                + _montoabono.PadLeft(15, '0') + _moneda + instruordenante + _numerocuenta.PadRight(35)
+                + _swift.PadRight(11) + _fecha + formadepago;
+
+            //_cobros
+            string[] lines = { registrodecontrol, encabezado, credito };
+            foreach (var _item in _cobros)
+            {
+                Array.Resize(ref lines, lines.Length + 1);
+                lines[lines.Length - 1] = _item;
+            }
+
+            //totalizador
+            string _tipo = "04";
+            string totalcreditos = "1";
+            string debitos = Cobros.Count().ToString();
+            string montototal = total.ToString().Split(',')[0];
+            string totales = _tipo + totalcreditos.PadLeft(15, '0') + debitos.PadLeft(15, '0') + montototal.PadLeft(15, '0');
+            Array.Resize(ref lines, lines.Length + 1);
+            lines[lines.Length - 1] = totales;
+
+
+            // WriteAllLines creates a file, wregistrodecontrolrites a collection of strings to the file,
+            // and then closes the file.  You do NOT need to call Flush() or Close().
+            string ruta = @"C:\Users\carmelo\Desktop\POLAR\CargoCuentaBanesco\" + "I0005.208515428." + fechaarchivo + ".txt";
+            System.IO.File.WriteAllLines(ruta, lines);
+            //Thread.CurrentThread.CurrentCulture = new CultureInfo("es-VE");
+            //InstaTransfer.BLL.Concrete.URepository<AE_Archivo> archivoREPO = new InstaTransfer.BLL.Concrete.URepository<AE_Archivo>();
+            //AE_Archivo _nuevo = new AE_Archivo();
+            //_nuevo.FechaCreacion = DateTime.Now;
+            //_nuevo.IdAE_avance = Cobros.FirstOrDefault().AE_Avance.Id;
+            //_nuevo.Monto = Math.Round(Cobros.Sum(y => y.Monto), 2);
+            //_nuevo.FechaEjecucion = DateTime.Now;
+            //_nuevo.Ruta = ruta;
+            //_nuevo.Valores = numeroorden;
+            //_nuevo.ConsultaExitosa = false;
+            //_nuevo.CorreoSoporteEnviado = false;
+            //_nuevo.IdAE_ArchivosStatus = 1;
+            //_nuevo.StatusChangeDate = DateTime.Now;
+            //_nuevo.RutaRespuesta = "nada - escribo servicio COBRO DIARIO";
+            //archivoREPO.AddEntity(_nuevo);
+            //archivoREPO.SaveChanges();
+
+            return true;
+        }
+
+        public bool GenerarCobroBanescoFinPago(List<CP_ArchivoEstadoCuenta> Cobros)
+        {
+            int cantidadmovimientos = Cobros.Count();
+            //string comercio = Cobros.First().AE_Avance.Id;
+            //string rif = Cobros.First().AE_Avance.RifCommerce;
+            string fechaarchivo = DateTime.Now.AddDays(1).ToString("ddMMyy.hhmm");
+            string id = Cobros.FirstOrDefault().Id.ToString();
+            if (id.Length > 4)
+            {
+                id = id.Substring((id.Length - 4), 4);
+            }
+            else if (id.Length < 4)
+            {
+                id = id.PadLeft(4, '0');
+            }
+            string numeroorden = DateTime.Now.AddDays(1).ToString("yyMMdd");
+            string _fecha = DateTime.Now.AddDays(1).ToString("yyyyMMdd");
+            numeroorden = numeroorden + id;
+            //datos fijos
+            string registro = "00";
+            //string idtransaccion = "2020040801";
+            string asociado = "208515428";
+            string ordencobroreferencia = numeroorden;
+            string documento = "DIRDEB";
+            string banco = "01";
+            string fecha = DateTime.Now.AddDays(1).ToString("yyyyMMddhhmmss");
+            string registrodecontrol = registro + asociado.PadRight(35) + ordencobroreferencia.PadRight(30) + documento + fecha.PadRight(14) + banco;
+            //encabezado
+            string tiporegistro = "01";
+            string transaccion = "DMI";
+            string condicion = "9";
+
+
+            //string fecha = DateTime.Now.ToString("yyyyMMddhhmmss");
+            string encabezado = tiporegistro + transaccion.PadRight(35) + condicion.PadRight(3) + ordencobroreferencia.PadRight(35) + _fecha;
+            decimal total = 0;
+            //debitos
+            int k = 0;
+            //decimal total = 0;
+            List<string> _cobros = new List<string>();
+            foreach (var cobro in Cobros)
+            {
+                CP_Beneficiario beneficiario = CP_Beneficiario.GetAllRecords().Where(u => u.CodigoCliente == cobro.CodigoComercio).FirstOrDefault();
+                string _cuenta;
+                string _nombrecomercial;
+                string _rifc;
+                if (beneficiario != null && beneficiario.Id > 0)
+                {
+                    _cuenta = beneficiario.Cuenta;
+                    _nombrecomercial = beneficiario.RazonSocial;
+                    _rifc = beneficiario.TipoIdentificacion + beneficiario.Identificacion.PadLeft(9, '0');
+                }
+                else
+                {
+                    if (k == 0)
+                    {
+                        _cuenta = "01340373233733019371";
+                        _nombrecomercial = "Carmelo Larez";
+                        _rifc = "V018601098";
+                    }
+                    else if (k == 1)
+                    {
+                        _cuenta = "01340874278743016046";
+                        _nombrecomercial = "Alexyomar Istruriz";
+                        _rifc = "V017302339";
+                    }
+                    else
+                    {
+                        _cuenta = "01340373233733019371";
+                        _nombrecomercial = "Carmelo Larez";
+                        _rifc = "V018601098";
+
+                    }
+                    k++;
+                }
+                string tipo = "03";
+                string recibo = cobro.Id.ToString().PadLeft(8, '0');
+                decimal _cambio = Math.Round(cobro.TotalArchivo, 2);
+                _cambio = _cambio * 100;
+                total = total + _cambio;
+                string montoacobrar = _cambio.ToString().Split(',')[0];
+                string moneda = "VES";
+                string numerocuenta = _cuenta;
+                string swift = "UNIOVECA";
+                //string _rif = Cobros.FirstOrDefault().AE_Avance.Commerce.Rif;
+                string nombre = _nombrecomercial.Replace(".", " ").Replace(",", " ").ToUpper().TrimEnd();
+                string libre = "423";
+                string contrato = _rifc;
+                string fechavencimiento = "       ";
+                string debito = tipo + recibo.PadRight(30)
+                    + montoacobrar.PadLeft(15, '0') + moneda + numerocuenta.PadRight(30)
+                    + swift.PadRight(11) + _rifc.PadRight(17) + nombre.PadRight(35)
+                    + libre + contrato.PadRight(35) + fechavencimiento;
+                _cobros.Add(debito);
+
+            }
+
+            //registro credito
+            string _tipo2 = "02";
+            string _recibo = Cobros.First().Id.ToString().PadLeft(8, '0');
+            string _rif = "J410066105";
+            string ordenante = "FINPAGOS TECNOLOGIA C A";
+            //decimal cambio = Math.Round(Cobros.Sum(y => y.Monto), 2);
+            //cambio = cambio * 100;
+            string _montoabono = total.ToString().Split(',')[0];
+            string _moneda = "VES";
+            string _numerocuenta = "01340031870311158436";
+            string _swift = "BANSVECA";
             //string _fecha = DateTime.Now.ToString("yyyyMMdd");
             string formadepago = "423";
             string instruordenante = " ";

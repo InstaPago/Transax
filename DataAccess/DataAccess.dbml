@@ -538,6 +538,7 @@
       <Column Name="Tasa" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
       <Column Name="PromedioAcumulado" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
       <Column Name="FechaValor" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="TasaUtilizada" Type="System.Decimal" DbType="Decimal(18,2) NULL" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.AE_Variables" Member="AE_Variables">
@@ -736,6 +737,7 @@
       <Column Name="Efectivo" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="EfectivoCambiado" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Column Name="Descripcion" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="RecibidoEnDolares" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
       <Association Name="AE_EstadoCuenta_AE_MovimientosDebito" Member="AE_MovimientosDebitos" ThisKey="Id" OtherKey="IdAE_EstadoCuenta" Type="AE_MovimientosDebito" />
       <Association Name="AE_Avance_AE_EstadoCuenta" Member="AE_Avance" ThisKey="IdAvance" OtherKey="Id" Type="AE_Avance" IsForeignKey="true" />
     </Type>
@@ -765,6 +767,8 @@
       <Column Name="CapitalNuevoIngreso" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
       <Column Name="NuevoCapital" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
       <Column Name="ValorAccion" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="GastoExtraordinario" Type="System.Decimal" DbType="Decimal(18,2) NULL" CanBeNull="true" />
+      <Column Name="TasaDiferencia" Type="System.Decimal" DbType="Decimal(18,2) NULL" CanBeNull="true" />
     </Type>
   </Table>
   <Table Name="dbo.AE_Operacion" Member="AE_Operacions">
@@ -926,12 +930,12 @@
     <Type Name="CP_Archivo">
       <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
       <Column Name="Nombre" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
-      <Column Name="Ruta" Type="System.String" DbType="NVarChar(200) NOT NULL" CanBeNull="false" />
+      <Column Name="Ruta" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
       <Column Name="Registro" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
       <Column Name="Contenido" Type="System.String" DbType="Text NOT NULL" CanBeNull="false" UpdateCheck="Never" />
       <Column Name="FechaLectura" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
       <Column Name="Tipo" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
-      <Column Name="Descripcion" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Descripcion" Type="System.String" DbType="NVarChar(500) NOT NULL" CanBeNull="false" />
       <Column Name="ReferenciaOrigen" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
       <Column Name="IdCP_Archivo" Type="System.Boolean" DbType="Bit" CanBeNull="true" />
       <Column Name="IdEmpresa" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />

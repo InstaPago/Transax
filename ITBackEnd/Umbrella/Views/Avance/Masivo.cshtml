@@ -69,9 +69,8 @@
 <div class="row">
     <div class="col-sm-12">
 
-
         <ul class="nav nav-tabs tabs">
-   
+
             <li class="tab">
                 <a href="#tasa" idtable="avance-abono" data-toggle="tab" aria-expanded="false" data-action="">
                     <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
@@ -79,25 +78,25 @@
                 </a>
             </li>
             @*<li class="tab">
-                <a href="#transito" idtable="avance-transito" data-toggle="tab" aria-expanded="false" data-action="">
-                    <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
-                    <span class="hidden-xs">Transito</span>
-                </a>
-            </li>
-            <li class="tab">
-                <a href="#efectivo" idtable="avance-efectivo" data-toggle="tab" aria-expanded="false" data-action="">
-                    <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
-                    <span class="hidden-xs">Efectivo</span>
-                </a>
-            </li>
-            <li class="tab">
-                <a href="#saldos" idtable="avance-abono" data-toggle="tab" aria-expanded="false" data-action="">
-                    <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
-                    <span class="hidden-xs">Carga de Saldos Diarios</span>
-                </a>*@
+                    <a href="#transito" idtable="avance-transito" data-toggle="tab" aria-expanded="false" data-action="">
+                        <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
+                        <span class="hidden-xs">Transito</span>
+                    </a>
+                </li>
+                <li class="tab">
+                    <a href="#efectivo" idtable="avance-efectivo" data-toggle="tab" aria-expanded="false" data-action="">
+                        <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
+                        <span class="hidden-xs">Efectivo</span>
+                    </a>
+                </li>
+                <li class="tab">
+                    <a href="#saldos" idtable="avance-abono" data-toggle="tab" aria-expanded="false" data-action="">
+                        <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
+                        <span class="hidden-xs">Carga de Saldos Diarios</span>
+                    </a>*@
 
         </ul>
-    
+
         <div class="tab-pane active fade in" id="tasa">
             <div class="card-box table-responsive">
                 <div class="col-lg-12">
@@ -110,50 +109,51 @@
                         <button type="button" class="btn btn-default " data-toggle="modal" data-target="#NUEVO" value=""> <i class="md  md-play-install"></i> Generar Cobro @DateTime.Now.ToShortDateString()</button>
                         <div id="NUEVO" class="modal fade" role="dialog">
                             <div class="modal-dialog modal-lg" style="min-width:1000px;">
+                                <form action="@Url.Action("GenerarArchivoMasivoCobroBanesco", "Avance")" typeof="post" id="FormGenerar">
+                                    <!-- Modal content-->
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                            <h4 class="modal-title text-left">Generar archivo de cobro</h4>
+                                        </div>
+                                        <div class="modal-body">
 
-                                <!-- Modal content-->
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title text-left">Generar archivo de cobro</h4>
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Avance</th>
+                                                        <th>Comercio</th>
+                                                        <th>Fecha</th>
+                                                        <th>Monto Bs</th>
+                                                        <th>Acción</th>
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                    @foreach (var _item in CobroDiario)
+                                                    {
+                                                        <tr>
+                                                            <td style="text-align:left">@_item.Id </td>
+                                                            <td style="text-align:left">@_item.AE_Avance.Commerce.SocialReasonName  </td>
+                                                            <td style="text-align:left">@_item.FechaOperacion.ToShortDateString()</td>
+                                                            <td style="text-align:left">@_item.MontoBs</td>
+                                                            <td style="text-align:left"><input type="checkbox" value="@_item.Id" name="ids" checked /></td>
+
+
+                                                        </tr>
+                                                    }
+
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <input type="submit" style="width:200px;" id="add_movimiento" class="btn btn-primary" value="Editar" />
+                                        </div>
+
                                     </div>
-                                    <div class="modal-body">
-                                        <table class="table table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th>Avance</th>
-                                                    <th>Comercio</th>
-                                                    <th>Fecha</th>
-                                                    <th>Monto Bs</th>
-
-                                                    <th>Acción</th>
-
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-
-                                                @foreach (var _item in CobroDiario)
-                                                {
-                                                <tr>
-                                                    <td>@_item.Id </td>
-                                                    <td>@_item.AE_Avance.Commerce.SocialReasonName  </td>
-                                                    <td>@_item.FechaOperacion.ToShortDateString()</td>
-                                                    <td>@_item.MontoBs</td>
-                                                    <td><input type="checkbox" value="@_item.Id" name="ids" checked /></td>
-
-
-                                                </tr>
-                                                }
-
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="modal-footer">
-
-                                    </div>
-
-                                </div>
-
+                                </form>
                             </div>
 
                         </div>
@@ -169,6 +169,7 @@
                                     <th>Banco</th>
                                     <th>Origen</th>
                                     <th>Cobro</th>
+                                    <th>Accion</th>
                                     <th>Respuesta</th>
                                     <th>Fecha Respuesta</th>
                                 </tr>
@@ -182,8 +183,9 @@
                                         <td>@item.Nombre  </td>
                                         <td>@item.Descripcion   </td>
                                         <td><span>Banesco</span></td>
-
-                                        <td></td>
+                                        <td>
+                                            Transax
+                                        </td>
                                         <td>
 
                                             <button type="button" class="btn btn-default " data-toggle="modal" data-target="#@k" value=""> <i class="md  md-search"></i> Ver</button>
@@ -194,11 +196,15 @@
                                                     <div class="modal-content">
                                                         <div class="modal-header">
                                                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                            <h4 class="modal-title">  </h4>
+                                                            <h4 class="modal-title"> Contenido Archivo Generado  </h4>
                                                         </div>
 
                                                         <div class="modal-body">
-                                                            @Html.Raw(HttpUtility.HtmlDecode(item.Contenido))
+                                                            <div class="row">
+                                                                <div class="col-lg-12" style="font-size:12px; color:black;">
+                                                                    @Html.Raw(HttpUtility.HtmlDecode(item.Contenido))
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                         <div class="modal-footer">
 
@@ -210,6 +216,12 @@
 
                                             </div>
                                         </td>
+                                        <td>
+                                            <form action="@Url.Action("EnviarArchivoBanco", "Avance")" _target="@item.Id " class="sendbank" typeof="post" >
+                                                <input type="hidden" name="id" value="@item.Id" />
+                                                <input type="submit" style="width:200px;" class="btn btn-primary " value="Enviar" />
+                                            </form>
+                                        </td>
                                         <td>   </td>
                                         <td>   </td>
                                     </tr>
@@ -219,13 +231,9 @@
                         </table>
                     </div>
                 </div>
-         
+
             </div>
         </div>
-   
-
-
-       
 
     </div>
 </div>
@@ -237,6 +245,56 @@
             TotalizarAcciones();
             TotalizarP();
             TotalizarC();
+
+            $(".sendbank").on("submit", function () {
+                Pace.start();
+
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("EnviarArchivoBanco", "Avance")",
+                    data: $(this).serialize(),
+                })
+                .done(function (r) {
+
+                    if (r.success) {
+
+                        toastr.success("Arvhico enviado con exito!", 'Éxito!');
+                        window.setTimeout(location.reload(), 4000);
+                        return false;
+                    } else {
+                        return false;
+                        // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                        toastr.error(r.message, 'Error!');
+                    }
+                });
+                Pace.stop();
+                return false;
+            });
+
+            $("#FormGenerar").on("submit", function () {
+                Pace.start();
+
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("GenerarArchivoMasivoCobroBanesco", "Avance")",
+                    data: $(this).serialize(),
+                })
+                .done(function (r) {
+
+                    if (r.success) {
+
+                        toastr.success("Arvhico generado con exito!", 'Éxito!');
+                        window.setTimeout(location.reload(), 4000);
+                        return false;
+                    } else {
+                        return false;
+                        // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                        toastr.error(r.message, 'Error!');
+                    }
+                });
+                Pace.stop();
+                return false;
+            });
 
             $(".actualizarestatus").on("click", function () {
                 Pace.start();

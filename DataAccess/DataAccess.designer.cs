@@ -12020,6 +12020,8 @@ namespace InstaTransfer.DataAccess
 		
 		private System.DateTime _FechaValor;
 		
+		private System.Nullable<decimal> _TasaUtilizada;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -12036,6 +12038,8 @@ namespace InstaTransfer.DataAccess
     partial void OnPromedioAcumuladoChanged();
     partial void OnFechaValorChanging(System.DateTime value);
     partial void OnFechaValorChanged();
+    partial void OnTasaUtilizadaChanging(System.Nullable<decimal> value);
+    partial void OnTasaUtilizadaChanged();
     #endregion
 		
 		public AE_Dolar()
@@ -12159,6 +12163,26 @@ namespace InstaTransfer.DataAccess
 					this._FechaValor = value;
 					this.SendPropertyChanged("FechaValor");
 					this.OnFechaValorChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TasaUtilizada", DbType="Decimal(18,2) NULL")]
+		public System.Nullable<decimal> TasaUtilizada
+		{
+			get
+			{
+				return this._TasaUtilizada;
+			}
+			set
+			{
+				if ((this._TasaUtilizada != value))
+				{
+					this.OnTasaUtilizadaChanging(value);
+					this.SendPropertyChanging();
+					this._TasaUtilizada = value;
+					this.SendPropertyChanged("TasaUtilizada");
+					this.OnTasaUtilizadaChanged();
 				}
 			}
 		}
@@ -15978,6 +16002,8 @@ namespace InstaTransfer.DataAccess
 		
 		private string _Descripcion;
 		
+		private bool _RecibidoEnDolares;
+		
 		private EntitySet<AE_MovimientosDebito> _AE_MovimientosDebitos;
 		
 		private EntityRef<AE_Avance> _AE_Avance;
@@ -16020,6 +16046,8 @@ namespace InstaTransfer.DataAccess
     partial void OnEfectivoCambiadoChanged();
     partial void OnDescripcionChanging(string value);
     partial void OnDescripcionChanged();
+    partial void OnRecibidoEnDolaresChanging(bool value);
+    partial void OnRecibidoEnDolaresChanged();
     #endregion
 		
 		public AE_EstadoCuenta()
@@ -16373,6 +16401,26 @@ namespace InstaTransfer.DataAccess
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_RecibidoEnDolares", DbType="Bit NOT NULL")]
+		public bool RecibidoEnDolares
+		{
+			get
+			{
+				return this._RecibidoEnDolares;
+			}
+			set
+			{
+				if ((this._RecibidoEnDolares != value))
+				{
+					this.OnRecibidoEnDolaresChanging(value);
+					this.SendPropertyChanging();
+					this._RecibidoEnDolares = value;
+					this.SendPropertyChanged("RecibidoEnDolares");
+					this.OnRecibidoEnDolaresChanged();
+				}
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="AE_EstadoCuenta_AE_MovimientosDebito", Storage="_AE_MovimientosDebitos", ThisKey="Id", OtherKey="IdAE_EstadoCuenta")]
 		public EntitySet<AE_MovimientosDebito> AE_MovimientosDebitos
 		{
@@ -16505,6 +16553,10 @@ namespace InstaTransfer.DataAccess
 		
 		private decimal _ValorAccion;
 		
+		private System.Nullable<decimal> _GastoExtraordinario;
+		
+		private System.Nullable<decimal> _TasaDiferencia;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -16555,6 +16607,10 @@ namespace InstaTransfer.DataAccess
     partial void OnNuevoCapitalChanged();
     partial void OnValorAccionChanging(decimal value);
     partial void OnValorAccionChanged();
+    partial void OnGastoExtraordinarioChanging(System.Nullable<decimal> value);
+    partial void OnGastoExtraordinarioChanged();
+    partial void OnTasaDiferenciaChanging(System.Nullable<decimal> value);
+    partial void OnTasaDiferenciaChanged();
     #endregion
 		
 		public AE_ValorAccionTR()
@@ -17018,6 +17074,46 @@ namespace InstaTransfer.DataAccess
 					this._ValorAccion = value;
 					this.SendPropertyChanged("ValorAccion");
 					this.OnValorAccionChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_GastoExtraordinario", DbType="Decimal(18,2) NULL")]
+		public System.Nullable<decimal> GastoExtraordinario
+		{
+			get
+			{
+				return this._GastoExtraordinario;
+			}
+			set
+			{
+				if ((this._GastoExtraordinario != value))
+				{
+					this.OnGastoExtraordinarioChanging(value);
+					this.SendPropertyChanging();
+					this._GastoExtraordinario = value;
+					this.SendPropertyChanged("GastoExtraordinario");
+					this.OnGastoExtraordinarioChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_TasaDiferencia", DbType="Decimal(18,2) NULL")]
+		public System.Nullable<decimal> TasaDiferencia
+		{
+			get
+			{
+				return this._TasaDiferencia;
+			}
+			set
+			{
+				if ((this._TasaDiferencia != value))
+				{
+					this.OnTasaDiferenciaChanging(value);
+					this.SendPropertyChanging();
+					this._TasaDiferencia = value;
+					this.SendPropertyChanged("TasaDiferencia");
+					this.OnTasaDiferenciaChanged();
 				}
 			}
 		}
@@ -20578,7 +20674,7 @@ namespace InstaTransfer.DataAccess
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Ruta", DbType="NVarChar(200) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Ruta", DbType="NVarChar(500) NOT NULL", CanBeNull=false)]
 		public string Ruta
 		{
 			get
@@ -20678,7 +20774,7 @@ namespace InstaTransfer.DataAccess
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Descripcion", DbType="NVarChar(50) NOT NULL", CanBeNull=false)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Descripcion", DbType="NVarChar(500) NOT NULL", CanBeNull=false)]
 		public string Descripcion
 		{
 			get

@@ -11,17 +11,29 @@
     List<InstaTransfer.DataAccess.AE_ValorAccion> ValorAccion = (List<InstaTransfer.DataAccess.AE_ValorAccion>)ViewBag.ValorAccion;
     List<InstaTransfer.DataAccess.AE_ValorAccionTR> ValorAccionTR = (List<InstaTransfer.DataAccess.AE_ValorAccionTR>)ViewBag.ValorAccionTR;
     List<InstaTransfer.DataAccess.AE_CambioDiario> CambioDiario = (List<InstaTransfer.DataAccess.AE_CambioDiario>)ViewBag.CambioDiario;
+    decimal TasaReportar = 0;
+    decimal TasaAlta = 0;
+    if (CambioDiario != null && CambioDiario.Count > 0)
+    {
+        TasaAlta = CambioDiario.OrderByDescending(u => u.TasaUtilizada).FirstOrDefault().TasaUtilizada;
+        TasaReportar = TasaAlta * decimal.Parse("1,03");
+    }
+
+
     List<Umbrella.Controllers.HomeController.CobroDiarioGeneral> CobroDiario = ViewBag.CobroDiarios;
+    List<InstaTransfer.DataAccess.AE_EstadoCuenta> EstadoCuentaHistoria = (List<InstaTransfer.DataAccess.AE_EstadoCuenta>)ViewBag.MovimientosHistorico;
     InstaTransfer.BLL.Concrete.URepository<InstaTransfer.DataAccess.AE_CambioDiario> AE_CambioDiarioREPO = new InstaTransfer.BLL.Concrete.URepository<InstaTransfer.DataAccess.AE_CambioDiario>();
     InstaTransfer.BLL.Concrete.URepository<InstaTransfer.DataAccess.AE_EstadoCuenta> AE_EstadoCuenta = new InstaTransfer.BLL.Concrete.URepository<InstaTransfer.DataAccess.AE_EstadoCuenta>();
     int i = 1;
     int k = 1;
     decimal totalcobrodiario = 0;
     decimal totalgasto = 0;
+    decimal acumuladotasa = 0;
     decimal totalganancia = 0;
     decimal valorbruto = 0;
     decimal totaltransito = 0;
     decimal totalefectivo = 0;
+    decimal diferencia = 0;
 }
 @{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = ViewBag.Title }); }
 <style>
@@ -130,7 +142,7 @@
                     @*ojo con el width:100%*@
                     <table id="datatable-buttonsasd" class="dtinit table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
                         <thead>
-                            <tr><td colspan="16"><strong>PAF</strong> = Pago Administrador Fondo / <strong>PU </strong>= Pago Utilidad / <strong> AC</strong> = Abono Capital / <strong> RC</strong> = Retiro Capital / <strong>PC</strong> = Prestamo Colocado </td></tr>
+                            <tr><td colspan="16"><strong>PAF</strong> = Pago Administrador Fondo / <strong>PU </strong>= Pago Utilidad / <strong> AC</strong> = Abono Capital / <strong> RC</strong> = Retiro Capital / <strong>PC</strong> = Prestamo Colocado / <strong>GE</strong> = Gasto Extraordinario / <strong>TD</strong> = Tasa Diferencia </td></tr>
                             <tr>
                                 <th>Fecha</th>
                                 <th>PAF</th>
@@ -138,11 +150,20 @@
                                 <th>RC</th>
                                 <th>AC</th>
                                 <th>PC</th>
+                                <th>GE</th>
+
 
                                 <th>Cobro</th>
+                                <th>Cobro R.</th>
+                                <th>Dif.</th>
+                                <th>Dif. Acu</th>
+
                                 <th>Gasto</th>
+                                <th>TD</th>
                                 <th>Abono Cap</th>
+
                                 <th>Utilidad</th>
+
                                 @*<th>Cuenta Vzla USD</th>*@
                                 <th>Cuentas</th>
 
@@ -159,6 +180,10 @@
                         <tbody>
                             @foreach (InstaTransfer.DataAccess.AE_ValorAccionTR item in ValorAccionTR)
                             {
+                                //decimal NuevoTotal = EstadoCuentaHistoria.Where(u => u.FechaOperacion.Day == item.FechaOperacion.Day && u.FechaOperacion.Month == item.FechaOperacion.Month && u.FechaOperacion.Year == item.FechaOperacion.Year).Sum(u => u.Monto);
+                                decimal _diferencia = 0;
+                                decimal NuevoTotal = 0;
+                                decimal TD = item.TasaDiferencia == null ? 0 : item.TasaDiferencia.Value;
                                 decimal variacion = item.NuevoCapital - item.CapitalInicial;
                                 if (item.UtilidadReportada == 0)
                                 {
@@ -167,29 +192,41 @@
                                 else
                                 {
                                     variacion = variacion - item.UtilidadReportada;
+                                    NuevoTotal = EstadoCuentaHistoria.Where(u => u.FechaOperacion.Day == item.FechaOperacion.Day && u.FechaOperacion.Month == item.FechaOperacion.Month && u.FechaOperacion.Year == item.FechaOperacion.Year).Sum(u => u.Monto);
                                 }
-                                <tr>
-                                    <td>@item.FechaOperacion.ToShortDateString()</td>
-                                    <td style="@(item.PagoUtilidadAdministrador < 0 ?"background-color:#f37272; color:black;":"" )">@item.PagoUtilidadAdministrador.ToString("N2") $</td>
-                                    <td style="@(item.PagoUtilidadMesInversionista < 0 ?"background-color:#f37272; color:black;":"" )">@item.PagoUtilidadMesInversionista.ToString("N2") $</td>
-                                    <td style="@(item.PagoCapitalInversionista < 0 ?"background-color:#f37272; color:black;":"" )">@item.PagoCapitalInversionista.ToString("N2") $</td>
-                                    <td style="@(item.CapitalNuevoIngreso > 0 ?"background-color:#5cc35c; color:black;":"" )">@item.CapitalNuevoIngreso.ToString("N2") $</td>
-                                    <td style="@(item.Prestamo > 0 ?"background-color:#90c4fe; color:black;":"" )">@item.Prestamo.ToString("N2") $</td>
-                                    <td>@item.TotalCobroDiario.ToString("N2") $</td>
-                                    <td>@item.GastoReportado.ToString("N2") $</td>
-                                    <td>@item.AbonoCapital.ToString("N2") $</td>
-                                    @*<td>@(item.TotalCobroDiario + item.GastoReportado)</td>*@
-                                    <td>@item.UtilidadReportada.ToString("N2") $</td>
-                                    @*<td>@(item.UsdVenezuela != null ? item.UsdVenezuela.Value.ToString("N2") : "0,00" )</td>*@
-                                    <td><strong>@item.SaldoUSD.ToString("N2") $</strong> </td>
+                                NuevoTotal = NuevoTotal + TD;
+                                diferencia = diferencia + (NuevoTotal - item.TotalCobroDiario);
+                                _diferencia = NuevoTotal - item.TotalCobroDiario;
 
-                                    <td><strong>@item.CapitalPorCobrar.ToString("N2") $</strong> </td>
-                                    <td><strong>@item.NuevoCapital.ToString("N2") $</strong></td>
-                                    <td> @((item.NuevoCapital - item.CapitalInicial).ToString() ) $</td>
-                                    <td style="@(variacion < -1 ? "background-color:#f37272; color:black;": variacion > 1 ? "background-color:#5cc35c; color:black;" : "background-color:white;color:black;" )"> @variacion.ToString("N2") $</td>
+                            <tr>
+                                <td>@item.FechaOperacion.ToShortDateString()</td>
+                                <td style="@(item.PagoUtilidadAdministrador < 0 ? "background-color:#f37272; color:black;" : "" )">@item.PagoUtilidadAdministrador.ToString("N2") $</td>
+                                <td style="@(item.PagoUtilidadMesInversionista < 0 ? "background-color:#f37272; color:black;" : "" )">@item.PagoUtilidadMesInversionista.ToString("N2") $</td>
+                                <td style="@(item.PagoCapitalInversionista < 0 ? "background-color:#f37272; color:black;" : "" )">@item.PagoCapitalInversionista.ToString("N2") $</td>
+                                <td style="@(item.CapitalNuevoIngreso > 0 ? "background-color:#5cc35c; color:black;" : "" )">@item.CapitalNuevoIngreso.ToString("N2") $</td>
+                                <td style="@(item.Prestamo > 0 ? "background-color:#90c4fe; color:black;" : "" )">@item.Prestamo.ToString("N2") $</td>
+                                <td style="@(item.GastoExtraordinario == null ? "" : item.GastoExtraordinario.Value < 0 ? "background-color:#f37272; color:black;" : "" )">@( item.GastoExtraordinario == null ? "0,00" :  item.GastoExtraordinario.Value.ToString("N2") ) $</td>
 
-                                    <td>@item.ValorAccion.ToString("N2") $</td>
-                                </tr>
+                                <td>@item.TotalCobroDiario.ToString("N2") $</td>
+                                <td style="@( item.TotalCobroDiario != NuevoTotal ? "background-color:#cac546; color:black;" : "" )">@NuevoTotal.ToString("N2") $</td>
+                                <td style="@(_diferencia > 0 ? "background-color:#5cc35c; color:black;" : _diferencia == 0 ? "" : "background-color:#f37272; color:black;" )">@_diferencia.ToString("N2") $</td>
+                                <td style="">@diferencia.ToString("N2") $</td>
+                                <td>@item.GastoReportado.ToString("N2") $</td>
+                                <td style="@(item.TasaDiferencia == null ? "" : item.TasaDiferencia.Value < 0 ? "background-color:#f37272; color:black;" : "" )">@( item.TasaDiferencia == null ? "0,00" :  item.TasaDiferencia.Value.ToString("N2") ) $</td>
+                                <td>@item.AbonoCapital.ToString("N2") $</td>
+                                @*<td>@(item.TotalCobroDiario + item.GastoReportado)</td>*@
+                                <td>@item.UtilidadReportada.ToString("N2") $</td>
+                                @*<td>@(item.UsdVenezuela != null ? item.UsdVenezuela.Value.ToString("N2") : "0,00" )</td>*@
+                                <td><strong>@item.SaldoUSD.ToString("N2") $</strong> </td>
+
+                                <td><strong>@item.CapitalPorCobrar.ToString("N2") $</strong> </td>
+                                <td><strong>@item.NuevoCapital.ToString("N2") $</strong></td>
+                                <td> @((item.NuevoCapital - item.CapitalInicial).ToString() ) $</td>
+                                <td style="@(variacion < -1 ? "background-color:#f37272; color:black;" : variacion > 1 ? "background-color:#5cc35c; color:black;" : "background-color:white;color:black;" )"> @variacion.ToString("N2") $</td>
+
+                                <td>@item.ValorAccion.ToString("N2") $</td>
+                            </tr>
+
                             }
                         </tbody>
                     </table>
@@ -212,7 +249,8 @@
                             <thead>
                                 <tr>
                                     <th>Fecha</th>
-                                    <th>Monto</th>
+                                    <th>Tasa Cobro</th>
+                                    <th>Tasa Reportada</th>
                                     <th>Detalle</th>
                                 </tr>
                             </thead>
@@ -223,6 +261,7 @@
                                     <td>@item.FechaValor.ToShortDateString()</td>
                                     @*<td>@item.FechaValor.ToShortDateString()</td>*@
                                     <td>@item.Tasa </td>
+                                    <td>@(item.TasaUtilizada == null ? "0" : item.TasaUtilizada.Value.ToString("N2") ) </td>
                                     <td>
 
                                         <input type="button" class="btn btn-default " data-toggle="modal" data-target="#@k" value="Detalle" />
@@ -254,27 +293,27 @@
                                                             <tbody>
 
                                                                 @foreach (var _item in AE_CambioDiarioREPO.GetAllRecords().Where(u => u.FechaRegistro.Day == item.Date.Day && u.FechaRegistro.Month == item.Date.Month && u.FechaRegistro.Year == item.Date.Year).ToList())
-                                                                    {
-                                                                <tr>
-                                                                    <td>@_item.FechaRegistro.ToShortDateString()</td>
-                                                                    <td>@_item.MontoBs</td>
-                                                                    <td>@_item.TasaUtilizada</td>
-                                                                    <td>@((_item.MontoBs / _item.TasaUtilizada).ToString("N2"))</td>
-                                                                    <td>@_item.Descripcion</td>
-                                                                    <td style="@(_item.IdEstatus.Value == 1 ? "color:green;" : "color:red;")">@(_item.IdEstatus.Value == 1 ? "Entregado" : "Transito"  )</td>
-                                                                    <td>
-                                                                        @if (_item.IdEstatus.Value == 1)
-                                                                                {
-                                                                            <input type="button" class="btn btn-block actualizarestatus" data-valor="@_item.Id" data-estado="2" value="Transito" />
-                                                                                }
-                                                                                else
-                                                                                {
-                                                                            <input type="button" class="btn btn-group actualizarestatus" data-valor="@_item.Id" data-estado="1" value="Entregado" />
-                                                                                }
-                                                                    </td>
+                                                                {
+                                                                    <tr>
+                                                                        <td>@_item.FechaRegistro.ToShortDateString()</td>
+                                                                        <td>@_item.MontoBs</td>
+                                                                        <td>@_item.TasaUtilizada</td>
+                                                                        <td>@((_item.MontoBs / _item.TasaUtilizada).ToString("N2"))</td>
+                                                                        <td>@_item.Descripcion</td>
+                                                                        <td style="@(_item.IdEstatus.Value == 1 ? "color:green;" : "color:red;")">@(_item.IdEstatus.Value == 1 ? "Entregado" : "Transito"  )</td>
+                                                                        <td>
+                                                                            @if (_item.IdEstatus.Value == 1)
+                                                                            {
+                                                                                <input type="button" class="btn btn-block actualizarestatus" data-valor="@_item.Id" data-estado="2" value="Transito" />
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <input type="button" class="btn btn-group actualizarestatus" data-valor="@_item.Id" data-estado="1" value="Entregado" />
+                                                                            }
+                                                                        </td>
 
-                                                                </tr>
-                                                                    }
+                                                                    </tr>
+                                                                }
 
                                                             </tbody>
                                                         </table>
@@ -353,12 +392,12 @@
                             <tbody>
                                 @foreach (InstaTransfer.DataAccess.AE_CambioDiario item in CambioDiario)
                                 {
-                                <tr>
-                                    <td>@item.MontoBs Bs</td>
-                                    <td>@item.TasaUtilizada Bs </td>
-                                    <td>@( (item.MontoBs / item.TasaUtilizada).ToString("N") ) $ </td>
-                                    <td>@item.FechaRegistro.ToShortDateString()</td>
-                                </tr>
+                                    <tr>
+                                        <td>@item.MontoBs Bs</td>
+                                        <td>@item.TasaUtilizada Bs </td>
+                                        <td>@( (item.MontoBs / item.TasaUtilizada).ToString("N") ) $ </td>
+                                        <td>@item.FechaRegistro.ToShortDateString()</td>
+                                    </tr>
                                 }
                             </tbody>
                         </table>
@@ -399,25 +438,25 @@
                                 @foreach (var _item in AE_CambioDiarioREPO.GetAllRecords().Where(u => u.IdEstatus == 2).ToList())
                                 {
                                     totaltransito = totaltransito + (_item.MontoBs / _item.TasaUtilizada);
-                                <tr>
-                                    <td>@_item.FechaRegistro.ToShortDateString()</td>
-                                    <td>@_item.MontoBs</td>
-                                    <td>@_item.TasaUtilizada</td>
-                                    <td>@((_item.MontoBs / _item.TasaUtilizada).ToString("N2"))</td>
-                                    <td>@_item.Descripcion</td>
-                                    <td style="@(_item.IdEstatus.Value == 1 ? "color:green;" : "color:red;")">@(_item.IdEstatus.Value == 1 ? "Entregado" : "Transito"  )</td>
-                                    <td>
-                                        @if (_item.IdEstatus.Value == 1)
+                                    <tr>
+                                        <td>@_item.FechaRegistro.ToShortDateString()</td>
+                                        <td>@_item.MontoBs</td>
+                                        <td>@_item.TasaUtilizada</td>
+                                        <td>@((_item.MontoBs / _item.TasaUtilizada).ToString("N2"))</td>
+                                        <td>@_item.Descripcion</td>
+                                        <td style="@(_item.IdEstatus.Value == 1 ? "color:green;" : "color:red;")">@(_item.IdEstatus.Value == 1 ? "Entregado" : "Transito"  )</td>
+                                        <td>
+                                            @if (_item.IdEstatus.Value == 1)
                                             {
-                                            <input type="button" class="btn btn-block actualizarestatus" data-valor="@_item.Id" data-estado="2" value="Transito" />
+                                                <input type="button" class="btn btn-block actualizarestatus" data-valor="@_item.Id" data-estado="2" value="Transito" />
                                             }
                                             else
                                             {
-                                            <input type="button" class="btn btn-group actualizarestatus" data-valor="@_item.Id" data-estado="1" value="Entregado" />
+                                                <input type="button" class="btn btn-group actualizarestatus" data-valor="@_item.Id" data-estado="1" value="Entregado" />
                                             }
-                                    </td>
+                                        </td>
 
-                                </tr>
+                                    </tr>
                                 }
 
                             </tbody>
@@ -495,88 +534,198 @@
                 <h4 class="header-title"><b>BALANCE DIARIO DEL FONDO</b></h4>
                 <div class="clearfix"></div>
                 <div class="col-lg-12" style="margin-top:3%;">
-                    <h4 class="header-title">
-                        COBROS DEL DIA
-                    </h4>
-                    <hr />
-                    <div class="col-lg-9">
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th></th>
-                                        <th>ID-Avance</th>
-                                        <th>Comercio</th>
-                                        <th>Monto Bs</th>
-                                        <th>Tasa</th>
-                                        <th>Monto $</th>
-                                        <th>Gasto Banco</th>
-                                        <th>Total $</th>
-                                        <th>Utilidad $</th>
 
-                                    </tr>
-                                </thead>
-                                <tbody>
+                    <div class="col-lg-10">
 
-                                    @foreach (var _item in CobroDiario.First().Lista.Where(u => u.Monto > 0))
-                                    {
+                        <h4 class="header-title">
+                            COBROS DEL DIA RECIBIDOS EN BOLIVARES
+                        </h4>
+                        <hr />
+                        <div class="col-lg-12">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>ID-Avance</th>
+                                            <th>Comercio</th>
+                                            <th>Monto Bs</th>
+                                            <th>Tasa Cobrado</th>
+                                            <th>Tasa a Reportar</th>
+                                            <th>Monto $</th>
+                                            <th>Monto R $</th>
 
-                                        decimal total = 0;
-                                        decimal gasto = 0;
-                                        decimal ganacia = 0;
-                                        decimal porcen = (_item.AE_Avance.Reembolso - _item.AE_Avance.Avance) * 100 / _item.AE_Avance.Avance;
-                                        gasto = _item.AE_Avance.GastoBanco == 0 ? 0 : _item.AE_Avance.GastoBanco;
-                                        decimal MontoConGasto = _item.AE_Avance.GastoBanco == 0 ? _item.Monto : (_item.Monto - (_item.Monto * _item.AE_Avance.GastoBanco / 100));
-                                    <tr>
-                                        <td>@_item.FechaOperacion.ToShortDateString()</td>
-                                        <td>@_item.IdAvance (@porcen.ToString("N") %)</td>
-                                        <td>@_item.AE_Avance.Commerce.BusinessName</td>
-                                        <td>@_item.MontoBs.Value.ToString("N") Bs</td>
-                                        <td>@_item.Tasa.Value.ToString("N") Bs</td>
-                                        <td>@_item.Monto $</td>
-                                        <td>@(_item.AE_Avance.GastoBanco == 0 ? "0,00" : (_item.Monto * _item.AE_Avance.GastoBanco / 100).ToString("N") ) $ (@_item.AE_Avance.GastoBanco %)</td>
-                                        <td>@( _item.AE_Avance.GastoBanco == 0 ? _item.Monto.ToString("N") : (_item.Monto - (_item.Monto * _item.AE_Avance.GastoBanco / 100)).ToString("N")) $</td>
-                                        @if (_item.AE_Avance.Modalidad && _item.SoloUtilidad)
+
+                                            <th>Gasto Banco</th>
+                                            <th>Gasto Tasa</th>
+                                            <th>Total $</th>
+                                            <th>Utilidad $</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var _item in CobroDiario.First().Lista.Where(u => u.Monto > 0 && !u.RecibidoEnDolares))
+                                        {
+                                            decimal montonuevo = 0;
+                                            if (TasaReportar == 0)
                                             {
-                                            <td>@((MontoConGasto).ToString("N") ) $</td>
-                                            }
-                                            else if (_item.AE_Avance.Modalidad && !_item.SoloUtilidad)
-                                            {
-                                            <td>@("0,00" ) $</td>
+                                                montonuevo = 0;
                                             }
                                             else
                                             {
-                                            <td>@((MontoConGasto * porcen / 100).ToString("N") ) $</td>
+                                                montonuevo = (_item.MontoBs.Value / TasaReportar);
+                                            }
+
+                                            decimal diferenciatasa = _item.Monto - montonuevo;
+                                            decimal total = 0;
+                                            decimal gasto = 0;
+                                            decimal ganacia = 0;
+                                            decimal porcen = (_item.AE_Avance.Reembolso - _item.AE_Avance.Avance) * 100 / _item.AE_Avance.Avance;
+                                            gasto = _item.AE_Avance.GastoBanco == 0 ? 0 : _item.AE_Avance.GastoBanco;
+                                            decimal MontoConGasto = _item.AE_Avance.GastoBanco == 0 ? _item.Monto : (_item.Monto - (_item.Monto * _item.AE_Avance.GastoBanco / 100));
+                                            //MontoConGasto = MontoConGasto - diferenciatasa;
+                                        <tr>
+                                            <td>@_item.FechaOperacion.ToShortDateString()</td>
+                                            <td>@_item.IdAvance (@porcen.ToString("N") %)</td>
+                                            <td>@_item.AE_Avance.Commerce.BusinessName</td>
+                                            <td>@_item.MontoBs.Value.ToString("N") Bs</td>
+                                            <td>@_item.Tasa.Value.ToString("N") Bs</td>
+                                            <td>@TasaReportar.ToString("N") Bs</td>
+                                            <td>@_item.Monto $</td>
+                                            <td>@montonuevo.ToString("N") $</td>
+                                            <td>@(_item.AE_Avance.GastoBanco == 0 ? "0,00" : (_item.Monto * _item.AE_Avance.GastoBanco / 100).ToString("N") ) $ (@_item.AE_Avance.GastoBanco %)</td>
+                                            <td>@diferenciatasa.ToString("N")</td>
+                                            <td>@( _item.AE_Avance.GastoBanco == 0 ? (_item.Monto - diferenciatasa).ToString("N") : (_item.Monto - (_item.Monto * _item.AE_Avance.GastoBanco / 100) - diferenciatasa).ToString("N")) $</td>
+
+                                            @if (_item.AE_Avance.Modalidad && _item.SoloUtilidad)
+                                            {
+                                                <td>@((MontoConGasto - diferenciatasa).ToString("N") ) $</td>
+                                            }
+                                            else if (_item.AE_Avance.Modalidad && !_item.SoloUtilidad)
+                                            {
+                                                <td>@("0,00" ) $</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@(((MontoConGasto - diferenciatasa) * porcen / 100).ToString("N") ) $</td>
                                             }
 
 
-                                    </tr>
-                                        total = _item.AE_Avance.GastoBanco == 0 ? _item.Monto : (_item.Monto - (_item.Monto * _item.AE_Avance.GastoBanco / 100));
-                                        totalcobrodiario = totalcobrodiario + total;
-                                        totalgasto = totalgasto + (_item.Monto - MontoConGasto);
-                                        valorbruto = valorbruto + _item.Monto;
-                                        if (_item.AE_Avance.Modalidad && _item.SoloUtilidad)
-                                        {
-                                            totalganancia = totalganancia + MontoConGasto;
+                                        </tr>
+                                            total = _item.AE_Avance.GastoBanco == 0 ? _item.Monto - diferenciatasa : (_item.Monto - (_item.Monto * _item.AE_Avance.GastoBanco / 100) - diferenciatasa);
+                                            totalcobrodiario = totalcobrodiario + total;
+                                            totalgasto = totalgasto + (_item.Monto - MontoConGasto);
+                                            acumuladotasa = acumuladotasa + diferenciatasa;
+                                            valorbruto = valorbruto + _item.Monto;
+                                            if (_item.AE_Avance.Modalidad && _item.SoloUtilidad)
+                                            {
+                                                totalganancia = totalganancia + MontoConGasto;
+                                            }
+                                            else if (_item.AE_Avance.Modalidad && !_item.SoloUtilidad)
+                                            {
+                                                totalganancia = totalganancia + (0);
+                                            }
+                                            else
+                                            {
+
+                                                totalganancia = totalganancia + ((MontoConGasto) * porcen / 100) - diferenciatasa;
+                                            }
+
                                         }
-                                        else if (_item.AE_Avance.Modalidad && !_item.SoloUtilidad)
-                                        {
-                                            totalganancia = totalganancia + (0);
-                                        }
-                                        else
-                                        {
 
-                                            totalganancia = totalganancia + ((MontoConGasto) * porcen / 100);
-                                        }
+                                    </tbody>
+                                </table>
 
-                                    }
-
-                                </tbody>
-                            </table>
-
+                            </div>
                         </div>
+
+                        <div class="clearfix"></div>
+
+                        <div class="col-lg-12">
+                            <h4 class="header-title">
+                                COBROS DEL DIA RECIBIDOS EN DOLARES
+                            </h4>
+                            <hr />
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>ID-Avance</th>
+                                            <th>Comercio</th>
+                                            @*<th>Monto Bs</th>
+                                                <th>Tasa</th>*@
+                                            <th>Monto $</th>
+                                            <th>Gasto Banco</th>
+                                            <th>Total $</th>
+                                            <th>Utilidad $</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var _item in CobroDiario.First().Lista.Where(u => u.Monto > 0 && u.RecibidoEnDolares))
+                                        {
+
+                                            decimal total = 0;
+                                            decimal gasto = 0;
+                                            decimal ganacia = 0;
+                                            decimal porcen = (_item.AE_Avance.Reembolso - _item.AE_Avance.Avance) * 100 / _item.AE_Avance.Avance;
+                                            gasto = _item.AE_Avance.GastoBanco == 0 ? 0 : _item.AE_Avance.GastoBanco;
+                                            decimal MontoConGasto = _item.AE_Avance.GastoBanco == 0 ? _item.Monto : (_item.Monto - (_item.Monto * _item.AE_Avance.GastoBanco / 100));
+                                            <tr>
+                                                <td>@_item.FechaOperacion.ToShortDateString()</td>
+                                                <td>@_item.IdAvance (@porcen.ToString("N") %)</td>
+                                                <td>@_item.AE_Avance.Commerce.BusinessName</td>
+                                                @*<td>@_item.MontoBs.Value.ToString("N") Bs</td>
+                                                    <td>@_item.Tasa.Value.ToString("N") Bs</td>*@
+                                                <td>@_item.Monto $</td>
+                                                <td>@(_item.AE_Avance.GastoBanco == 0 ? "0,00" : (_item.Monto * _item.AE_Avance.GastoBanco / 100).ToString("N") ) $ (@_item.AE_Avance.GastoBanco %)</td>
+                                                <td>@( _item.AE_Avance.GastoBanco == 0 ? _item.Monto.ToString("N") : (_item.Monto - (_item.Monto * _item.AE_Avance.GastoBanco / 100)).ToString("N")) $</td>
+                                                @if (_item.AE_Avance.Modalidad && _item.SoloUtilidad)
+                                                {
+                                                    <td>@((MontoConGasto).ToString("N") ) $</td>
+                                                }
+                                                else if (_item.AE_Avance.Modalidad && !_item.SoloUtilidad)
+                                                {
+                                                    <td>@("0,00" ) $</td>
+                                                }
+                                                else
+                                                {
+                                                    <td>@((MontoConGasto * porcen / 100).ToString("N") ) $</td>
+                                                }
+
+
+                                            </tr>
+                                            total = _item.AE_Avance.GastoBanco == 0 ? _item.Monto : (_item.Monto - (_item.Monto * _item.AE_Avance.GastoBanco / 100));
+                                            totalcobrodiario = totalcobrodiario + total;
+                                            totalgasto = totalgasto + (_item.Monto - MontoConGasto);
+                                            valorbruto = valorbruto + _item.Monto;
+                                            if (_item.AE_Avance.Modalidad && _item.SoloUtilidad)
+                                            {
+                                                totalganancia = totalganancia + MontoConGasto;
+                                            }
+                                            else if (_item.AE_Avance.Modalidad && !_item.SoloUtilidad)
+                                            {
+                                                totalganancia = totalganancia + (0);
+                                            }
+                                            else
+                                            {
+
+                                                totalganancia = totalganancia + ((MontoConGasto) * porcen / 100);
+                                            }
+
+                                        }
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+
                     </div>
-                    <div class="col-lg-2 col-lg-offset-1">
+                    <div class="col-lg-2 ">
                         <span for="rif">Cobro Bruto Diario $</span>
                         <div class="form-group flex">
                             <span class="currency">$</span>
@@ -586,6 +735,11 @@
                         <div class="form-group flex">
                             <span class="currency">$</span>
                             <input type="text" value="@totalgasto.ToString("F").Replace(',','.')" id="_totalgastos" name="_totalgastos" class="">
+                        </div>
+                        <span for="rif">Dif. Tasa $</span>
+                        <div class="form-group flex">
+                            <span class="currency">$</span>
+                            <input type="text" value="@acumuladotasa.ToString("F").Replace(',','.')" id="_totalgastos" name="_totaldiftasa" class="">
                         </div>
                         <span for="rif">Total Neto Diario $</span>
                         <div class="form-group flex">
@@ -602,12 +756,14 @@
 
                         @if (CobroDiario.Count > 0)
                         {
-                        <button id="actualizartasa" class="btn btn-primary waves-effect waves-light w-md" type="button">
-                            Actualizar Tasa
-                            <i class="md md-system-update"></i>
-                        </button>
-                        <br />
-                        <span>Ultima Tasas Registrada @Dolar.FirstOrDefault().Tasa.ToString("N")</span>
+                            <button id="actualizartasa" class="btn btn-primary waves-effect waves-light w-md" type="button">
+                                Actualizar Tasa a :  @Dolar.FirstOrDefault().Tasa.ToString("N2")
+                                <i style="margin-left:15px;" class="md md-check"></i>
+                            </button>
+                            @*<br />
+            <span>Tasa Alta Registrada <strong style="color:red;"> @TasaReportar.ToString("N2")</strong></span>*@
+                            @*<br />
+            <span>Tasa a Reportar <strong style="color:red;"> @TasaReportar.ToString("N")</strong></span>*@
                         }
 
                     </div>
@@ -622,146 +778,166 @@
                         <input type="hidden" value="@valorbruto.ToString("F").Replace(',','.')" id="totalcobrodiariobruto" name="totalcobrodiariobruto">
                         <input type="hidden" value="@totalcobrodiario.ToString("F").Replace(',','.')" id="totalcobrodiario" name="totalcobrodiario" />
                         <input type="hidden" value="@totalganancia.ToString("F").Replace(',','.')" id="totalgananciadiaria" name="totalgananciadiaria" />
-                        <div class="col-lg-12">
-                            <h4 class="header-title">
-                                ACTIVOS
-                            </h4> <span style="font-size:13px">(Los montos en bolivares se convertiran utilizando la siguiente tasa @Dolar.FirstOrDefault().Tasa.ToString("N"))</span>
 
-                            <hr />
-                        </div>
+                        <input type="hidden" value="0" id="totalbancosBS" name="totalbancosBS" class="activo">
+                        <input type="hidden" value="0" id="montodolaresBS" name="montodolaresBS" readonly class="activo">
+                        <input type="hidden" value="@((ValorAccionTR.First().SaldoUSD + totalcobrodiario).ToString("F0"))" id="totaldolares" name="totaldolares" class="activo">
+                        <input type="hidden" readonly value="@( ((Reembolso - Cobrado).ToString("F0")))" id="pendienteporcobrar" name="pendienteporcobrar" class=" activo">
+                        <input type="hidden" id="dolarestransito" value="0" name="dolarestransito" class="activo">
+                        <input type="hidden" style="border-color:#03025f !important;" value="0" id="totalactivos" name="totalactivos" class="activo">
+                        <input type="hidden" id="dolarestransito" value="0" name="dolarestransito" class="activo">
+                        <input type="hidden" value="@totalgasto.ToString("N").Replace(',','.')" id="totalgastos" name="totalgastos" class="">
+                        <input type="hidden" value="0" id="totalbancospBS" name="totalbancospBS" class="">
+                        <input type="hidden" value="0" readonly id="montodolarespBS" name="montodolarespBS" class="activo">
+                        <input type="hidden" value="0" id="totaldolaresp" name="totaldolaresp" class="activo">
+                        <input type="hidden" style="border-color:red;" value="0" id="totalpasivos" name="totalpasivos" class="">
+                        <input type="hidden" value="@AccionesExistentes.ToString("F0")" readonly id="cantidadaccion" name="cantidadaccion" class="activo">
+                        <input type="hidden" value="@Acciones.ToString("N").Replace(',','.')" readonly id="valoraccion" name="valoraccion" class="activo">
+                        <input type="hidden" value="0" readonly id="nuevovalor" name="nuevovalor" class="activo">
+                        <input type="hidden" style="border-color:green;" value="" id="totalcapital" name="totalcapital" class="">
                         <input type="hidden" value="@Dolar.FirstOrDefault().Tasa.ToString("F0")" id="tasadolares" name="tasadolares" class="activo">
-                        <div class="col-sm-2  col-xs-12">
-                            <label for="rif">Total Bancos Bs</label>
-                            <div class="form-group flex">
-                                <span class="currency">Bs</span>
-                                <input type="text" value="0" id="totalbancosBS" name="totalbancosBS" class="activo">
-                            </div>
-                        </div>
-                        <div class="col-sm-2 col-xs-12">
-                            <label for="rif">conversion a usd </label>
-                            <div class="form-group flex">
-                                <span class="currency">$</span>
-                                <input type="text" value="0" id="montodolaresBS" name="montodolaresBS" readonly class="activo">
-                            </div>
-                        </div>
-                        <div class="col-sm-2 col-xs-12">
-                            <label for="rif">Total bancos usd</label>
-                            <div class="form-group flex">
-                                <span class="currency">$</span>
-                                <input type="text" value="@((ValorAccionTR.First().SaldoUSD + totalcobrodiario).ToString("F0"))" id="totaldolares" name="totaldolares" class="activo">
-                            </div>
-                        </div>
-                        <div class="col-sm-2 col-xs-12">
-                            <label for="rif"> Por Cobrar <span style="font-size:12px;"></span></label>
-                            <div class="form-group flex">
-                                <span class="currency">$</span>
-                                <input type="text" readonly value="@( ((Reembolso - Cobrado).ToString("F0")))" id="pendienteporcobrar" name="pendienteporcobrar" class=" activo">
-                            </div>
-                        </div>
+                        <input type="hidden" value="@TasaReportar.ToString("F0").Replace(',','.')" name="TasaUtilizada" />
+                        <input type="hidden" value="@acumuladotasa.ToString("F0").Replace(',','.')" name="AcumuladoTasa"/>
+                        @*<div class="col-lg-12">
+            <h4 class="header-title">
+                ACTIVOS
+            </h4> <span style="font-size:13px">(Los montos en bolivares se convertiran utilizando la siguiente tasa @Dolar.FirstOrDefault().Tasa.ToString("N"))</span>
 
-                        <div class="col-sm-2 col-lg-offset-1  col-xs-12">
-                            <label for="rif">TOTAL ACTIVOS</label>
-                            <div class="form-group flex">
+            <hr />
+        </div>*@
 
-                                <span class="currency" style="border-color:#03025f !important;">$</span>
+                        @*<div class="col-sm-2  col-xs-12">
+            <label for="rif">Total Bancos Bs</label>
+            <div class="form-group flex">
+                <span class="currency">Bs</span>
+                <input type="hidden" value="0" id="totalbancosBS" name="totalbancosBS" class="activo">
+            </div>
+        </div>
+        <div class="col-sm-2 col-xs-12">
+            <label for="rif">conversion a usd </label>
+            <div class="form-group flex">
+                <span class="currency">$</span>
+                <input type="hidden" value="0" id="montodolaresBS" name="montodolaresBS" readonly class="activo">
+            </div>
+        </div>
+        <div class="col-sm-2 col-xs-12">
+            <label for="rif">Total bancos usd</label>
+            <div class="form-group flex">
+                <span class="currency">$</span>
+                <input type="hidden" value="@((ValorAccionTR.First().SaldoUSD + totalcobrodiario).ToString("F0"))" id="totaldolares" name="totaldolares" class="activo">
+            </div>
+        </div>
+        <div class="col-sm-2 col-xs-12">
+            <label for="rif"> Por Cobrar <span style="font-size:12px;"></span></label>
+            <div class="form-group flex">
+                <span class="currency">$</span>
+                <input type="hidden" readonly value="@( ((Reembolso - Cobrado).ToString("F0")))" id="pendienteporcobrar" name="pendienteporcobrar" class=" activo">
+            </div>
+        </div>*@
 
-                                <input type="text" style="border-color:#03025f !important;" value="0" id="totalactivos" name="totalactivos" class="activo">
-                            </div>
-                        </div>
-                        <div class="col-sm-2  col-xs-12">
-                            <label for="rif">$ En transito</label>
-                            <div class="form-group flex">
-                                <span class="currency">$</span>
-                                <input type="text" id="dolarestransito" value="0" name="dolarestransito" class="activo">
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="col-lg-12" style="margin-top:2%">
-                            @*<h4 class="header-title">GASTOS</h4><span style="font-size:13px">(Los montos en bolivares se convertiran utilizando la siguiente tasa @Dolar.FirstOrDefault().Tasa.ToString("N"))</span>*@
-                            <hr />
-                        </div>
+                        @*<div class="col-sm-2 col-lg-offset-1  col-xs-12">
+            <label for="rif">TOTAL ACTIVOS</label>
+            <div class="form-group flex">
 
-                        <div class="col-sm-2 col-xs-12">
-                            <label for="rif">Gastos $</label>
-                            <div class="form-group flex">
-                                <span class="currency">$</span>
-                                <input type="text" value="@totalgasto.ToString("N").Replace(',','.')" id="totalgastos" name="totalgastos" class="">
-                            </div>
-                        </div>
+                <span class="currency" style="border-color:#03025f !important;">$</span>
 
-                        <div class="clearfix"></div>
-                        <div class="col-lg-12" style="margin-top:2%">
-                            <h4 class="header-title">PASIVOS</h4><span style="font-size:13px">(Los montos en bolivares se convertiran utilizando la siguiente tasa @Dolar.FirstOrDefault().Tasa.ToString("N"))</span>
-                            <hr />
-                        </div>
+                <input type="hidden" style="border-color:#03025f !important;" value="0" id="totalactivos" name="totalactivos" class="activo">
+            </div>
+        </div>
+        <div class="col-sm-2  col-xs-12">
+            <label for="rif">$ En transito</label>
+            <div class="form-group flex">
+                <span class="currency">$</span>
+                <input type="hidden" id="dolarestransito" value="0" name="dolarestransito" class="activo">
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-lg-12" style="margin-top:2%">
 
-                        <div class="col-sm-2 col-xs-12">
-                            <label for="rif">Deudas Bs</label>
-                            <div class="form-group flex">
-                                <span class="currency">Bs</span>
-                                <input type="text" value="0" id="totalbancospBS" name="totalbancospBS" class="">
-                            </div>
-                        </div>
-                        <div class="col-sm-2 col-xs-12">
-                            <label for="rif"> conversion a usd</label>
-                            <div class="form-group flex">
-                                <span class="currency">$</span>
-                                <input type="text" value="0" readonly id="montodolarespBS" name="montodolarespBS" class="activo">
-                            </div>
-                        </div>
-                        <div class="col-sm-2 col-xs-12">
-                            <label for="rif">Deuda usd</label>
-                            <div class="form-group flex">
-                                <span class="currency">$</span>
-                                <input type="text" value="0" id="totaldolaresp" name="totaldolaresp" class="activo">
-                            </div>
-                        </div>
-                        <div class="col-sm-2 col-lg-offset-3  col-xs-12">
-                            <label for="rif">TOTAL PASIVOS</label>
-                            <div class="form-group flex">
+            <hr />
+        </div>*@
 
-                                <span class="currency" style="border-color:red;">$</span>
-                                <input type="text" style="border-color:red;" value="0" id="totalpasivos" name="totalpasivos" class="">
-                            </div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="col-lg-12" style="margin-top:2%">
-                            <h4 class="header-title">CAPITAL</h4>
-                            <hr />
-                        </div>
+                        @*<div class="col-sm-2 col-xs-12">
+            <label for="rif">Gastos $</label>
+            <div class="form-group flex">
+                <span class="currency">$</span>
+                <input type="hidden" value="@totalgasto.ToString("N").Replace(',','.')" id="totalgastos" name="totalgastos" class="">
+            </div>
+        </div>
 
-                        <div class="col-sm-2 col-xs-12">
-                            <label for="rif"> Acciones existentes</label>
-                            <div class="form-group flex">
-                                <span class="currency">#</span>
-                                <input type="text" value="@AccionesExistentes.ToString("F0")" readonly id="cantidadaccion" name="cantidadaccion" class="activo">
-                            </div>
-                        </div>
+        <div class="clearfix"></div>
+        <div class="col-lg-12" style="margin-top:2%">
+            <h4 class="header-title">PASIVOS</h4><span style="font-size:13px">(Los montos en bolivares se convertiran utilizando la siguiente tasa @Dolar.FirstOrDefault().Tasa.ToString("N"))</span>
+            <hr />
+        </div>
 
-                        <div class="col-sm-2 col-xs-12">
-                            <label for="rif">Valor</label>
-                            <div class="form-group flex">
-                                <span class="currency">$</span>
-                                <input type="text" value="@Acciones.ToString("N").Replace(',','.')" readonly id="valoraccion" name="valoraccion" class="activo">
-                            </div>
-                        </div>
-                        <div class="col-sm-2 col-xs-12">
-                            <label for="rif">Nuevo Valor</label>
-                            <div class="form-group flex">
-                                <span class="currency">$</span>
-                                <input type="text" value="0" readonly id="nuevovalor" name="nuevovalor" class="activo">
-                            </div>
-                        </div>
-                        <div class="col-sm-2 col-lg-offset-3  col-xs-12">
-                            <label for="rif">TOTAL CAPITAL </label>
-                            <div class="form-group flex">
+        <div class="col-sm-2 col-xs-12">
+            <label for="rif">Deudas Bs</label>
+            <div class="form-group flex">
+                <span class="currency">Bs</span>
+                <input type="hidden" value="0" id="totalbancospBS" name="totalbancospBS" class="">
+            </div>
+        </div>
+        <div class="col-sm-2 col-xs-12">
+            <label for="rif"> conversion a usd</label>
+            <div class="form-group flex">
+                <span class="currency">$</span>
+                <input type="hidden" value="0" readonly id="montodolarespBS" name="montodolarespBS" class="activo">
+            </div>
+        </div>
+        <div class="col-sm-2 col-xs-12">
+            <label for="rif">Deuda usd</label>
+            <div class="form-group flex">
+                <span class="currency">$</span>
+                <input type="hidden" value="0" id="totaldolaresp" name="totaldolaresp" class="activo">
+            </div>
+        </div>
+        <div class="col-sm-2 col-lg-offset-3  col-xs-12">
+            <label for="rif">TOTAL PASIVOS</label>
+            <div class="form-group flex">
 
-                                <span class="currency" style="border-color:green;">$</span>
-                                <input type="text" style="border-color:green;" value="" id="totalcapital" name="totalcapital" class="">
-                            </div>
-                        </div>
+                <span class="currency" style="border-color:red;">$</span>
+                <input type="hidden" style="border-color:red;" value="0" id="totalpasivos" name="totalpasivos" class="">
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="col-lg-12" style="margin-top:2%">
+            <h4 class="header-title">CAPITAL</h4>
+            <hr />
+        </div>*@
 
-                        <div class="col-xs-12 text-center">
+                        @*<div class="col-sm-2 col-xs-12">
+            <label for="rif"> Acciones existentes</label>
+            <div class="form-group flex">
+                <span class="currency">#</span>
+                <input type="hidden" value="@AccionesExistentes.ToString("F0")" readonly id="cantidadaccion" name="cantidadaccion" class="activo">
+            </div>
+        </div>
+
+        <div class="col-sm-2 col-xs-12">
+            <label for="rif">Valor</label>
+            <div class="form-group flex">
+                <span class="currency">$</span>
+                <input type="hidden" value="@Acciones.ToString("N").Replace(',','.')" readonly id="valoraccion" name="valoraccion" class="activo">
+            </div>
+        </div>
+        <div class="col-sm-2 col-xs-12">
+            <label for="rif">Nuevo Valor</label>
+            <div class="form-group flex">
+                <span class="currency">$</span>
+                <input type="hidden" value="0" readonly id="nuevovalor" name="nuevovalor" class="activo">
+            </div>
+        </div>
+        <div class="col-sm-2 col-lg-offset-3  col-xs-12">
+            <label for="rif">TOTAL CAPITAL </label>
+            <div class="form-group flex">
+
+                <span class="currency" style="border-color:green;">$</span>
+                <input type="hidden" style="border-color:green;" value="" id="totalcapital" name="totalcapital" class="">
+            </div>
+        </div>*@
+
+                        <div class="col-xs-12 text-center" style="display:none;">
                             <button id="guardar" class="btn btn-primary waves-effect waves-light w-md" type="button">
                                 Guardar
                                 <i class="md md-save"></i>
@@ -769,73 +945,78 @@
                         </div>
                     </form>
                 </div>
-                <div class="col-lg-12">
-                    <label>HISTORICO</label>
-                    <hr />
+                @*<div class="col-lg-12">
+                        <label>HISTORICO</label>
+                        <hr />
 
-                    <div class="clearfix"></div>
-                    @*ojo con el width:100%*@
-                    <table id="datatable-buttonsasd" class="dtinit table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>PAF</th>
-                                <th>PU</th>
-                                <th>AC</th>
-                                <th>PC</th>
-                                <th>Cobro</th>
-                                <th>Gasto</th>
-                                <th>Abono Cap</th>
-                                <th>Utilidad</th>
+                        <div class="clearfix"></div>
 
-                                <th>Cuentas</th>
+                        <table id="datatable-buttonsasd" class="dtinit table table-striped table-hover table-bordered dt-responsive text-nowrap" cellspacing="0" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>PAF</th>
+                                    <th>PU</th>
+                                    <th>AC</th>
+                                    <th>PC</th>
+                                    <th>Cobro</th>
+                                    <th>Cobro Revision</th>
 
-                                <th>Capital PC</th>
-                                <th>Total</th>
-                                <th>Variación</th>
-                                <th>G/P</th>
-                                <th>Acción</th>
+                                    <th>Gasto</th>
+                                    <th>Abono Cap</th>
+                                    <th>Utilidad</th>
+
+                                    <th>Cuentas</th>
+
+                                    <th>Capital PC</th>
+                                    <th>Total</th>
+                                    <th>Variación</th>
+                                    <th>G/P</th>
+                                    <th>Acción</th>
 
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (InstaTransfer.DataAccess.AE_ValorAccionTR item in ValorAccionTR)
-                            {
-                                decimal variacion = item.NuevoCapital - item.CapitalInicial;
-                                if (item.UtilidadReportada == 0)
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (InstaTransfer.DataAccess.AE_ValorAccionTR item in ValorAccionTR)
                                 {
-                                    variacion = 0;
-                                }
-                                else
-                                {
-                                    variacion = variacion - item.UtilidadReportada;
-                                }
-                            <tr>
-                                <td>@item.FechaOperacion.ToShortDateString()</td>
-                                <td style="@(item.PagoUtilidadAdministrador < 0 ?"background-color:#f37272; color:black;":"" )">@item.PagoUtilidadAdministrador.ToString("N2") $</td>
-                                <td style="@(item.PagoUtilidadMesInversionista < 0 ?"background-color:#f37272; color:black;":"" )">@item.PagoUtilidadMesInversionista.ToString("N2") $</td>
-                                <td style="@(item.CapitalNuevoIngreso > 0 ?"background-color:#5cc35c; color:black;":"" )">@item.CapitalNuevoIngreso.ToString("N2") $</td>
-                                <td style="@(item.Prestamo > 0 ?"background-color:#90c4fe; color:black;":"" )">@item.Prestamo.ToString("N2") $</td>
-                                <td>@item.TotalCobroDiario.ToString("N2") $</td>
-                                <td>@item.GastoReportado.ToString("N2") $</td>
-                                <td>@item.AbonoCapital.ToString("N2") $</td>
-                                @*<td>@(item.TotalCobroDiario + item.GastoReportado)</td>*@
-                                <td>@item.UtilidadReportada.ToString("N2") $</td>
-                                @*<td>@(item.UsdVenezuela != null ? item.UsdVenezuela.Value.ToString("N2") : "0,00" )</td>*@
-                                <td><strong>@item.SaldoUSD.ToString("N2") $</strong> </td>
 
-                                <td><strong>@item.CapitalPorCobrar.ToString("N2") $</strong> </td>
-                                <td><strong>@item.NuevoCapital.ToString("N2") $</strong></td>
+                                    decimal NuevoTotal = EstadoCuentaHistoria.Where(u => u.FechaOperacion.Day == item.FechaOperacion.Day && u.FechaOperacion.Month == item.FechaOperacion.Month && u.FechaOperacion.Year == item.FechaOperacion.Year).Sum(u => u.Monto);
+                                    decimal variacion = item.NuevoCapital - item.CapitalInicial;
+                                    if (item.UtilidadReportada == 0)
+                                    {
+                                        variacion = 0;
+                                    }
+                                    else
+                                    {
+                                        variacion = variacion - item.UtilidadReportada;
+                                    }
+                                <tr>
+                                    <td>@item.FechaOperacion.ToShortDateString()</td>
+                                    <td style="@(item.PagoUtilidadAdministrador < 0 ?"background-color:#f37272; color:black;":"" )">@item.PagoUtilidadAdministrador.ToString("N2") $</td>
+                                    <td style="@(item.PagoUtilidadMesInversionista < 0 ?"background-color:#f37272; color:black;":"" )">@item.PagoUtilidadMesInversionista.ToString("N2") $</td>
+                                    <td style="@(item.CapitalNuevoIngreso > 0 ?"background-color:#5cc35c; color:black;":"" )">@item.CapitalNuevoIngreso.ToString("N2") $</td>
+                                    <td style="@(item.Prestamo > 0 ?"background-color:#90c4fe; color:black;":"" )">@item.Prestamo.ToString("N2") $</td>
+                                    <td>@item.TotalCobroDiario.ToString("N2") $</td>
+                                    <td style="@( (item.TotalCobroDiario - NuevoTotal) > 0 ?"background-color:#90c4fe; color:black;":"" )">@NuevoTotal.ToString("N2") $</td>
+                                    <td>@item.GastoReportado.ToString("N2") $</td>
+                                    <td>@item.AbonoCapital.ToString("N2") $</td>
 
-                                <td> @((item.NuevoCapital - item.CapitalInicial).ToString() ) $</td>
-                                <td style="@(variacion < -1 ? "background-color:#f37272; color:black;": variacion > 1 ? "background-color:#5cc35c; color:black;" : "background-color:white;color:black;" )"> @variacion.ToString("N2") $</td>
-                                <td>@item.ValorAccion.ToString("N2") $</td>
-                            </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                                    <td>@item.UtilidadReportada.ToString("N2") $</td>
+
+                                    <td><strong>@item.SaldoUSD.ToString("N2") $</strong> </td>
+
+                                    <td><strong>@item.CapitalPorCobrar.ToString("N2") $</strong> </td>
+                                    <td><strong>@item.NuevoCapital.ToString("N2") $</strong></td>
+
+                                    <td> @((item.NuevoCapital - item.CapitalInicial).ToString() ) $</td>
+                                    <td style="@(variacion < -1 ? "background-color:#f37272; color:black;": variacion > 1 ? "background-color:#5cc35c; color:black;" : "background-color:white;color:black;" )"> @variacion.ToString("N2") $</td>
+                                    <td>@item.ValorAccion.ToString("N2") $</td>
+                                </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>*@
 
 
 
@@ -1044,9 +1225,12 @@
             $("#actualizartasa").on("click", function () {
 
                 Pace.start();
+         
+             
                 $.ajax({
                     method: "POST",
-                    url: "@Url.Action("_ActualizarTasa", "Home")",
+                    url: "@Url.Action("_ActualizarTasa", "Home")"
+             
                 })
                     .done(function (r) {
 
@@ -1253,7 +1437,7 @@
                         $.fn.dataTable.ext.buttons.excelHtml5.action(e, dt, button, config);
                     }
                 }, {
-                    extend: "pdf", 
+                    extend: "pdf",
                     className: "btn-sm",
                     action: function (e, dt, button, config) {
                         //if ($('#filterRoles').val() != "") {

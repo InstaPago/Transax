@@ -23,6 +23,7 @@ using System.IO;
 using System.Configuration;
 using System.Threading;
 using System.Globalization;
+using Renci.SshNet;
 
 namespace Umbrella.Controllers
 {
@@ -43,6 +44,7 @@ namespace Umbrella.Controllers
         URepository<AE_Archivo> AE_ArchivoREPO = new URepository<InstaTransfer.DataAccess.AE_Archivo>();
         URepository<AE_Dolar> AE_DolarREPO = new URepository<AE_Dolar>();
         URepository<CP_Archivo> CP_ArchivoREPO = new URepository<CP_Archivo>();
+        URepository<AE_ValorAccionTR> AE_ValorAccionTRREPO = new URepository<AE_ValorAccionTR>();
         // GET: Avance
         public ActionResult Index()
         {
@@ -57,13 +59,15 @@ namespace Umbrella.Controllers
             List<CP_Archivo> List = new List<CP_Archivo>();
             List = CP_ArchivoREPO.GetAllRecords().OrderByDescending(u => u.Id).ToList();
             ViewBag.CP_Archivo = List;
-      
-            List<AE_EstadoCuenta> ListaEstadoCuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.AE_Avance.IdEstatus == 1 && u.FechaOperacion.Day == fecha.Day && u.FechaOperacion.Month == fecha.Month && u.FechaOperacion.Year == fecha.Year && !u.Abono).ToList();
+
+            List<AE_EstadoCuenta> ListaEstadoCuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.AE_Avance.IdEstatus == 1 && u.FechaOperacion.Day == fecha.AddDays(-1).Day && u.FechaOperacion.Month == fecha.Month && u.FechaOperacion.Year == fecha.Year && u.Monto > 0 && !u.Abono).ToList();
             ViewBag.CobroDiarios = ListaEstadoCuenta;
 
             return View();
         }
 
+        [HttpPost]
+        [ValidateInput(false)]
         public JsonResult GenerarArchivoMasivoCobroBanesco(List<int> ids)
         {
             List<AE_EstadoCuenta> Registros = new List<AE_EstadoCuenta>();
@@ -75,9 +79,10 @@ namespace Umbrella.Controllers
             }
 
             try
-            { 
-                bool win = _GenerarArchivoBANPOL(Registros);
-                            
+            {
+                //bool win = _GenerarArchivoBANPOL(Registros);
+                bool win = _GenerarArchivoBANPOLFINPAGO(Registros);
+
                 if (win)
                 {
                     return Json(new
@@ -161,6 +166,10 @@ namespace Umbrella.Controllers
 
         public ActionResult Details(int id)
         {
+            List<AE_ValorAccionTR> ListValorAccionTR = AE_ValorAccionTRREPO.GetAllRecords().OrderByDescending(u => u.FechaCreacionRegistro).Take(5).ToList();
+            AE_ValorAccionTR Ultimo = ListValorAccionTR.FirstOrDefault();
+            ViewBag.RT = Ultimo;
+
             InstaTransfer.DataAccess.AE_Dolar Dolar = AE_DolarREPO.GetAllRecords().OrderByDescending(u => u.FechaValor).FirstOrDefault();
             ViewBag.Tasa = Dolar.Tasa;
             List<AE_Avance> ListAvance = new List<AE_Avance>();
@@ -812,9 +821,19 @@ namespace Umbrella.Controllers
 
         }
 
-        public JsonResult AddMovimiento(int id, decimal monto, int lote, string fecha, string tasa, bool soloutilidad, bool efectivo)
+        public JsonResult AddMovimiento(int id, decimal monto, int lote, string fecha, string tasa, bool soloutilidad, bool efectivo , bool moneda)
         {
             InstaTransfer.DataAccess.AE_Avance Avance = AE_AvanceREPO.GetAllRecords().Where(u => u.Id == id).FirstOrDefault();
+
+            if (DateTime.Parse(fecha).ToString("dd/MM/yy") != DateTime.Now.ToString("dd/MM/yy"))
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Fecha mal registrada"
+                }, JsonRequestBehavior.DenyGet);
+            }
+
             if (Avance.Modalidad)
             {
                 try
@@ -838,6 +857,7 @@ namespace Umbrella.Controllers
                     estadocuenta.EfectivoCambiado = false;
                     estadocuenta.Efectivo = efectivo;
                     estadocuenta.SoloUtilidad = soloutilidad;
+                    estadocuenta.RecibidoEnDolares = moneda;
                     AE_EstadoCuentaREPO.AddEntity(estadocuenta);
                     AE_EstadoCuentaREPO.SaveChanges();
                     ListaCobros.Add(estadocuenta);
@@ -883,6 +903,7 @@ namespace Umbrella.Controllers
                     estadocuenta.EfectivoCambiado = false;
                     estadocuenta.Efectivo = efectivo;
                     estadocuenta.SoloUtilidad = soloutilidad;
+                    estadocuenta.RecibidoEnDolares = moneda;
                     AE_EstadoCuentaREPO.AddEntity(estadocuenta);
                     AE_EstadoCuentaREPO.SaveChanges();
                     ListaCobros.Add(estadocuenta);
@@ -906,9 +927,16 @@ namespace Umbrella.Controllers
 
         }
 
-        public JsonResult EditMovimiento(int id, decimal monto, int lote, string fecha, string tasa)
+        public JsonResult EditMovimiento(int id, decimal monto, int lote, string fecha, string tasa, bool moneda)
         {
-
+            if (DateTime.Parse(fecha).ToString("dd/MM/yy") != DateTime.Now.ToString("dd/MM/yy"))
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Fecha mal registrada"
+                }, JsonRequestBehavior.DenyGet);
+            }
             AE_EstadoCuenta estadocuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.Id == id).FirstOrDefault();
             try
             {
@@ -916,8 +944,8 @@ namespace Umbrella.Controllers
                 //estadocuenta.MontoBase = monto;
                 //estadocuenta.Abono = false;
                 //estadocuenta.Estatus = 1;
-                estadocuenta.FechaOperacion = DateTime.Parse(fecha);
-                estadocuenta.FechaRegistro = DateTime.Now;
+                //estadocuenta.FechaOperacion = DateTime.Parse(fecha);
+                //estadocuenta.FechaRegistro = DateTime.Now;
                 //estadocuenta.IdAvance = id;
                 estadocuenta.Lote = lote;
                 estadocuenta.Monto = monto / decimal.Parse(tasa);
@@ -925,6 +953,7 @@ namespace Umbrella.Controllers
                 estadocuenta.SaldoInicial = monto;
                 estadocuenta.SaldoFinal = monto;
                 estadocuenta.Tasa = decimal.Parse(tasa);
+                estadocuenta.RecibidoEnDolares = moneda;
                 //AE_EstadoCuentaREPO.AddEntity(estadocuenta);
                 AE_EstadoCuentaREPO.SaveChanges();
 
@@ -1094,7 +1123,7 @@ namespace Umbrella.Controllers
             int cantidadmovimientos = Cobros.Count();
             //string comercio = Cobros.First().AE_Avance.Id;
             string rif = Cobros.First().AE_Avance.RifCommerce;
-            string fechaarchivo = DateTime.Now.AddDays(0).ToString("ddMMyy.hhmm");
+            string fechaarchivo = DateTime.Now.AddHours(14).ToString("ddMMyy.hhmm");
             string id = Cobros.FirstOrDefault().Id.ToString();
             if (id.Length > 4)
             {
@@ -1104,8 +1133,8 @@ namespace Umbrella.Controllers
             {
                 id = id.PadLeft(4, '0');
             }
-            string numeroorden = DateTime.Now.AddDays(0).ToString("yyMMdd");
-            string _fecha = DateTime.Now.AddDays(0).ToString("yyyyMMdd");
+            string numeroorden = DateTime.Now.AddHours(14).ToString("yyMMdd");
+            string _fecha = DateTime.Now.AddHours(14).ToString("yyyyMMdd");
             numeroorden = numeroorden + id;
             //datos fijos
             string registro = "00";
@@ -1114,7 +1143,7 @@ namespace Umbrella.Controllers
             string ordencobroreferencia = numeroorden;
             string documento = "DIRDEB";
             string banco = "01";
-            string fecha = DateTime.Now.AddDays(0).ToString("yyyyMMddhhmmss");
+            string fecha = DateTime.Now.AddHours(14).ToString("yyyyMMddhhmmss");
             string registrodecontrol = registro + asociado.PadRight(35) + ordencobroreferencia.PadRight(30) + documento + fecha.PadRight(14) + banco;
             //encabezado
             string tiporegistro = "01";
@@ -1203,6 +1232,130 @@ namespace Umbrella.Controllers
             foreach (var item in lines)
             {
                 contenido = item + "</br>";
+            }
+            archivo.Contenido = contenido;
+            archivo.Registro = cantidadmovimientos;
+            archivo.FechaLectura = DateTime.Now;
+            archivo.FechaCreacion = DateTime.Now;
+            archivo.Descripcion = "[CARGO EN CUENTA] Cargo cuenta masivo de la empresa Fin Pagos.";
+            archivo.IdCP_Archivo = null;
+            archivo.ReferenciaOrigen = "Estado de cuenta operaciones de prestamos";
+            CP_ArchivoREPO.AddEntity(archivo);
+            CP_ArchivoREPO.SaveChanges();
+
+            return true;
+        }
+
+        public bool _GenerarArchivoBANPOLFINPAGO(List<AE_EstadoCuenta> Cobros)
+        {
+            int cantidadmovimientos = Cobros.Count();
+            //string comercio = Cobros.First().AE_Avance.Id;
+            //string rif = Cobros.First().AE_Avance.RifCommerce;
+            string fechaarchivo = DateTime.Now.AddDays(0).ToString("ddMMyy.hhmm");
+            string id = Cobros.FirstOrDefault().Id.ToString();
+            if (id.Length > 4)
+            {
+                id = id.Substring((id.Length - 4), 4);
+            }
+            else if (id.Length < 4)
+            {
+                id = id.PadLeft(4, '0');
+            }
+            string numeroorden = DateTime.Now.AddDays(0).ToString("yyMMdd");
+            string _fecha = DateTime.Now.AddDays(0).ToString("yyyyMMdd");
+            numeroorden = numeroorden + id;
+            //datos fijos
+            string registro = "00";
+            //string idtransaccion = "2020040801";
+            string asociado = "210374095";
+            string ordencobroreferencia = numeroorden;
+            string documento = "DIRDEB";
+            string banco = "01";
+            string fecha = DateTime.Now.AddDays(0).ToString("yyyyMMddhhmmss");
+            string registrodecontrol = registro + asociado.PadRight(35) + ordencobroreferencia.PadRight(30) + documento + fecha.PadRight(14) + banco;
+            //encabezado
+            string tiporegistro = "01";
+            string transaccion = "DMI";
+            string condicion = "9";
+            //string fecha = DateTime.Now.ToString("yyyyMMddhhmmss");
+            string encabezado = tiporegistro + transaccion.PadRight(35) + condicion.PadRight(3) + ordencobroreferencia.PadRight(35) + _fecha;
+
+            decimal total = 0;
+            //debitos
+            //decimal total = 0;
+            List<string> _cobros = new List<string>();
+            foreach (var cobro in Cobros)
+            {
+                string rif = cobro.AE_Avance.RifCommerce.ToUpper();
+                string tipo = "03";
+                string recibo = cobro.Id.ToString().PadLeft(8, '0');
+                decimal _cambio = Math.Round(cobro.Monto, 2);
+                _cambio = _cambio * 100;
+                total = total + _cambio;
+                string montoacobrar = _cambio.ToString().Split(',')[0];
+                string moneda = "VES";
+                string numerocuenta = cobro.AE_Avance.NumeroCuenta;
+                string swift = "UNIOVECA";
+                //string _rif = Cobros.FirstOrDefault().AE_Avance.Commerce.Rif;
+                string nombre = cobro.AE_Avance.Commerce.SocialReasonName.Replace(".", " ").Replace(",", " ").ToUpper().TrimEnd();
+                string libre = "423";
+                string contrato = rif;
+                string fechavencimiento = "      ";
+                string debito = tipo + recibo.PadRight(30)
+                    + montoacobrar.PadLeft(15, '0') + moneda + numerocuenta.PadRight(30)
+                    + swift.PadRight(11) + rif.PadRight(17) + nombre.PadRight(35)
+                    + libre + contrato.PadRight(35) + fechavencimiento;
+                _cobros.Add(debito);
+
+            }
+
+            //registro credito
+            string _tipo2 = "02";
+            string _recibo = Cobros.First().Id.ToString().PadLeft(8, '0');
+            string _rif = "J410066105";
+            string ordenante = "FINPAGOS TECNOLOGIA C A";
+            //decimal cambio = Math.Round(Cobros.Sum(y => y.Monto), 2);
+            //cambio = cambio * 100;
+            string _montoabono = total.ToString().Split(',')[0];
+            string _moneda = "VES";
+            string _numerocuenta = "01340031870311158436";
+            string _swift = "UNIOVECA";
+            //string _fecha = DateTime.Now.ToString("yyyyMMdd");
+            string formadepago = "423";
+            string instruordenante = " ";
+            string credito = _tipo2 + _recibo.PadRight(30) + _rif.PadRight(17) + ordenante.PadRight(35)
+                + _montoabono.PadLeft(15, '0') + _moneda + instruordenante + _numerocuenta.PadRight(35)
+                + _swift.PadRight(11) + _fecha + formadepago;
+
+            //_cobros
+            string[] lines = { registrodecontrol, encabezado, credito };
+            foreach (var _item in _cobros)
+            {
+                Array.Resize(ref lines, lines.Length + 1);
+                lines[lines.Length - 1] = _item;
+            }
+
+            //totalizador
+            string _tipo = "04";
+            string totalcreditos = "1";
+            string debitos = Cobros.Count().ToString();
+            string montototal = total.ToString().Split(',')[0];
+            string totales = _tipo + totalcreditos.PadLeft(15, '0') + debitos.PadLeft(15, '0') + montototal.PadLeft(15, '0');
+            Array.Resize(ref lines, lines.Length + 1);
+            lines[lines.Length - 1] = totales;
+
+            string ruta = @"C:\Apps\Transax\Repo\MasivoBanesco\" + "I0005." + asociado + "." + fechaarchivo + ".txt";
+            System.IO.File.WriteAllLines(ruta, lines);
+
+            CP_Archivo archivo = new CP_Archivo();
+            archivo.IdEmpresa = 1;
+            archivo.Nombre = "I0005." + asociado + "." + fechaarchivo + ".txt";
+            archivo.Ruta = ruta;
+            archivo.Tipo = 1;
+            string contenido = "";
+            foreach (var item in lines)
+            {
+                contenido = contenido + item + "</br>";
             }
             archivo.Contenido = contenido;
             archivo.Registro = cantidadmovimientos;
@@ -1328,6 +1481,69 @@ namespace Umbrella.Controllers
 
             return true;
         }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public JsonResult EnviarArchivoBanco(int id)
+        {
+            CP_Archivo archivo = CP_ArchivoREPO.GetAllRecords().Where(u => u.Id == id).FirstOrDefault();
+            try
+            {
+                FileUploadSFTP(archivo.Ruta);
+                //archivo.IdEstatus = 2;
+                //CP_ArchivoREPO.SaveChanges();
+
+            }
+            catch (Exception e)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = e.Message
+                }, JsonRequestBehavior.DenyGet);
+            }
+            return Json(new
+            {
+                success = true,
+                message = "Operacion finalizada de forma correcta!"
+            }, JsonRequestBehavior.DenyGet);
+
+        }
+
+        public void FileUploadSFTP(string uploadfile)
+        {
+            var host = "10.148.174.215";
+            var port = 5522;
+            var username = "instapag";
+            var password = "540144017";
+            var workingdirectory = "/IN";
+            // path for file you want to upload
+            var uploadFile = uploadfile;
+
+            using (var client = new SftpClient(host, port, username, password))
+            {
+                client.Connect();
+                if (client.IsConnected)
+                {
+                    //Debug.WriteLine("I'm connected to the client");
+                    if (client.Exists(client.WorkingDirectory + workingdirectory))
+                    {
+                        client.ChangeDirectory(client.WorkingDirectory +  workingdirectory);
+                        using (var fileStream = new FileStream(uploadFile, FileMode.Open))
+                        {
+
+                            client.BufferSize = 4 * 1024; // bypass Payload error large files
+                            client.UploadFile(fileStream, Path.GetFileName(uploadFile));
+                        }
+                    }
+                }
+                else
+                {
+                    //Debug.WriteLine("I couldn't connect");
+                }
+            }
+        }
+
 
         public class Interes
         {

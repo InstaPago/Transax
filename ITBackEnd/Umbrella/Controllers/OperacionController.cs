@@ -431,7 +431,7 @@ namespace Umbrella.Controllers
             List<AE_Variable> Variables = AE_VariableREPO.GetAllRecords().ToList();
             ViewBag.Variables = Variables;
             AE_Operacion Operacion = AE_OperacionREPO.GetAllRecords().Where(u => u.Id == Id).FirstOrDefault();
-            List<AE_OperacionPago> OperacioPago = Operacion.AE_OperacionPagos.ToList();
+            List<AE_OperacionPago> OperacioPago = Operacion.AE_OperacionPagos.OrderBy(u => u.Id).ToList();
             List<AE_Avance> ListAvance = new List<AE_Avance>();
             ListAvance = AE_AvanceREPO.GetAllRecords().Where(u => u.IdEstatus == 1 || u.IdEstatus == 2 && u.FechaInicioCobro > Operacion.FechaInicioOperacion).ToList();
             ViewBag.Balance = AE_BalanceDiarioREPO.GetAllRecords().Take(10).OrderByDescending(u => u.FechaOperaicon).ToList();

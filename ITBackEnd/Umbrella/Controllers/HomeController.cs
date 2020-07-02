@@ -5,6 +5,7 @@ using InstaTransfer.ITResources.Constants;
 using InstaTransfer.ITResources.Enums;
 using InstaTransfer.ITResources.Global;
 using Microsoft.AspNet.Identity;
+using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -51,6 +52,7 @@ namespace Umbrella.Controllers
         URepository<AE_ValorAccionTR> AE_ValorAccionTRREPO = new URepository<AE_ValorAccionTR>();
         URepository<AE_AdministradorPago> AE_AdministradorPagoREPO = new URepository<AE_AdministradorPago>();
         URepository<AE_CambioDiario> AE_CambioDiarioREPO = new URepository<AE_CambioDiario>();
+        URepository<AE_Cierre> AE_CierreREPO = new URepository<AE_Cierre>();
         DateTime lastDashboardUpdate = BackEndGlobals.LastDashboardUpdate;
         int realTimeDeclarationsCount = BackEndGlobals.RealTimeDeclarationsCount;
         int realTimePurchaseOrdersCount = BackEndGlobals.RealTimePurchaseOrdersCount;
@@ -86,7 +88,7 @@ namespace Umbrella.Controllers
                 acciones = AE_ValorAccionREPO.GetAllRecords().Take(5).OrderByDescending(u => u.FechaOperacion).FirstOrDefault().ValorAccion;
                 accionesExistentes = balanceAcciones.FirstOrDefault().TotalAcciones;
             }
-
+            ViewBag.MovimientosHistorico = AE_EstadoCuentaREPO.GetAllRecords().Where(u => !u.Abono && (u.AE_Avance.IdEstatus == 1 || u.AE_Avance.IdEstatus == 2)).ToList();
             ViewBag.Acciones = acciones;
             ViewBag.AccionesExistentes = accionesExistentes;
             ViewBag.Dolar = AE_DolaresREPO.GetAllRecords().Take(30).OrderByDescending(u => u.FechaValor).ToList();
@@ -189,6 +191,9 @@ namespace Umbrella.Controllers
 
             //OBTENER VALORES
             decimal totalutilidafondo = 0;
+            decimal totalutilidinver = 0;
+            decimal utilidadacumulado = 0;
+            decimal retitocapital = 0;
             AE_ValorAccionTR ValorAccionTR = AE_ValorAccionTRREPO.GetAllRecords().OrderByDescending(u => u.FechaCreacionRegistro).FirstOrDefault();
             List<AE_Operacion> Operaciones = AE_OperacionREPO.GetAllRecords().Where(u => u.IdEstatus == 1).ToList();
             foreach (var item in Operaciones)
@@ -200,7 +205,7 @@ namespace Umbrella.Controllers
                 decimal utilidadreal = utilidad * item.PorcentajeGanancia / 100;
                 decimal utilidadfondo = utilidad * (100 - item.PorcentajeGanancia) / 100;
                 decimal montoactual = item.Monto;
-            
+                totalutilidinver = totalutilidinver + utilidadreal;
                 totalutilidafondo = totalutilidafondo + utilidadfondo;
 
                 //EVALUAMO SI NO HAY SOLICITUD DE RETIRO DE UTILIDAD
@@ -219,7 +224,7 @@ namespace Umbrella.Controllers
                     Pago.TipoReinversionUtilidad = false;
                     AE_OperacionPagoREPO.AddEntity(Pago);
                     AE_OperacionPagoREPO.SaveChanges();
-
+                    utilidadacumulado = utilidadacumulado + utilidadreal;
                     //AJUSTAMOS OPERACION
                     decimal accionesnuevas = (montoactual) / ValorAccionTR.ValorAccion;
                     item.Monto = item.Monto;
@@ -295,7 +300,7 @@ namespace Umbrella.Controllers
                     Pago.TipoReinversionUtilidad = false;
                     AE_OperacionPagoREPO.AddEntity(Pago);
                     AE_OperacionPagoREPO.SaveChanges();
-
+                    retitocapital = retitocapital + (item.Monto + utilidadreal);
                     //AJUSTAMOS OPERACION
                     decimal accionesnuevas = (montoactual + utilidadreal) / ValorAccionTR.ValorAccion;
                     item.Monto = item.Monto + utilidadreal;
@@ -371,7 +376,7 @@ namespace Umbrella.Controllers
                     Pago.TipoReinversionUtilidad = true;
                     AE_OperacionPagoREPO.AddEntity(Pago);
                     AE_OperacionPagoREPO.SaveChanges();
-
+              
                     //AJUSTAMOS OPERACION
                     decimal accionesnuevas = (montoactual + utilidadreal) / ValorAccionTR.ValorAccion;
                     item.Monto = item.Monto + utilidadreal;
@@ -451,9 +456,70 @@ namespace Umbrella.Controllers
 
             AE_ValorAccionTRREPO.AddEntity(NewValorAccionTR);
             AE_ValorAccionTRREPO.SaveChanges();
+
+
+            AE_Cierre Ultimo = AE_CierreREPO.GetAllRecords().OrderByDescending(u => u.Date).FirstOrDefault();
+            AE_Cierre Nuevo = new AE_Cierre();
+            Nuevo.CapitalFInalMes = NewValorAccionTR.CapitalNuevoIngreso;
+            Nuevo.CapitalPrimeroMes = Ultimo.CapitalFInalMes;
+            Nuevo.Date = DateTime.Now;
+            Nuevo.Mes = DateTime.Now.AddMonths(-1).ToString("MMMM");
+            Nuevo.MontoAdministrador = totalutilidafondo;
+            Nuevo.MontoInversionista = totalutilidinver;
+            Nuevo.PagoUtilida = utilidadacumulado;
+            Nuevo.RetiroCapital = retitocapital;
+            Nuevo.ValorAccionInicio = Ultimo.ValorAccionFin;
+            Nuevo.ValorAccionFin = NewValorAccionTR.ValorAccion;
+            Nuevo.Rendimiento = ((Nuevo.ValorAccionFin - Nuevo.ValorAccionInicio) * 100 )/ Nuevo.ValorAccionInicio;
+            AE_CierreREPO.AddEntity(Nuevo);
+            AE_CierreREPO.SaveChanges();
+
             return true;
         }
 
+        public bool CerrarFondo()
+        {
+            List<AE_Avance> Avances = AE_AvanceREPO.GetAllRecords(u => u.IdEstatus == 1).ToList();
+            
+            foreach (var item in Avances)
+            {
+                List<AE_EstadoCuenta> estadocuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.IdAvance == item.Id).ToList();
+                decimal totalpagado = estadocuenta.Where(u => u.Abono == false && u.SoloUtilidad == false).Sum(u => u.Monto);
+                decimal capitalprestado = 0;
+                if (item.Modalidad)
+                {
+                    capitalprestado = item.Avance; 
+                }
+                else 
+                {
+                    capitalprestado = item.Reembolso; 
+                }
+              
+                decimal resto = capitalprestado - totalpagado;
+                AE_EstadoCuenta estadocuentapago = new AE_EstadoCuenta();
+                estadocuentapago.Abono = false;
+                estadocuentapago.Descripcion = "Pago";
+                estadocuentapago.Efectivo = false;
+                estadocuentapago.EfectivoCambiado = false;
+                estadocuentapago.Estatus = 1;
+                estadocuentapago.FechaOperacion = DateTime.Now;
+                estadocuentapago.FechaRegistro = DateTime.Now;
+                estadocuentapago.IdAvance = item.Id;
+                estadocuentapago.Lote = 99;
+                estadocuentapago.Monto = resto;
+                estadocuentapago.MontoBase = 0;
+                estadocuentapago.MontoBs = 0;
+                estadocuentapago.SaldoFinal = 0;
+                estadocuentapago.SaldoInicial = 0;
+                estadocuentapago.SoloUtilidad = false;
+                estadocuentapago.Tasa = 0;
+                AE_EstadoCuentaREPO.AddEntity(estadocuentapago);
+                AE_EstadoCuentaREPO.SaveChanges();
+
+
+            }
+            return true;
+        }
 
         [SessionExpireFilter]
         public ActionResult Dashboard()
@@ -500,10 +566,28 @@ namespace Umbrella.Controllers
             ViewBag.CobroDiario = Lista;
             foreach (var item in ListAvance.Where(u => u.IdEstatus == 1).ToList())
             {
+                decimal porcentajeoperacion = (item.Reembolso - item.Avance) * 100 / item.Avance;
                 decimal _cobrado = item.AE_EstadoCuentas.Where(u => !u.Abono && !u.SoloUtilidad).Sum(u => u.Monto);
-                cobrado = cobrado + _cobrado;
                 reembolso = reembolso + (item.Reembolso - _cobrado);
-                prestado = prestado + (item.Avance - _cobrado);
+                if (item.Modalidad)
+                {
+                    _cobrado = item.AE_EstadoCuentas.Where(u => !u.Abono && !u.SoloUtilidad).Sum(u => u.Monto);
+  
+                }
+                else {
+                    decimal t_cobrado = item.AE_EstadoCuentas.Where(u => !u.Abono && !u.SoloUtilidad).Sum(u => u.Monto);
+                    _cobrado = t_cobrado - (t_cobrado * porcentajeoperacion / 100);
+                }
+                cobrado = cobrado + (_cobrado);
+            
+                if (item.Modalidad)
+                {
+                    prestado = prestado + (item.Avance - _cobrado);
+                }
+                else
+                {
+                    prestado = prestado + (item.Avance - _cobrado);
+                }
             }
 
             ViewBag.Cobrado = cobrado;
@@ -2225,8 +2309,17 @@ namespace Umbrella.Controllers
 
         #endregion
 
-        public JsonResult _GuardarConfiguracion(string totalbancosBS, string montodolaresBS, string totaldolares, string pendienteporcobrar, string totalactivos, string totalbancospBS, string montodolarespBS, string totaldolaresp, string totalpasivos, string cantidadaccion, string valoraccion, string nuevovalor, DateTime? fechaoperacion, string tasadolares, string dolarestransito, string totalgastos, string totalcobrodiario, string totalgananciadiaria, string totalcobrodiariobruto)
+        public JsonResult _GuardarConfiguracion(string totalbancosBS, string montodolaresBS, string totaldolares, string pendienteporcobrar, string totalactivos, string totalbancospBS, string montodolarespBS, string totaldolaresp, string totalpasivos, string cantidadaccion, string valoraccion, string nuevovalor, DateTime? fechaoperacion, string tasadolares, string dolarestransito, string totalgastos, string totalcobrodiario, string totalgananciadiaria, string totalcobrodiariobruto, string TasaUtilizada, string AcumuladoTasa)
         {
+            List<AE_EstadoCuenta> EstadoCuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.AE_Avance.IdEstatus == 1 && u.FechaOperacion.Day == DateTime.Now.Day && u.FechaOperacion.Month == DateTime.Now.Month && u.FechaOperacion.Year == DateTime.Now.Year && !u.Abono && !u.RecibidoEnDolares).ToList();
+
+            foreach (var item in EstadoCuenta)
+            {
+                item.Tasa = decimal.Parse(TasaUtilizada.Replace('.', ','));
+                item.Monto = item.MontoBs.Value / decimal.Parse(TasaUtilizada.Replace('.', ','));
+                AE_EstadoCuentaREPO.SaveChanges();
+
+            }
 
             List<AE_ValorAccionTR> ListValorAccionTR = AE_ValorAccionTRREPO.GetAllRecords().OrderByDescending(u => u.FechaCreacionRegistro).Take(5).ToList();
             if (ListValorAccionTR.Count > 0)
@@ -2257,6 +2350,8 @@ namespace Umbrella.Controllers
                 ValorAccionTR.TotalAcciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.FechaRegistro).FirstOrDefault().TotalAcciones;
                 ValorAccionTR.PagoUtilidadAdministrador = 0;
                 ValorAccionTR.ValorAccion = ValorAccionTR.NuevoCapital / ValorAccionTR.TotalAcciones;
+                ValorAccionTR.Tasa = decimal.Parse(TasaUtilizada.Replace('.', ','));
+                ValorAccionTR.TasaDiferencia = decimal.Parse(AcumuladoTasa.Replace('.', ','));
 
                 AE_ValorAccionTRREPO.AddEntity(ValorAccionTR);
                 AE_ValorAccionTRREPO.SaveChanges();
@@ -2377,6 +2472,17 @@ namespace Umbrella.Controllers
                 //    AE_OperacionREPO.SaveChanges();
 
                 //}
+                try
+                {
+                    List<AE_Dolar> Dolar = AE_DolarREPO.GetAllRecords().Where(u => u.FechaValor.Day == DateTime.Now.Day && u.FechaValor.Month == DateTime.Now.Month && u.FechaValor.Year == DateTime.Now.Year).ToList();
+                    if (Dolar != null && Dolar.Count > 0)
+                    {
+                        AE_Dolar tt = Dolar.FirstOrDefault();
+                        tt.TasaUtilizada = decimal.Parse(TasaUtilizada.Replace('.', ','));
+                        AE_DolarREPO.SaveChanges();
+                    }
+                }
+                catch { }
 
 
 
@@ -2601,15 +2707,13 @@ namespace Umbrella.Controllers
             try
             {
                 var Dolar = AE_DolaresREPO.GetAllRecords().OrderByDescending(u => u.FechaValor).FirstOrDefault();
-                List<AE_EstadoCuenta> EstadoCuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.AE_Avance.IdEstatus == 1 && u.FechaOperacion.Day == DateTime.Now.Day && u.FechaOperacion.Month == DateTime.Now.Month && u.FechaOperacion.Year == DateTime.Now.Year && !u.Abono).ToList();
+                List<AE_EstadoCuenta> EstadoCuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.AE_Avance.IdEstatus == 1 && u.FechaOperacion.Day == DateTime.Now.Day && u.FechaOperacion.Month == DateTime.Now.Month && u.FechaOperacion.Year == DateTime.Now.Year && !u.Abono && !u.RecibidoEnDolares).ToList();
                 if (EstadoCuenta.Count > 0)
                 {
                     foreach (var item in EstadoCuenta)
                     {
                         item.Tasa = Dolar.Tasa;
                         item.Monto = (item.MontoBs.Value / Dolar.Tasa);
-
-
                     }
                     AE_EstadoCuentaREPO.SaveChanges();
                 }
