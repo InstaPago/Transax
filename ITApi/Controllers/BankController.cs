@@ -122,6 +122,198 @@ namespace ITApi.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 
+
+        // GET api/banks/Charge
+        /// <summary>
+        /// Obtiene todos los bancos disponibles
+        /// </summary>
+        /// <returns>Respuesta con el estado, mensaje, y lista de bancos</returns>
+        [Route("Charge")]
+        //[ResponseType(typeof(BankGetResponse))]
+        [HttpPost]
+        public HttpResponseMessage Charge([FromBody]Create model)
+        {
+            Guid Key = model.Key;
+            String Data = model.DataPayment;
+
+            JavaScriptSerializer __jsonSerializer = new JavaScriptSerializer();
+            Cobro __data = (Cobro)__jsonSerializer.Deserialize(Data, typeof(Cobro));
+            bool win = _GenerarArchivoBANPOL(__data);
+
+            var result = new
+            {
+                success = true,
+                message = "Archivo guardado de forma correcta"
+      
+            };
+
+            return Request.CreateResponse(HttpStatusCode.OK, result);
+        }
+
+        public bool _GenerarArchivoBANPOL(Cobro Cobros)
+        {          
+            int cantidadmovimientos = Cobros.Cliente.Count();
+            string rif = Cobros.Empresa.Documento;
+            string fechaarchivo = DateTime.Now.AddDays(0).ToString("ddMMyy.hhmm");
+            string id = Cobros.Empresa.IdCobro.ToString();
+            if (id.Length > 4)
+            {
+                id = id.Substring((id.Length - 4), 4);
+            }
+            else if (id.Length < 4)
+            {
+                id = id.PadLeft(4, '0');
+            }
+            string numeroorden = DateTime.Now.AddDays(0).ToString("yyMMdd");
+            string _fecha = DateTime.Now.AddDays(0).ToString("yyyyMMdd");
+            numeroorden = numeroorden + id;
+            string registro = "00";
+            string asociado = Cobros.Empresa.CodBancario;
+            string ordencobroreferencia = numeroorden;
+            string documento = "DIRDEB";
+            string banco = "01";
+            string fecha = DateTime.Now.AddDays(0).ToString("yyyyMMddhhmmss");
+            string registrodecontrol = registro + asociado.PadRight(35) + ordencobroreferencia.PadRight(30) + documento + fecha.PadRight(14) + banco;
+            string tiporegistro = "01";
+            string transaccion = "DMI";
+            string condicion = "9";
+
+            //string fecha = DateTime.Now.ToString("yyyyMMddhhmmss");
+            string encabezado = tiporegistro + transaccion.PadRight(35) + condicion.PadRight(3) + ordencobroreferencia.PadRight(35) + _fecha;
+
+            decimal total = 0;
+            //debitos
+            //decimal total = 0;
+            List<string> _cobros = new List<string>();
+            foreach (var cobro in Cobros.Cliente)
+            {
+                string tipo = "03";
+                string recibo = cobro.Idtransaccion.ToString().PadLeft(8, '0');
+                decimal _monto = decimal.Parse(cobro.Monto) / 100;
+                string montoacobrar = cobro.Monto;
+                total = total + _monto;
+                string moneda = "VES";
+                string numerocuenta = cobro.CuentaBancaria;
+                string swift = "UNIOVECA";
+                string nombre = cobro.RazonSocial.Replace(".", " ").Replace(",", " ").ToUpper().TrimEnd();
+                string libre = "423";
+                string contrato = cobro.Documento;
+                string fechavencimiento = "      ";
+
+                string debito = tipo + recibo.PadRight(30)
+                    + montoacobrar.PadLeft(15, '0') + moneda + numerocuenta.PadRight(30)
+                    + swift.PadRight(11) + cobro.Documento.PadRight(17) + nombre.PadRight(35)
+                    + libre + contrato.PadRight(35) + fechavencimiento;
+                _cobros.Add(debito);
+
+            }
+            decimal _total = total * 100;
+            //registro credito
+            string _tipo2 = "02";
+            string _recibo = Cobros.Cliente.First().Idtransaccion.ToString().PadLeft(8, '0');
+            string _rif = Cobros.Empresa.Documento;
+            string ordenante = Cobros.Empresa.RazonSocial.ToString().Replace(".", " ").Replace(",", " ").ToUpper().TrimEnd();
+            string _montoabono = _total.ToString().Split(',')[0];
+            string _moneda = "VES";
+            string _numerocuenta = Cobros.Empresa.CuentaBancaria;
+            string _swift = "UNIOVECA";
+            //string _fecha = DateTime.Now.ToString("yyyyMMdd");
+            string formadepago = "423";
+            string instruordenante = " ";
+            string credito = _tipo2 + _recibo.PadRight(30) + _rif.PadRight(17) + ordenante.PadRight(35)
+                + _montoabono.PadLeft(15, '0') + _moneda + instruordenante + _numerocuenta.PadRight(35)
+                + _swift.PadRight(11) + _fecha + formadepago;
+
+
+            //_cobros
+            string[] lines = { registrodecontrol, encabezado, credito };
+            foreach (var _item in _cobros)
+            {
+                Array.Resize(ref lines, lines.Length + 1);
+                lines[lines.Length - 1] = _item;
+            }
+
+            //totalizador
+            string _tipo = "04";
+            string totalcreditos = "1";
+            string debitos = Cobros.Cliente.Count().ToString();
+            string montototal = total.ToString().Split(',')[0];
+            string totales = _tipo + totalcreditos.PadLeft(15, '0') + debitos.PadLeft(15, '0') + montototal.PadLeft(15, '0');
+            Array.Resize(ref lines, lines.Length + 1);
+            lines[lines.Length - 1] = totales;
+
+            string ruta = @"E:\Apps\archivos\" + "I0005." + asociado + "." + fechaarchivo + ".txt";
+            //System.IO.File.WriteAllLines(ruta, lines);
+
+            URepository<CP_Archivo> CP_ArchivoREPO = new URepository<CP_Archivo>();
+            CP_Archivo archivo = new CP_Archivo();
+            archivo.IdEmpresa = 1;
+            archivo.Nombre = "I0005." + asociado +"."+ fechaarchivo + ".txt";
+            archivo.Ruta = ruta;
+            archivo.Tipo = 1;
+            string contenido = "";
+            foreach (var item in lines)
+            {
+                contenido = contenido + item + "</br>";
+            }
+            archivo.Contenido = contenido;
+            archivo.FechaLectura = DateTime.Now;
+            archivo.FechaCreacion = DateTime.Now;
+            archivo.Descripcion = "[INSTAPAGO] Cargo cuenta masivo.";
+            archivo.IdCP_Archivo = null;
+            archivo.ReferenciaOrigen = "Estado de cuenta operaciones de prestamos";
+            CP_ArchivoREPO.AddEntity(archivo);
+            CP_ArchivoREPO.SaveChanges();
+
+            return true;
+        }
+
+
+        public class Create
+        {
+            public Guid Key { get; set; }
+            public String DataPayment { get; set; }
+        }
+
+
+        public class Cobro
+        { 
+            public Empresa Empresa { get; set; }
+
+            public List<Cliente> Cliente { get; set; }
+        
+        }
+
+
+
+        public class Empresa
+        { 
+            public string Documento { get; set; }
+
+            public string CodBancario { get; set; }
+
+            public string RazonSocial { get; set; }
+
+            public string CuentaBancaria { get; set; }
+            public string IdCobro { get; set; }
+
+        }
+
+        public class Cliente
+        {
+            public string RazonSocial { get; set; }
+
+            public string CuentaBancaria { get; set; }
+
+            public string Monto { get; set; }
+
+            public string Documento { get; set; }
+
+            public string Idtransaccion { get; set; }
+
+        }
+
+
     }
 }
 

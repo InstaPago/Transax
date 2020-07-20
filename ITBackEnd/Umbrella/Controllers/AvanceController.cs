@@ -172,7 +172,9 @@ namespace Umbrella.Controllers
 
             InstaTransfer.DataAccess.AE_Dolar Dolar = AE_DolarREPO.GetAllRecords().OrderByDescending(u => u.FechaValor).FirstOrDefault();
             ViewBag.Tasa = Dolar.Tasa;
-            List<AE_Avance> ListAvance = new List<AE_Avance>();
+
+            ViewBag.Tasas = AE_DolarREPO.GetAllRecords().ToList();
+            List <AE_Avance> ListAvance = new List<AE_Avance>();
             ListAvance = AE_AvanceREPO.GetAllRecords().Where(u => u.Id == id).ToList();
             List<AE_EstadoCuenta> estadocuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.IdAvance == ListAvance.FirstOrDefault().Id).ToList();
             //AE_Avance _item = AE_AvanceREPO.GetAllRecords().Where(u => u.RifCommerce == ListAvance.FirstOrDefault().RifCommerce).ToList().FirstOrDefault();

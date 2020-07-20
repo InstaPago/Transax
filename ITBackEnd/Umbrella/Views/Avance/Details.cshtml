@@ -6,9 +6,14 @@
     List<InstaTransfer.DataAccess.AE_EstadoCuenta>
     EstadoCuenta = (List<InstaTransfer.DataAccess.AE_EstadoCuenta>
         )ViewBag.EstadoCuenta;
+
+    List<InstaTransfer.DataAccess.AE_Dolar>
+Tasas = (List<InstaTransfer.DataAccess.AE_Dolar>
+    )ViewBag.Tasas;
+
     List<InstaTransfer.DataAccess.AE_Archivo>
-        Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
-            )ViewBag.Archivos;
+Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
+    )ViewBag.Archivos;
 
     InstaTransfer.DataAccess.AE_ValorAccionTR Ultimo = (InstaTransfer.DataAccess.AE_ValorAccionTR)ViewBag.RT;
     string[] _fechaNames = ViewBag.fechas;
@@ -19,6 +24,7 @@
     decimal porcentaje = ViewBag.porcentaje;
     decimal sugeridointereses = ViewBag.sugeridointereses;
     decimal saldoinicial = 0;
+    decimal defitasaacumulado = 0;
     List<Umbrella.Controllers.AvanceController.Interes> ListInteres = (List<Umbrella.Controllers.AvanceController.Interes>)ViewBag.InteresesList;
     if (Model.Modalidad)
     {
@@ -233,10 +239,10 @@
                                             <h4 class="modal-title">Propuesta Aceptada</h4>
                                         </div>
                                         <div class="modal-body">
-                                            <label>Monto aprobado</label>
-                                            <input type="text" class="form-control" name="avance" id="avance" value="@Model.Avance" required="required" />
-                                            <label>Retorno</label>
-                                            <input type="text" class="form-control" name="retorno" id="retorno" value="@Model.Reembolso" required="required" />
+                                            @*<label>Monto aprobado</label>*@
+                                            <input type="hidden" class="form-control" name="avance" id="avance" value="@Model.Avance" required="required" />
+                                            @*<label>Retorno</label>*@
+                                            <input type="hidden" class="form-control" name="retorno" id="retorno" value="@Model.Reembolso" required="required" />
                                             <label>Maximo cobro posible</label>
                                             <input type="text" class="form-control" name="maximo" id="maximo" value="@Model.MaximoCobro" required="required" />
                                             <label>Gasto Banco %</label>
@@ -301,7 +307,7 @@
                         <div class="col-lg-12 col-lg-offset-0 text-center">
                             @if (Model.IdEstatus == 1)
                             {
-                                <input type="button" value="Finalizar Operación" id="finalizarope" Target="@Model.Id" class="btn btn-danger" />
+                                @*<input type="button" value="Finalizar Operación" id="finalizarope" Target="@Model.Id" class="btn btn-danger" />*@
 
                                 <input type="button" value="Agregar Movimiento" id="addmovimiento" class="btn btn-success" data-toggle="modal" data-target="#modaladdmovimiento" />
                             }
@@ -454,7 +460,7 @@
                                 <th>Lote</th>
                                 <th>Monto Bs</th>
                                 <th>Tasa</th>
-
+                                <th>Tasa Promedio</th>
                                 <th>Débito @moneda</th>
                                 <th>Abono</th>
 
@@ -465,15 +471,17 @@
                                 }
 
                                 @*
-                                    <th>Tipo</th>*@
+                                <th>Tipo</th>*@
                                 @*
-                                    <th>Acciones</th>*@
+                                <th>Acciones</th>*@
                             </tr>
                         </thead>
                         <tbody>
 
                             @foreach (InstaTransfer.DataAccess.AE_EstadoCuenta item in EstadoCuenta.OrderByDescending(u => u.FechaOperacion).ThenByDescending(u => u.Lote).ToList())
                             {
+
+
                                 if (item.Monto != 0)
                                 {
                                     <tr dtaction="@Url.Action("Details", "Avance")">
@@ -485,6 +493,7 @@
 
                                         @if (item.Abono)
                                         {
+                                            <td></td>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -500,8 +509,20 @@
                                         }
                                         else
                                         {
+
+                                            decimal tasapromedio = Tasas.Where(u => u.FechaValor.Day == item.FechaOperacion.Day && u.FechaValor.Month == item.FechaOperacion.Month && u.FechaValor.Year == item.FechaOperacion.Year).Count() > 0 ? Tasas.Where(u => u.FechaValor.Day == item.FechaOperacion.Day && u.FechaValor.Month == item.FechaOperacion.Month && u.FechaValor.Year == item.FechaOperacion.Year).FirstOrDefault().Tasa : 0;
+                                            if (tasapromedio != 0)
+                                            {
+                                                decimal montonuevo = item.MontoBs.Value / tasapromedio;
+                                                decimal dife = montonuevo - item.Monto;
+                                                defitasaacumulado = defitasaacumulado + dife;
+                                            }
+
                                             <td>@(item.MontoBs == null ? item.Monto.ToString("N2") + " Bs" : item.MontoBs.Value.ToString("N2") + " Bs")</td>
                                             <td>@(item.Tasa == null ? "-" : item.Tasa.Value.ToString("N2"))</td>
+                                            <td>
+                                                @( (Tasas.Where(u => u.FechaValor.Day == item.FechaOperacion.Day && u.FechaValor.Month == item.FechaOperacion.Month && u.FechaValor.Year == item.FechaOperacion.Year).Count() > 0 ? Tasas.Where(u => u.FechaValor.Day == item.FechaOperacion.Day && u.FechaValor.Month == item.FechaOperacion.Month && u.FechaValor.Year == item.FechaOperacion.Year).FirstOrDefault().Tasa : 0 ).ToString("N2"))
+                                            </td>
                                             <td>@item.Monto.ToString("N2") @moneda</td>
                                             <td></td>
                                             <td>@((saldoinicial).ToString("N2")) @moneda</td>
@@ -515,7 +536,7 @@
                                             else
                                             {
                                                 <td></td>
-}
+                                            }
                                         }
                                     </tr>
                                 }
@@ -536,6 +557,7 @@
                                 <th>Lote</th>
                                 <th>Monto Bs</th>
                                 <th>Tasa</th>
+                                <th>Tasa Promedio</th>
                                 <th>@moneda</th>
                                 <th>Abono</th>
 
@@ -546,15 +568,17 @@
                                 }
 
                                 @*
-                                    <th>Tipo</th>*@
+                                <th>Tipo</th>*@
                                 @*
-                                    <th>Acciones</th>*@
+                                <th>Acciones</th>*@
                             </tr>
                         </thead>
                         <tbody>
 
                             @foreach (InstaTransfer.DataAccess.AE_EstadoCuenta item in EstadoCuenta.OrderByDescending(u => u.FechaOperacion).ThenByDescending(u => u.Lote).ToList())
                             {
+
+
                                 if (item.Monto != 0)
                                 {
                                     <tr dtaction="@Url.Action("Details", "Avance")" style="@(item.Abono ? "" : item.SoloUtilidad ? "" :  "background-color:#aeeff7; color:black;"  )">
@@ -569,27 +593,55 @@
                                             <td></td>
                                             <td></td>
                                             <td></td>
+                                            <td></td>
                                             <td>@item.Monto.ToString("N2") @moneda</td>
                                             <td>@item.Monto.ToString("N2") @moneda</td>
                                         }
                                         else if (item.SoloUtilidad)
                                         {
+
+                                            decimal tasapromedio = Tasas.Where(u => u.FechaValor.Day == item.FechaOperacion.Day && u.FechaValor.Month == item.FechaOperacion.Month && u.FechaValor.Year == item.FechaOperacion.Year).Count() > 0 ? Tasas.Where(u => u.FechaValor.Day == item.FechaOperacion.Day && u.FechaValor.Month == item.FechaOperacion.Month && u.FechaValor.Year == item.FechaOperacion.Year).FirstOrDefault().Tasa : 0;
+                                            if (tasapromedio != 0)
+                                            {
+                                                decimal montonuevo = item.MontoBs.Value / tasapromedio;
+                                                decimal dife = montonuevo - item.Monto;
+                                                defitasaacumulado = defitasaacumulado + dife;
+                                            }
                                             <td>@(item.MontoBs == null ? item.Monto.ToString("N2") + " Bs" : item.MontoBs.Value.ToString("N2") + " Bs")</td>
                                             <td>@(item.Tasa == null ? "-" : item.Tasa.Value.ToString("N2"))</td>
+                                            <td>
+                                                @( (Tasas.Where(u => u.FechaValor.Day == item.FechaOperacion.Day && u.FechaValor.Month == item.FechaOperacion.Month && u.FechaValor.Year == item.FechaOperacion.Year).Count() > 0 ? Tasas.Where(u => u.FechaValor.Day == item.FechaOperacion.Day && u.FechaValor.Month == item.FechaOperacion.Month && u.FechaValor.Year == item.FechaOperacion.Year).FirstOrDefault().Tasa : 0 ).ToString("N2"))
+                                            </td>
                                             <td>@item.Monto.ToString("N2") @moneda</td>
                                             <td></td>
                                             <td>@((saldoinicial).ToString("N2")) @moneda</td>
                                         }
                                         else
                                         {
+                                            decimal tasapromedio = Tasas.Where(u => u.FechaValor.Day == item.FechaOperacion.Day && u.FechaValor.Month == item.FechaOperacion.Month && u.FechaValor.Year == item.FechaOperacion.Year).Count() > 0 ? Tasas.Where(u => u.FechaValor.Day == item.FechaOperacion.Day && u.FechaValor.Month == item.FechaOperacion.Month && u.FechaValor.Year == item.FechaOperacion.Year).FirstOrDefault().Tasa : 0;
+                                            if (tasapromedio != 0)
+                                            {
+                                                decimal montonuevo = item.MontoBs.Value / tasapromedio;
+                                                decimal dife = montonuevo - item.Monto;
+                                                defitasaacumulado = defitasaacumulado + dife;
+                                            }
                                             <td>@(item.MontoBs == null ? item.Monto.ToString("N2") + " Bs" : item.MontoBs.Value.ToString("N2") + " Bs")</td>
                                             <td>@(item.Tasa == null ? "-" : item.Tasa.Value.ToString("N2"))</td>
+                                            <td>
+                                                @( (Tasas.Where(u => u.FechaValor.Day == item.FechaOperacion.Day && u.FechaValor.Month == item.FechaOperacion.Month && u.FechaValor.Year == item.FechaOperacion.Year).Count() > 0 ? Tasas.Where(u => u.FechaValor.Day == item.FechaOperacion.Day && u.FechaValor.Month == item.FechaOperacion.Month && u.FechaValor.Year == item.FechaOperacion.Year).FirstOrDefault().Tasa : 0 ).ToString("N2"))
+                                            </td>
+
+
                                             <td>@item.Monto.ToString("N2") @moneda</td>
+
+
                                             <td></td>
+
+
                                             <td>@((saldoinicial).ToString("N2")) @moneda</td>
                                         }
                                         @if (isTransaXUser || isTransaXAdmin)
-                                        { 
+                                        {
                                             <td>
                                                 @if (Model.IdEstatus == 1 && (item.FechaOperacion.ToString("dd/MM/yyyy") == DateTime.Now.ToString("dd/MM/yyyy")) && (Ultimo.FechaOperacion < DateTime.Now))
                                                 {
@@ -614,8 +666,13 @@
                             }
                         </tbody>
                     </table>
+
+
                 }
             </div>
+        </div>
+        <div class="col-lg-12 text-center">
+            @defitasaacumulado.ToString("N2")
         </div>
         <!-- Modal EDITAR-->
         <div id="ModalEditarMovimiento" class="modal fade" role="dialog">
@@ -638,7 +695,7 @@
                             <label>Numero Lote</label>
                             <input type="number" class="form-control" name="lote" id="_Lote" value="" required="required" />
                             @*<label>Fecha Movimiento:</label>*@
-                            <input type="hidden" class="form-control" Name="fecha" id="_Fecha" value="@DateTime.Now.ToString("dd-MM-yyyy")"  />
+                            <input type="hidden" class="form-control" Name="fecha" id="_Fecha" value="@DateTime.Now.ToString("dd-MM-yyyy")" />
                             <label>Tipo Moneda</label>
                             <select class="form-control" name="moneda">
                                 <option value="true">Dolar</option>
@@ -673,19 +730,19 @@
 
                         <tr>
                             @*
-                                <th>Rif</th>*@
+                            <th>Rif</th>*@
                             <th>Fecha </th>
                             @*
-                                <th>Saldo Inicial</th>*@
+                            <th>Saldo Inicial</th>*@
                             <th>Lote</th>
                             <th>Descripcion</th>
 
                             <th>Monto Bs</th>
 
                             @*
-                                <th>Tipo</th>*@
+                            <th>Tipo</th>*@
                             @*
-                                <th>Acciones</th>*@
+                            <th>Acciones</th>*@
                         </tr>
                     </thead>
                     <tbody>
@@ -697,7 +754,7 @@
 
                                 <tr dtaction="@Url.Action("Details", "Avance")">
                                     @*
-                                        <td>@item.AE_Avance.RifCommerce</td>*@
+                                    <td>@item.AE_Avance.RifCommerce</td>*@
                                     <td>@item.FechaOperacion.ToShortDateString()</td>
 
                                     <td>@(item.Lote == null ? "-" : item.Lote.Value.ToString() ) </td>
@@ -741,7 +798,7 @@
                                 <th>Estado</th>
                                 <th>Descargar</th>
                                 @*
-                                    <th>Acciones</th>*@
+                                <th>Acciones</th>*@
                             </tr>
                         </thead>
                         <tbody>
@@ -756,11 +813,11 @@
                                     <td><a href="@Url.Action("lnkfilepath_Click", "Avance", new { ruta = @_item.Ruta })" class="descarga" ruta="@_item.Ruta">descargar</a></td>
 
                                     @*
-                                        <td>
-                                            <a class="btn btn-primary waves-effect waves-light btn-sm" commerceid="@item.Rif">Detalles</a>
-                                        </td>*@
+                                    <td>
+                                        <a class="btn btn-primary waves-effect waves-light btn-sm" commerceid="@item.Rif">Detalles</a>
+                                    </td>*@
                                     @*
-                                        <td><input onclick="switchTestMode(this)" data-size="small" type="checkbox" data-plugin="switchery" data-color="#00b19d"></td>*@
+                                    <td><input onclick="switchTestMode(this)" data-size="small" type="checkbox" data-plugin="switchery" data-color="#00b19d"></td>*@
                                 </tr>
                             }
                         </tbody>
