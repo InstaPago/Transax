@@ -2309,8 +2309,21 @@ namespace Umbrella.Controllers
 
         #endregion
 
-        public JsonResult _GuardarConfiguracion(string totalbancosBS, string montodolaresBS, string totaldolares, string pendienteporcobrar, string totalactivos, string totalbancospBS, string montodolarespBS, string totaldolaresp, string totalpasivos, string cantidadaccion, string valoraccion, string nuevovalor, DateTime? fechaoperacion, string tasadolares, string dolarestransito, string totalgastos, string totalcobrodiario, string totalgananciadiaria, string totalcobrodiariobruto, string TasaUtilizada, string AcumuladoTasa)
+        public JsonResult _GuardarConfiguracion(string totalbancosBS, string montodolaresBS, string totaldolares, string pendienteporcobrar, string totalactivos, string totalbancospBS, string montodolarespBS, string totaldolaresp, string totalpasivos, string cantidadaccion, string valoraccion, string nuevovalor, DateTime? fechaoperacion, string tasadolares, string dolarestransito, string totalgastos, string totalcobrodiario, string totalgananciadiaria, string totalcobrodiariobruto, string TasaUtilizada, string AcumuladoTasa, string pass)
         {
+            if (pass != "10563")
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "PIN Incorrecto!"
+                }, JsonRequestBehavior.DenyGet);
+            }
+            else { 
+            
+            
+            
+         
             List<AE_EstadoCuenta> EstadoCuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.AE_Avance.IdEstatus == 1 && u.FechaOperacion.Day == DateTime.Now.AddDays(0).Day && u.FechaOperacion.Month == DateTime.Now.Month && u.FechaOperacion.Year == DateTime.Now.Year && !u.Abono && !u.RecibidoEnDolares).ToList();
 
             foreach (var item in EstadoCuenta)
@@ -2399,7 +2412,7 @@ namespace Umbrella.Controllers
                 if (fechaoperacion != null)
                     NuevoBalance.FechaOperaicon = fechaoperacion.Value;
                 else
-                    NuevoBalance.FechaOperaicon = DateTime.Now.AddDays(-1);
+                    NuevoBalance.FechaOperaicon = DateTime.Now.AddDays(0);
 
                 //ACTIVOS
                 NuevoBalance.TotalCuentaBs = decimal.Parse(totalbancosBS.Replace('.', ','));
@@ -2500,6 +2513,7 @@ namespace Umbrella.Controllers
                 success = true,
                 message = "Balance agregado de forma correcta!"
             }, JsonRequestBehavior.DenyGet);
+            }
 
         }
 

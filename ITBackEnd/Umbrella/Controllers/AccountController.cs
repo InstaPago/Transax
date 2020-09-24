@@ -101,12 +101,17 @@ namespace Umbrella.Controllers
         [AllowAnonymousOnly]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
+            //UserManager.RemovePassword("aff48ec0-2e6e-45ab-86e6-57c7a82b24ef");
+            //UserManager.AddPassword("aff48ec0-2e6e-45ab-86e6-57c7a82b24ef", "Transax##5");
+
+
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
 
             var _user = UserManager.Find(model.Email, model.Password);
+
             try
             {
                 if (UserManager.IsInRole((_user != null ? _user.Id : string.Empty), UserRoleConstant.CommerceApiUser))
@@ -145,6 +150,8 @@ namespace Umbrella.Controllers
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
             var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+
+
             switch (result)
             {
                 case SignInStatus.Success:
@@ -427,7 +434,7 @@ namespace Umbrella.Controllers
 
             UserManager.RemovePassword(idusuario);
             UserManager.AddPassword(idusuario, clave);
-
+            //aff48ec0 - 2e6e - 45ab - 86e6 - 57c7a82b24ef
             return Json(new
             {
                 success = true,
@@ -1844,111 +1851,132 @@ namespace Umbrella.Controllers
 
         public bool LecturaArchivoSalidaBanesco()
         {
-            DirectoryInfo d = new DirectoryInfo(@"C:\Users\carmelo\Desktop\POLAR\Salida");//Assuming Test is your Folder
-            FileInfo[] Files = d.GetFiles("*.txt"); //Getting Text files
+            DirectoryInfo d = new DirectoryInfo(@"C:\Apps\Transax\Repo\RespuestaBanesco\");
+            //Assuming Test is your Folder
+            string rutafinal = @"C:\Apps\Transax\Repo\RespuestaBanescoBackUp\";
+            FileInfo[] Files = d.GetFiles("*"); //Getting Text files
             List<Estructura> Lista = new List<Estructura>();
             CP_Archivo item = new CP_Archivo();
-
+            CP_Archivo getCP = new CP_Archivo();
             foreach (FileInfo file in Files)
             {
-                item.Nombre = file.Name;
-                item.Ruta = file.FullName;
-                item.FechaLectura = DateTime.Now;
-                string lineas = "";
-                int i = 0;
-                string text = System.IO.File.ReadAllText(file.FullName);
-                //System.Console.WriteLine("Contents of WriteText.txt = {0}", text);
-                // Example #2
-                // Read each line of the file into a string array. Each element
-                // of the array is one line of the file.
-                string[] lines = System.IO.File.ReadAllLines(file.FullName);
-                // Display the file contents by using a foreach loop.
-                //System.Console.WriteLine("Contents of WriteLines2.txt = ");
-                //_cobros
-                string[] linesArchivo = { };
-                foreach (string line in lines)
+                if (file.Name.Contains("0002"))
                 {
-                    if (i == 2)
+                    //item.Nombre = file.Name;
+                    //item.Ruta = file.FullName;
+                    //item.FechaLectura = DateTime.Now;
+                    string lineas = "";
+                    int i = 0;
+                    string text = System.IO.File.ReadAllText(file.FullName);
+                    //System.Console.WriteLine("Contents of WriteText.txt = {0}", text);
+                    // Example #2
+                    // Read each line of the file into a string array. Each element
+                    // of the array is one line of the file.
+                    string[] lines = System.IO.File.ReadAllLines(file.FullName);
+                    // Display the file contents by using a foreach loop.
+                    //System.Console.WriteLine("Contents of WriteLines2.txt = ");
+                    //_cobros
+                    string[] linesArchivo = { };
+                    foreach (string line in lines)
                     {
-                        lineas = lineas + line + "<br />";
-                        string sep = "\t";
-                        
-                  
-                       string tipo = line.Substring(16, 17).ToString().TrimEnd();
+                        //if (i == 2)
+                        //{
+                            lineas = lineas + line + "<br />";
+                            string sep = "\t";
 
-                        if (tipo == "01")
-                        {
-                            EstructuraSalidaBanescoEncabezado Registro = new EstructuraSalidaBanescoEncabezado();
-                            Registro.Trading = line.Substring(0, 14).ToString().TrimEnd();
-                            Registro.Filler = line.Substring(14, 15).ToString().TrimEnd();
-                            Registro.TipoRegistro = line.Substring(16, 18).ToString().TrimEnd();
-                            Registro.__NumeroReferenciaRespuesta = line.Substring(19, 53).ToString().TrimEnd();
-                            Registro.__FechaRespuesta = line.Substring(54, 67).ToString().TrimEnd();
-                            Registro.__NumeroReferenciaOrdenPago = line.Substring(68, 102).ToString().TrimEnd();
-                            Registro.__TipoOrdenPago = line.Substring(103, 105).ToString().TrimEnd();
-                            Registro.__CodigoBancoEmisor = line.Substring(106, 116).ToString().TrimEnd();
-                            Registro.__NombreBancoEmisor = line.Substring(117, 186).ToString().TrimEnd();
-                            Registro.__CodgioEmpresaReceptoraBansta = line.Substring(187, 203).ToString().TrimEnd();
-                            Registro.__DescripcionEmpresaReceptoraBansta = line.Substring(204, 273).ToString().TrimEnd();
 
-                            string _line = Registro.__NumeroReferenciaOrdenPago + "|1|";
+                            string tipo = line.Substring(16, 2).ToString().TrimEnd();
 
-                            Array.Resize(ref linesArchivo, linesArchivo.Length + 1);
-                            linesArchivo[linesArchivo.Length - 1] = _line;
-                        }
-                        else if (tipo == "02")
-                        {
-                            EstructuraSalidaBanescoDetalle Registro = new EstructuraSalidaBanescoDetalle();
-                            Registro.Trading = line.Substring(0, 14).ToString().TrimEnd();
-                            Registro.Filler = line.Substring(14, 15).ToString().TrimEnd();
-                            Registro.TipoRegistro = line.Substring(16, 17).ToString().TrimEnd();
-                            Registro.Indicador = line.Substring(17, 18).ToString().TrimEnd();
-                            Registro.NumeroReferencia = line.Substring(19, 53).ToString().TrimEnd();
-                            Registro.Fecha = line.Substring(54, 61).ToString().TrimEnd();
-                            Registro.Monto = line.Substring(62, 76).ToString().TrimEnd();
-                            Registro.Moneda = line.Substring(77, 79).ToString().TrimEnd();
-                            Registro.Rif = line.Substring(80, 96).ToString().TrimEnd();
-                            Registro.NumeroCuenta = line.Substring(97, 131).ToString().TrimEnd();
-                            Registro.BancoBeneficiario = line.Substring(132, 142).ToString().TrimEnd();
-                            Registro.BancoBeneficiarioDescripcion = line.Substring(143, 212).ToString().TrimEnd();
-                            Registro.CodigoAgencia = line.Substring(213, 215).ToString().TrimEnd();
-                            Registro.NombreBeneficiario = line.Substring(216, 285).ToString().TrimEnd();
-                            Registro.NumeroCliente = line.Substring(286, 320).ToString().TrimEnd();
-                            Registro.FechaVencimiento = line.Substring(321, 326).ToString().TrimEnd();
-                            Registro.NumeroSecuenciaArchivo = line.Substring(327, 332).ToString().TrimEnd();
+                            if (tipo == "01")
+                            {
+                                EstructuraSalidaBanescoEncabezado Registro = new EstructuraSalidaBanescoEncabezado();
+                                Registro.Trading = line.Substring(0, 14).ToString().TrimEnd();
+                                Registro.Filler = line.Substring(14, 15).ToString().TrimEnd();
+                                Registro.TipoRegistro = line.Substring(16, 18).ToString().TrimEnd();
+                                Registro.__NumeroReferenciaRespuesta = line.Substring(19, 34).ToString().TrimEnd();
+                                //Registro.__FechaRespuesta = line.Substring(54, 67).ToString().TrimEnd();
+                                //Registro.__NumeroReferenciaOrdenPago = line.Substring(68, 102).ToString().TrimEnd();
+                                //Registro.__TipoOrdenPago = line.Substring(103, 105).ToString().TrimEnd();
+                                //Registro.__CodigoBancoEmisor = line.Substring(106, 116).ToString().TrimEnd();
+                                //Registro.__NombreBancoEmisor = line.Substring(117, 186).ToString().TrimEnd();
+                                //Registro.__CodgioEmpresaReceptoraBansta = line.Substring(187, 203).ToString().TrimEnd();
+                                //Registro.__DescripcionEmpresaReceptoraBansta = line.Substring(204, 273).ToString().TrimEnd();
 
-                            string _line = Registro.NumeroCuenta + "|1|";
+                                //string _line = Registro.__NumeroReferenciaOrdenPago + "|1|";
 
-                            Array.Resize(ref linesArchivo, linesArchivo.Length + 1);
-                            linesArchivo[linesArchivo.Length - 1] = _line;
-                        }
-                        else if (tipo == "03")
-                        {
-                            EstructuraSalidaBanescoEstatus Registro = new EstructuraSalidaBanescoEstatus();
-                            Registro.Trading = line.Substring(0, 14).ToString().TrimEnd();
-                            Registro.Filler = line.Substring(14, 15).ToString().TrimEnd();
-                            Registro.TipoRegistro = line.Substring(16, 17).ToString().TrimEnd();
-                            Registro._CodigoEstatus = line.Substring(19, 21).ToString().TrimEnd();
-                            Registro._Descripcion = line.Substring(22, 91 ).ToString().TrimEnd();
+                                //Array.Resize(ref linesArchivo, linesArchivo.Length + 1);
+                                //linesArchivo[linesArchivo.Length - 1] = _line;
 
-                            string _line = Registro._CodigoEstatus + "|1|";
+                                getCP = ArchivoREPO.GetAllRecords().Where(u => u.ReferenciaArchivoBanco == Registro.__NumeroReferenciaRespuesta).FirstOrDefault();
 
-                            Array.Resize(ref linesArchivo, linesArchivo.Length + 1);
-                            linesArchivo[linesArchivo.Length - 1] = _line;
-                        }
-                        else if (tipo == "04")
-                        {
-                          
-                        }
+                            }
+                            else if (tipo == "02")
+                            {
+                                //EstructuraSalidaBanescoDetalle Registro = new EstructuraSalidaBanescoDetalle();
+                                //Registro.Trading = line.Substring(0, 14).ToString().TrimEnd();
+                                //Registro.Filler = line.Substring(1y bajando la respuesta exploto 4, 15).ToString().TrimEnd();
+                                //Registro.TipoRegistro = line.Substring(16, 17).ToString().TrimEnd();
+                                //Registro.Indicador = line.Substring(17, 18).ToString().TrimEnd();
+                                //Registro.NumeroReferencia = line.Substring(19, 53).ToString().TrimEnd();
+                                //Registro.Fecha = line.Substring(54, 61).ToString().TrimEnd();
+                                //Registro.Monto = line.Substring(62, 76).ToString().TrimEnd();
+                                //Registro.Moneda = line.Substring(77, 79).ToString().TrimEnd();
+                                //Registro.Rif = line.Substring(80, 96).ToString().TrimEnd();
+                                //Registro.NumeroCuenta = line.Substring(97, 131).ToString().TrimEnd();
+                                //Registro.BancoBeneficiario = line.Substring(132, 142).ToString().TrimEnd();
+                                //Registro.BancoBeneficiarioDescripcion = line.Substring(143, 212).ToString().TrimEnd();
+                                //Registro.CodigoAgencia = line.Substring(213, 215).ToString().TrimEnd();
+                                //Registro.NombreBeneficiario = line.Substring(216, 285).ToString().TrimEnd();
+                                //Registro.NumeroCliente = line.Substring(286, 320).ToString().TrimEnd();
+                                //Registro.FechaVencimiento = line.Substring(321, 326).ToString().TrimEnd();
+                                //Registro.NumeroSecuenciaArchivo = line.Substring(327, 332).ToString().TrimEnd();
 
+                                //string _line = Registro.NumeroCuenta + "|1|";
+
+                                //Array.Resize(ref linesArchivo, linesArchivo.Length + 1);
+                                //linesArchivo[linesArchivo.Length - 1] = _line;
+                            }
+                            else if (tipo == "03")
+                            {
+                                //EstructuraSalidaBanescoEstatus Registro = new EstructuraSalidaBanescoEstatus();
+                                //Registro.Trading = line.Substring(0, 14).ToString().TrimEnd();
+                                //Registro.Filler = line.Substring(14, 15).ToString().TrimEnd();
+                                //Registro.TipoRegistro = line.Substring(16, 17).ToString().TrimEnd();
+                                //Registro._CodigoEstatus = line.Substring(19, 21).ToString().TrimEnd();
+                                //Registro._Descripcion = line.Substring(22, 91).ToString().TrimEnd();
+
+                                //string _line = Registro._CodigoEstatus + "|1|";
+
+                                //Array.Resize(ref linesArchivo, linesArchivo.Length + 1);
+                                //linesArchivo[linesArchivo.Length - 1] = _line;
+                            }
+                            else if (tipo == "04")
+                            {
+
+                            }
+
+                        //}
+                        //i++;
                     }
-                    i++;
+                    getCP.FechaLectura = DateTime.Now;
+                    getCP.ContenidoRespuesta = lineas;
+                    getCP.EsRespuesta = true;
+                    ArchivoREPO.SaveChanges();
+
+                    file.MoveTo(rutafinal + file.Name + ".txt");
+                    //item.Contenido = lineas;
+                    //item.Descripcion = "[FINPAGO] RESPUESTA Cargo cuenta masivo.";
+                    //item.Tipo = 1;
+                    //item.IdEmpresa = 1;
+                    //item.IdReferencia = Guid.NewGuid();
+                    //item.
+
+                    //ArchivoREPO.AddEntity(item);
                 }
-                item.Contenido = lineas;
-                item.Descripcion = "Archivo Salida Banesco";
-                item.Tipo = 1;
-                ArchivoREPO.AddEntity(item);
-                ArchivoREPO.SaveChanges();
+                else {
+
+                    file.MoveTo(rutafinal + file.Name + ".txt");
+                }
 
 
             }
@@ -2168,33 +2196,64 @@ namespace Umbrella.Controllers
             }
             return true;
         }
-        public void DownloadAll()
+        public string DownloadAll()
         {
-            string host = @"sftp.domain.com";
-            string username = "myusername";
-            string password = "mypassword";
-
-            string remoteDirectory = "/RemotePath/";
-            string localDirectory = @"C:\LocalDriveFolder\Downloaded\";
-
-            using (var sftp = new SftpClient(host, username, password))
+            string texto = "";
+            try
             {
-                sftp.Connect();
-                var files = sftp.ListDirectory(remoteDirectory);
+                var host = "10.148.174.215";
+                var port = 5522;
+                var username = "instapag";
+                var password = "540144017";
+                var remoteDirectory = "/OUT";
+                var backupDirectory = "/OUTbackup/";
 
-                foreach (var file in files)
+                //string remoteDirectory = "/RemotePath/";
+                string localDirectory = @"C:\Apps\Transax\Repo\RespuestaBanesco\";
+                using (var sftp = new SftpClient(host, port, username, password))
                 {
-                    string remoteFileName = file.Name;
-                    if ((!file.Name.StartsWith(".")) && ((file.LastWriteTime.Date == DateTime.Today)))
+
+                    sftp.Connect();
+                    texto = "conecto con el sftp | ";
+                    if (sftp.IsConnected)
                     {
-                        using (Stream file1 = System.IO.File.OpenWrite(localDirectory + remoteFileName))
+                        //Debug.WriteLine("I'm connected to the client");
+                        if (sftp.Exists(sftp.WorkingDirectory + remoteDirectory))
                         {
-                            sftp.DownloadFile(remoteDirectory + remoteFileName, file1);
+                            texto = texto + "directorio existe" + sftp.WorkingDirectory + remoteDirectory + " | ";
+                            //sftp.ChangeDirectory(sftp.WorkingDirectory + remoteDirectory);
+                            //texto = texto + "cambie directorio" + sftp.WorkingDirectory + remoteDirectory + "| ";
+                            texto = texto + "busco archivos en" + sftp.WorkingDirectory + remoteDirectory + " | ";
+                            var files = sftp.ListDirectory(sftp.WorkingDirectory + remoteDirectory);
+                            texto = texto + "busque archivos " + sftp.WorkingDirectory + remoteDirectory + "  -> " + files.Count().ToString() + " | ";
+                            foreach (var file in files)
+                            {
+                                texto = texto + "encontre y recorro " + file.Name + " | ";
+                                string remoteFileName = file.Name;
+                                if ((!file.Name.StartsWith(".")) && ((file.LastWriteTime.Date == DateTime.Today)))
+                                {
+                                    texto = texto + "encontre y recorro " + localDirectory + remoteFileName + " | ";
+                                    using (Stream file1 = System.IO.File.OpenWrite(localDirectory + remoteFileName))
+                                    {
+                                        texto = texto + "intento descargar | ";
+                                        sftp.DownloadFile(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName, file1);
+                                        texto = texto + "lo descargue | ";
+                                        var inFile = sftp.Get(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName);
+                                        texto = texto + "lo muevo " + sftp.WorkingDirectory + backupDirectory + " | ";
+                                        inFile.MoveTo(sftp.WorkingDirectory + backupDirectory + remoteFileName);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
-
             }
+            catch (Exception e)
+            {
+                texto = texto + e.Message + "  " + e.StackTrace;
+                return texto;
+            }
+            return texto;
         }
 
         public void FileUploadSFTP()
@@ -2281,8 +2340,8 @@ namespace Umbrella.Controllers
             string tiporegistro = "01";
             string transaccion = "DMI";
             string condicion = "9";
-      
-      
+
+
             //string fecha = DateTime.Now.ToString("yyyyMMddhhmmss");
             string encabezado = tiporegistro + transaccion.PadRight(35) + condicion.PadRight(3) + ordencobroreferencia.PadRight(35) + _fecha;
             decimal total = 0;
@@ -2300,7 +2359,7 @@ namespace Umbrella.Controllers
                 {
                     _cuenta = beneficiario.Cuenta;
                     _nombrecomercial = beneficiario.RazonSocial;
-                    _rifc = beneficiario.TipoIdentificacion +  beneficiario.Identificacion.PadLeft(9,'0');
+                    _rifc = beneficiario.TipoIdentificacion + beneficiario.Identificacion.PadLeft(9, '0');
                 }
                 else
                 {
@@ -2568,7 +2627,7 @@ namespace Umbrella.Controllers
         {
             int cantidadmovimientos = Cobros.Count();
             string fechaarchivo = DateTime.Now.AddDays(0).ToString("ddMMyy.hhmm");
-     
+
             string _fecha = DateTime.Now.AddDays(0).ToString("yyyyMMdd");
             //datos fijos
             string registro = "00";
@@ -2578,7 +2637,7 @@ namespace Umbrella.Controllers
             string Referencia = DateTime.Now.AddDays(0).ToString("yyyyMMddhhmm"); ;
             string documento = "AFILIA";
             string registrodecontrol = registro + rif + Filler + Referencia.PadRight(30) + documento;
-     
+
             int k = 0;
             //decimal total = 0;
             List<string> _cobros = new List<string>();
@@ -2589,7 +2648,7 @@ namespace Umbrella.Controllers
                 if (beneficiario != null && beneficiario.Id > 0)
                 {
                     string _tipodocumento = beneficiario.TipoIdentificacion;
-                    string _documento = beneficiario.Identificacion.PadLeft(10,'0');
+                    string _documento = beneficiario.Identificacion.PadLeft(10, '0');
                     string digito = "0";
                     string tipocuenta = "01";
                     string numerocuenta = beneficiario.Cuenta;
@@ -2621,9 +2680,9 @@ namespace Umbrella.Controllers
                     //}
                     //k++;
                 }
-       
+
             }
-                       
+
             string[] lines = { registrodecontrol };
             foreach (var _item in _cobros)
             {
@@ -2679,38 +2738,38 @@ namespace Umbrella.Controllers
 
                 //if (beneficiario != null && beneficiario.Id > 0)
                 //{
-                    //string _tipodocumento = cobro.AE_Avance.RifCommerce.Substring(0,1);
-                    string _documento = cobro.AE_Avance.RifCommerce.PadLeft(10, '0');
-                    string digito = "0";
-                    string tipocuenta = "01";
-                    string numerocuenta = Cobros.FirstOrDefault().AE_Avance.NumeroCuenta;
-                    string nombre = cobro.AE_Avance.Commerce.SocialReasonName.Replace(".", " ").Replace(",", " ").ToUpper().TrimEnd();
-                    string _referencia = cobro.Id.ToString().PadLeft(8, '0');
-                    string debito = _documento + digito + tipocuenta + numerocuenta.PadLeft(35, '0') + nombre.PadRight(59) + _referencia;
-                    _cobros.Add(debito);
+                //string _tipodocumento = cobro.AE_Avance.RifCommerce.Substring(0,1);
+                string _documento = cobro.AE_Avance.RifCommerce.PadLeft(10, '0');
+                string digito = "0";
+                string tipocuenta = "01";
+                string numerocuenta = Cobros.FirstOrDefault().AE_Avance.NumeroCuenta;
+                string nombre = cobro.AE_Avance.Commerce.SocialReasonName.Replace(".", " ").Replace(",", " ").ToUpper().TrimEnd();
+                string _referencia = cobro.Id.ToString().PadLeft(8, '0');
+                string debito = _documento + digito + tipocuenta + numerocuenta.PadLeft(35, '0') + nombre.PadRight(59) + _referencia;
+                _cobros.Add(debito);
                 //}
                 //else
                 //{
-                    //if (k == 0)
-                    //{
-                    //    _cuenta = "01340373233733019371";
-                    //    _nombrecomercial = "Carmelo Larez";
-                    //    _rifc = "V018601098";
-                    //}
-                    //else if (k == 1)
-                    //{
-                    //    _cuenta = "01340874278743016046";
-                    //    _nombrecomercial = "Alexyomar Istruriz";
-                    //    _rifc = "V017302339";
-                    //}
-                    //else
-                    //{
-                    //    _cuenta = "01340373233733019371";
-                    //    _nombrecomercial = "Carmelo Larez";
-                    //    _rifc = "V018601098";
+                //if (k == 0)
+                //{
+                //    _cuenta = "01340373233733019371";
+                //    _nombrecomercial = "Carmelo Larez";
+                //    _rifc = "V018601098";
+                //}
+                //else if (k == 1)
+                //{
+                //    _cuenta = "01340874278743016046";
+                //    _nombrecomercial = "Alexyomar Istruriz";
+                //    _rifc = "V017302339";
+                //}
+                //else
+                //{
+                //    _cuenta = "01340373233733019371";
+                //    _nombrecomercial = "Carmelo Larez";
+                //    _rifc = "V018601098";
 
-                    //}
-                    //k++;
+                //}
+                //k++;
                 //}
 
             }
@@ -2819,7 +2878,7 @@ namespace Umbrella.Controllers
             public string Trading { get; set; }
             public string Filler { get; set; }
             public string TipoRegistro { get; set; }
-           
+
             public string _CodigoEstatus { get; set; }
             public string _Descripcion { get; set; }
 

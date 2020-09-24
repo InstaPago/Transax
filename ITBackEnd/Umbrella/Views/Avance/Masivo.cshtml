@@ -4,6 +4,7 @@
 
     List<InstaTransfer.DataAccess.CP_Archivo> Archivos = (List<InstaTransfer.DataAccess.CP_Archivo>)ViewBag.CP_Archivo;
     int k = 0;
+    
     List<InstaTransfer.DataAccess.AE_EstadoCuenta> CobroDiario = (List<InstaTransfer.DataAccess.AE_EstadoCuenta>)ViewBag.CobroDiarios;
 }
 @{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = ViewBag.Title }); }
@@ -122,7 +123,8 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Avance</th>
-                                                        <th>Comercio</th>
+                                                  
+                                                        <th>Razon</th>
                                                         <th>Fecha</th>
                                                         <th>Monto Bs</th>
                                                         <th>Acción</th>
@@ -133,15 +135,17 @@
 
                                                     @foreach (var _item in CobroDiario)
                                                     {
-                                                        <tr>
-                                                            <td style="text-align:left">@_item.Id </td>
-                                                            <td style="text-align:left">@_item.AE_Avance.Commerce.SocialReasonName  </td>
-                                                            <td style="text-align:left">@_item.FechaOperacion.ToShortDateString()</td>
-                                                            <td style="text-align:left">@_item.MontoBs</td>
-                                                            <td style="text-align:left"><input type="checkbox" value="@_item.Id" name="ids" checked /></td>
+                                                    <tr>
+                                                        <td style="text-align:left">@_item.AE_Avance.Id  </td>
+                
+                                                        <td style="text-align:left">@_item.AE_Avance.Commerce.BusinessName    </td>
+                                                        <td style="text-align:left">@_item.AE_Avance.Commerce.Rif    </td>
+                                                        <td style="text-align:left">@_item.FechaOperacion.ToShortDateString()</td>
+                                                        <td style="text-align:left">@_item.MontoBs</td>
+                                                        <td style="text-align:left"><input type="checkbox" value="@_item.Id" name="ids" checked /></td>
 
 
-                                                        </tr>
+                                                    </tr>
                                                     }
 
                                                 </tbody>
@@ -222,8 +226,45 @@
                                                 <input type="submit" style="width:200px;" class="btn btn-primary " value="Enviar" />
                                             </form>
                                         </td>
-                                        <td>   </td>
-                                        <td>   </td>
+                                        <td>
+                                            @if (item.EsRespuesta)
+                                            {
+                                            <button type="button" class="btn btn-default " data-toggle="modal" data-target="#@(item.Id + "t")" value=""> <i class="md  md-search"></i> Ver</button>
+                                            <div id="@(item.Id + "t")" class="modal fade" role="dialog">
+                                                <div class="modal-dialog modal-lg" style="min-width:1000px;">
+
+                                                    <!-- Modal content-->
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <h4 class="modal-title"> Contenido Archivo Generado  </h4>
+                                                        </div>
+
+                                                        <div class="modal-body">
+                                                            <div class="row">
+                                                                <div class="col-lg-12" style="font-size:12px; color:black;">
+                                                                    @Html.Raw(HttpUtility.HtmlDecode(item.ContenidoRespuesta))
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (item.EsRespuesta)
+                                            {
+                                                <label> @item.FechaLectura.ToShortDateString() </label>
+                                            }
+
+                                      </td>
                                     </tr>
                                     k++;
                                 }

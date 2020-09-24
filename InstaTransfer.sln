@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ScraperView", "UScraper\ScraperView.csproj", "{1207C11F-9882-44A3-8A62-6205BE5CE341}"
 EndProject
@@ -72,6 +72,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{82076147-BC7C-42A7-853C-B8E2C07C39D6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITChargeAccountScraperService", "ITChargeAccountScraperService\ITChargeAccountScraperService.csproj", "{4CBAB7CF-6F40-455C-BA6A-40D8FD95DFC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Banesco", "Banesco\Banesco.csproj", "{A8BB1226-6573-4C13-87E1-D627162C8056}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -167,6 +169,10 @@ Global
 		{4CBAB7CF-6F40-455C-BA6A-40D8FD95DFC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4CBAB7CF-6F40-455C-BA6A-40D8FD95DFC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4CBAB7CF-6F40-455C-BA6A-40D8FD95DFC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8BB1226-6573-4C13-87E1-D627162C8056}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8BB1226-6573-4C13-87E1-D627162C8056}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A8BB1226-6573-4C13-87E1-D627162C8056}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A8BB1226-6573-4C13-87E1-D627162C8056}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -200,99 +206,9 @@ Global
 		{DF7EBCB6-7B18-4EE4-A684-AC75761BDF2E} = {EEAE2006-E508-4522-A263-3518C826F39F}
 		{82076147-BC7C-42A7-853C-B8E2C07C39D6} = {8C3CC8BD-BAE3-46DE-90B7-5F7D02F7B9F5}
 		{4CBAB7CF-6F40-455C-BA6A-40D8FD95DFC9} = {A519B942-74C2-4B24-AB2C-9B1238CEA43B}
+		{A8BB1226-6573-4C13-87E1-D627162C8056} = {D4203EE9-2894-482A-9F53-2373648A242B}
 	EndGlobalSection
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 23
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://instapago.visualstudio.com/
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = ITResources\\ITResources.csproj
-		SccProjectTopLevelParentUniqueName1 = InstaTransfer.sln
-		SccProjectName1 = ITResources
-		SccLocalPath1 = ITResources
-		SccProjectUniqueName2 = ITLogic\\ITLogic.csproj
-		SccProjectTopLevelParentUniqueName2 = InstaTransfer.sln
-		SccProjectName2 = ITLogic
-		SccLocalPath2 = ITLogic
-		SccProjectUniqueName3 = UpdaterContracts\\UpdaterContracts.csproj
-		SccProjectTopLevelParentUniqueName3 = InstaTransfer.sln
-		SccProjectName3 = UpdaterContracts
-		SccLocalPath3 = UpdaterContracts
-		SccProjectUniqueName4 = UpdaterPresenter\\UpdaterPresenter.csproj
-		SccProjectTopLevelParentUniqueName4 = InstaTransfer.sln
-		SccProjectName4 = UpdaterPresenter
-		SccLocalPath4 = UpdaterPresenter
-		SccProjectUniqueName5 = UScraperContracts\\ScraperContracts.csproj
-		SccProjectTopLevelParentUniqueName5 = InstaTransfer.sln
-		SccProjectName5 = UScraperContracts
-		SccLocalPath5 = UScraperContracts
-		SccProjectUniqueName6 = UScraperPresenter\\ScraperPresenter.csproj
-		SccProjectTopLevelParentUniqueName6 = InstaTransfer.sln
-		SccProjectName6 = UScraperPresenter
-		SccLocalPath6 = UScraperPresenter
-		SccProjectUniqueName7 = UScraper\\ScraperView.csproj
-		SccProjectTopLevelParentUniqueName7 = InstaTransfer.sln
-		SccProjectName7 = UScraper
-		SccLocalPath7 = UScraper
-		SccProjectUniqueName8 = Updater\\UpdaterView.csproj
-		SccProjectTopLevelParentUniqueName8 = InstaTransfer.sln
-		SccProjectName8 = Updater
-		SccLocalPath8 = Updater
-		SccProjectUniqueName9 = BLL\\BLL.csproj
-		SccProjectTopLevelParentUniqueName9 = InstaTransfer.sln
-		SccProjectName9 = BLL
-		SccLocalPath9 = BLL
-		SccProjectUniqueName10 = ITExceptions\\ITExceptions.csproj
-		SccProjectTopLevelParentUniqueName10 = InstaTransfer.sln
-		SccProjectName10 = ITExceptions
-		SccLocalPath10 = ITExceptions
-		SccProjectUniqueName11 = ITService\\ITService.csproj
-		SccProjectTopLevelParentUniqueName11 = InstaTransfer.sln
-		SccProjectName11 = ITService
-		SccLocalPath11 = ITService
-		SccProjectUniqueName12 = RegistratorView\\RegistratorView.csproj
-		SccProjectTopLevelParentUniqueName12 = InstaTransfer.sln
-		SccProjectName12 = RegistratorView
-		SccLocalPath12 = RegistratorView
-		SccProjectUniqueName13 = ITBackEnd\\Umbrella\\BackEndView.csproj
-		SccProjectTopLevelParentUniqueName13 = InstaTransfer.sln
-		SccProjectName13 = ITBackEnd/Umbrella
-		SccLocalPath13 = ITBackEnd\\Umbrella
-		SccProjectUniqueName14 = ITApi\\ITApi.csproj
-		SccProjectTopLevelParentUniqueName14 = InstaTransfer.sln
-		SccProjectName14 = ITApi
-		SccLocalPath14 = ITApi
-		SccProjectUniqueName15 = BackEndViewTest\\BackEndViewTest.csproj
-		SccProjectTopLevelParentUniqueName15 = InstaTransfer.sln
-		SccProjectName15 = BackEndViewTest
-		SccLocalPath15 = BackEndViewTest
-		SccProjectUniqueName16 = ITReconciliatorServiceTest\\ITReconciliatorServiceTest.csproj
-		SccProjectTopLevelParentUniqueName16 = InstaTransfer.sln
-		SccProjectName16 = ITReconciliatorServiceTest
-		SccLocalPath16 = ITReconciliatorServiceTest
-		SccProjectUniqueName17 = CobroDiario\\CobroDiario.csproj
-		SccProjectTopLevelParentUniqueName17 = InstaTransfer.sln
-		SccProjectName17 = CobroDiario
-		SccLocalPath17 = CobroDiario
-		SccProjectUniqueName18 = ITReconciliatorService\\ITReconciliatorService.csproj
-		SccProjectTopLevelParentUniqueName18 = InstaTransfer.sln
-		SccProjectName18 = ITReconciliatorService
-		SccLocalPath18 = ITReconciliatorService
-		SccProjectUniqueName19 = ITBackEnd\\PaymentRequest\\Bennigton.csproj
-		SccProjectTopLevelParentUniqueName19 = InstaTransfer.sln
-		SccProjectName19 = ITBackEnd/PaymentRequest
-		SccLocalPath19 = ITBackEnd\\PaymentRequest
-		SccProjectUniqueName20 = ITCSScraper\\ITCSScraper.csproj
-		SccProjectTopLevelParentUniqueName20 = InstaTransfer.sln
-		SccProjectName20 = ITCSScraper
-		SccLocalPath20 = ITCSScraper
-		SccProjectUniqueName21 = DataAccess\\DataAccess.csproj
-		SccProjectTopLevelParentUniqueName21 = InstaTransfer.sln
-		SccProjectName21 = DataAccess
-		SccLocalPath21 = DataAccess
-		SccProjectUniqueName22 = ITChargeAccountScraperService\\ITChargeAccountScraperService.csproj
-		SccProjectTopLevelParentUniqueName22 = InstaTransfer.sln
-		SccProjectName22 = ITChargeAccountScraperService
-		SccLocalPath22 = ITChargeAccountScraperService
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1089FE66-FF7C-4E91-BE61-4A3B11A240A6}
 	EndGlobalSection
 EndGlobal

@@ -498,6 +498,12 @@
             </summary>
             <returns>Respuesta con el estado, mensaje, y lista de bancos</returns>
         </member>
+        <member name="M:ITApi.Controllers.BankController.GetInfoCharge(ITApi.Controllers.BankController.GetInfo)">
+            <summary>
+            Obtiene todos los bancos disponibles
+            </summary>
+            <returns>Respuesta con el estado, mensaje, y lista de bancos</returns>
+        </member>
         <member name="M:ITApi.Controllers.BankController.Charge(ITApi.Controllers.BankController.Create)">
             <summary>
             Obtiene todos los bancos disponibles

@@ -123,6 +123,43 @@ namespace ITApi.Controllers
         }
 
 
+
+        // GET api/banks/Charge
+        /// <summary>
+        /// Obtiene todos los bancos disponibles
+        /// </summary>
+        /// <returns>Respuesta con el estado, mensaje, y lista de bancos</returns>
+        [Route("GetInfoCharge")]
+        //[ResponseType(typeof(BankGetResponse))]
+        [HttpPost]
+        public HttpResponseMessage GetInfoCharge([FromBody]GetInfo model)
+        {
+            Guid Key = model.Key;
+            Guid Data = model.Id;
+
+            URepository<CP_ItemArchivo> CP_ItemArchivoREPO = new URepository<CP_ItemArchivo>();
+            URepository<CP_Archivo> CP_ArchivoREPO = new URepository<CP_Archivo>();
+
+            CP_Archivo archivo = CP_ArchivoREPO.GetAllRecords().Where(u => u.IdReferencia == Data).FirstOrDefault();
+
+            List<CP_ItemArchivo> items = CP_ItemArchivoREPO.GetAllRecords().Where(u => u.IdReferencia == Data).ToList();
+
+            var json = new JavaScriptSerializer().Serialize(items);
+
+            var result = new
+            {
+                status = "1",
+                id = archivo.Id.ToString(),
+                timecreated = archivo.Nombre.ToString(),
+                responsebanktime = archivo.FechaLectura.ToString(),
+                items = json,
+                fulldata = archivo.Contenido.ToString()               
+
+            };
+
+            return Request.CreateResponse(HttpStatusCode.OK, result);
+        }
+
         // GET api/banks/Charge
         /// <summary>
         /// Obtiene todos los bancos disponibles
@@ -138,20 +175,23 @@ namespace ITApi.Controllers
 
             JavaScriptSerializer __jsonSerializer = new JavaScriptSerializer();
             Cobro __data = (Cobro)__jsonSerializer.Deserialize(Data, typeof(Cobro));
-            bool win = _GenerarArchivoBANPOL(__data);
+            CP_Archivo _archivo = _GenerarArchivoBANPOL(__data);
 
             var result = new
             {
                 success = true,
-                message = "Archivo guardado de forma correcta"
-      
+                message = "Archivo guardado de forma correcta",
+                referencia = _archivo.IdReferencia.ToString(),
+                name = _archivo.Nombre.ToString()
+
             };
 
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 
-        public bool _GenerarArchivoBANPOL(Cobro Cobros)
+        public CP_Archivo  _GenerarArchivoBANPOL(Cobro Cobros)
         {          
+            Guid referencia = Guid.NewGuid();
             int cantidadmovimientos = Cobros.Cliente.Count();
             string rif = Cobros.Empresa.Documento;
             string fechaarchivo = DateTime.Now.AddDays(0).ToString("ddMMyy.hhmm");
@@ -180,7 +220,7 @@ namespace ITApi.Controllers
 
             //string fecha = DateTime.Now.ToString("yyyyMMddhhmmss");
             string encabezado = tiporegistro + transaccion.PadRight(35) + condicion.PadRight(3) + ordencobroreferencia.PadRight(35) + _fecha;
-
+            URepository<CP_ItemArchivo> CP_ItemArchivoREPO = new URepository<CP_ItemArchivo>();
             decimal total = 0;
             //debitos
             //decimal total = 0;
@@ -206,7 +246,20 @@ namespace ITApi.Controllers
                     + libre + contrato.PadRight(35) + fechavencimiento;
                 _cobros.Add(debito);
 
+                CP_ItemArchivo item = new CP_ItemArchivo();
+                item.Cuenta = cobro.CuentaBancaria;
+                item.Detalle = debito;
+                item.Estatus = 1;
+                item.FechaRegistro = DateTime.Now;
+                item.FechaRespuesta = null;
+                item.IdReferencia = referencia;
+                item.Monto = _monto;
+                item.RazonSocial = cobro.RazonSocial;
+                item.RespuestaBanco = "";
+                CP_ItemArchivoREPO.AddEntity(item);
+
             }
+    
             decimal _total = total * 100;
             //registro credito
             string _tipo2 = "02";
@@ -259,13 +312,19 @@ namespace ITApi.Controllers
             archivo.Contenido = contenido;
             archivo.FechaLectura = DateTime.Now;
             archivo.FechaCreacion = DateTime.Now;
-            archivo.Descripcion = "[INSTAPAGO] Cargo cuenta masivo.";
+            archivo.Descripcion = "["+ Cobros.Empresa.RazonSocial.ToUpper() + "] Cargo cuenta masivo.";
             archivo.IdCP_Archivo = null;
             archivo.ReferenciaOrigen = "Estado de cuenta operaciones de prestamos";
+            archivo.IdReferencia = referencia;
+            archivo.EsRespuesta = false;
+            archivo.ContenidoRespuesta = "Esperando";
+            archivo.ReferenciaArchivoBanco = numeroorden;
             CP_ArchivoREPO.AddEntity(archivo);
             CP_ArchivoREPO.SaveChanges();
 
-            return true;
+            CP_ItemArchivoREPO.SaveChanges();
+
+            return archivo;
         }
 
 
@@ -275,6 +334,14 @@ namespace ITApi.Controllers
             public String DataPayment { get; set; }
         }
 
+
+
+        public class GetInfo
+        {
+            public Guid Key { get; set; }
+            public Guid Id { get; set; }
+
+        }
 
         public class Cobro
         { 

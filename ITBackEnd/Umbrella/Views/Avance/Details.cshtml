@@ -134,7 +134,7 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
                     else
                     {
                         <h4 class="text-dark" style="font-size:15px;"> Tasa Interes: <strong> @( ((Model.Reembolso - Model.Avance) * 100 / Model.Avance).ToString("N2") ) % </strong></h4>
-                        <h4 class="text-dark" style="font-size:15px;"> Cobro Minimo Esperado: <strong>@moneda @Model.Reembolso  </strong></h4>
+                        <h4 class="text-dark" style="font-size:15px;"> Cobro Minimo Esperado: <strong>@moneda @Model.Reembolso.ToString("N2")  </strong></h4>
                         <hr />
 
                         <div class="col-lg-6" style="padding:0px;">
@@ -146,7 +146,8 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
                         </div>
                         <div class="col-lg-6">
                             <h4 class="text-dark" style="font-size:15px;"> Intereses Cobrado: <strong>@moneda @totalintereses.ToString("N2")  </strong> </h4>
-                            <h4 class="text-dark" style="font-size:15px;"> Intereses Generados: <strong style="color:red">  @moneda @sugeridointereses.ToString("N2") </strong> </h4>
+                            <h4 class="text-dark" style="font-size:15px;"> Intereses Generados: <strong>  @moneda @sugeridointereses.ToString("N2") </strong> </h4>
+                            <h4 class="text-dark" style="font-size:15px;"> Intereses Pendientes por pagar: <strong style="color:red">  @moneda @((sugeridointereses - totalintereses).ToString("N2")) </strong> </h4>
                             <input type="button" class="btn btn-default " data-toggle="modal" data-target="#interes" value="Detalle" />
                             <div id="interes" class="modal fade" role="dialog">
                                 <div class="modal-dialog modal-lg" style="min-width:1000px;">
@@ -307,13 +308,27 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
                         <div class="col-lg-12 col-lg-offset-0 text-center">
                             @if (Model.IdEstatus == 1)
                             {
-                                @*<input type="button" value="Finalizar Operación" id="finalizarope" Target="@Model.Id" class="btn btn-danger" />*@
 
-                                <input type="button" value="Agregar Movimiento" id="addmovimiento" class="btn btn-success" data-toggle="modal" data-target="#modaladdmovimiento" />
+                                <div class="col-lg-12">
+                                    <input type="button" value="Finalizar Operación" id="finalizarope" Target="@Model.Id" class="btn btn-danger" />
+
+                                    <input type="button" value="Agregar Movimiento" id="addmovimiento" class="btn btn-success" data-toggle="modal" data-target="#modaladdmovimiento" />
+                                </div>
+                                <div class="col-lg-12 text-center">
+                                    <input type="password" id="passfina" class="form-control" style="width:60px !important; margin-left:35%; margin-top:10px;" />
+                                </div>
+                            }
+                            else if (Model.IdEstatus == 2)
+                            {
+                                <label>Operación Finalizada!</label>
+                            }
+                            else if (Model.IdEstatus == 3)
+                            {
+                                <label>Operación Anulada!</label>
                             }
                             else
                             {
-                                <label>Operación Finalizada!</label>
+                                <label>Esperando Aprobación</label>
                             }
                         </div>
                         <!-- Modal -->
@@ -460,7 +475,7 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
                                 <th>Lote</th>
                                 <th>Monto Bs</th>
                                 <th>Tasa</th>
-                                <th>Tasa Promedio</th>
+                                <th>TP</th>
                                 <th>Débito @moneda</th>
                                 <th>Abono</th>
 
@@ -471,9 +486,9 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
                                 }
 
                                 @*
-                                <th>Tipo</th>*@
+                                    <th>Tipo</th>*@
                                 @*
-                                <th>Acciones</th>*@
+                                    <th>Acciones</th>*@
                             </tr>
                         </thead>
                         <tbody>
@@ -557,7 +572,7 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
                                 <th>Lote</th>
                                 <th>Monto Bs</th>
                                 <th>Tasa</th>
-                                <th>Tasa Promedio</th>
+                                <th>TP</th>
                                 <th>@moneda</th>
                                 <th>Abono</th>
 
@@ -568,9 +583,9 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
                                 }
 
                                 @*
-                                <th>Tipo</th>*@
+                                    <th>Tipo</th>*@
                                 @*
-                                <th>Acciones</th>*@
+                                    <th>Acciones</th>*@
                             </tr>
                         </thead>
                         <tbody>
@@ -730,19 +745,19 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
 
                         <tr>
                             @*
-                            <th>Rif</th>*@
+                                <th>Rif</th>*@
                             <th>Fecha </th>
                             @*
-                            <th>Saldo Inicial</th>*@
+                                <th>Saldo Inicial</th>*@
                             <th>Lote</th>
                             <th>Descripcion</th>
 
                             <th>Monto Bs</th>
 
                             @*
-                            <th>Tipo</th>*@
+                                <th>Tipo</th>*@
                             @*
-                            <th>Acciones</th>*@
+                                <th>Acciones</th>*@
                         </tr>
                     </thead>
                     <tbody>
@@ -754,7 +769,7 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
 
                                 <tr dtaction="@Url.Action("Details", "Avance")">
                                     @*
-                                    <td>@item.AE_Avance.RifCommerce</td>*@
+                                        <td>@item.AE_Avance.RifCommerce</td>*@
                                     <td>@item.FechaOperacion.ToShortDateString()</td>
 
                                     <td>@(item.Lote == null ? "-" : item.Lote.Value.ToString() ) </td>
@@ -798,7 +813,7 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
                                 <th>Estado</th>
                                 <th>Descargar</th>
                                 @*
-                                <th>Acciones</th>*@
+                                    <th>Acciones</th>*@
                             </tr>
                         </thead>
                         <tbody>
@@ -813,11 +828,11 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
                                     <td><a href="@Url.Action("lnkfilepath_Click", "Avance", new { ruta = @_item.Ruta })" class="descarga" ruta="@_item.Ruta">descargar</a></td>
 
                                     @*
-                                    <td>
-                                        <a class="btn btn-primary waves-effect waves-light btn-sm" commerceid="@item.Rif">Detalles</a>
-                                    </td>*@
+                                        <td>
+                                            <a class="btn btn-primary waves-effect waves-light btn-sm" commerceid="@item.Rif">Detalles</a>
+                                        </td>*@
                                     @*
-                                    <td><input onclick="switchTestMode(this)" data-size="small" type="checkbox" data-plugin="switchery" data-color="#00b19d"></td>*@
+                                        <td><input onclick="switchTestMode(this)" data-size="small" type="checkbox" data-plugin="switchery" data-color="#00b19d"></td>*@
                                 </tr>
                             }
                         </tbody>
@@ -860,7 +875,9 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
         }, function () {
                 ShowLoader();
                 var id = $("#finalizarope").attr("Target");
-                var datos = { id : id };
+          	var pass = $("#passfina").val();
+                var datos = { id : id , pass : pass };
+
             $.ajax({
                 method: "POST",
                 url: '@Url.Action("FinalizarOperacion", "Avance")',

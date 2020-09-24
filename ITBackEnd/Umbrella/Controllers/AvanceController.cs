@@ -60,7 +60,7 @@ namespace Umbrella.Controllers
             List = CP_ArchivoREPO.GetAllRecords().OrderByDescending(u => u.Id).ToList();
             ViewBag.CP_Archivo = List;
 
-            List<AE_EstadoCuenta> ListaEstadoCuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.AE_Avance.IdEstatus == 1 && u.FechaOperacion.Day == fecha.AddDays(-1).Day && u.FechaOperacion.Month == fecha.Month && u.FechaOperacion.Year == fecha.Year && u.Monto > 0 && !u.Abono).ToList();
+            List<AE_EstadoCuenta> ListaEstadoCuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.AE_Avance.IdEstatus == 1 && u.FechaOperacion.Day == fecha.AddDays(0).Day && u.FechaOperacion.Month == fecha.Month && u.FechaOperacion.Year == fecha.Year && u.Monto > 0 && !u.Abono).ToList();
             ViewBag.CobroDiarios = ListaEstadoCuenta;
 
             return View();
@@ -976,29 +976,41 @@ namespace Umbrella.Controllers
 
         }
 
-        public JsonResult FinalizarOperacion(int id)
+        public JsonResult FinalizarOperacion(int id, string pass)
         {
-            AE_Avance avance = AE_AvanceREPO.GetAllRecords().Where(u => u.Id == id).FirstOrDefault();
-            try
+            if (pass == "10563")
             {
+                AE_Avance avance = AE_AvanceREPO.GetAllRecords().Where(u => u.Id == id).FirstOrDefault();
+                try
+                {
 
-                avance.IdEstatus = 2;
-                AE_AvanceREPO.SaveChanges();
+                    avance.IdEstatus = 2;
+                    AE_AvanceREPO.SaveChanges();
 
+                }
+                catch (Exception e)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = e.Message
+                    }, JsonRequestBehavior.DenyGet);
+                }
+                return Json(new
+                {
+                    success = true,
+                    message = "Operacion finalizada de forma correcta!"
+                }, JsonRequestBehavior.DenyGet);
             }
-            catch (Exception e)
-            {
+            else {
                 return Json(new
                 {
                     success = false,
-                    message = e.Message
+                    message = "PIN Incorrecto!"
                 }, JsonRequestBehavior.DenyGet);
+
             }
-            return Json(new
-            {
-                success = true,
-                message = "Operacion finalizada de forma corrcta!"
-            }, JsonRequestBehavior.DenyGet);
+                   
         }
 
         public bool _GenerarArchivo(List<AE_EstadoCuenta> Cobros)
@@ -1291,7 +1303,7 @@ namespace Umbrella.Controllers
                 string rif = cobro.AE_Avance.RifCommerce.ToUpper();
                 string tipo = "03";
                 string recibo = cobro.Id.ToString().PadLeft(8, '0');
-                decimal _cambio = Math.Round(cobro.Monto, 2);
+                decimal _cambio = Math.Round(cobro.MontoBs.Value, 2);
                 _cambio = _cambio * 100;
                 total = total + _cambio;
                 string montoacobrar = _cambio.ToString().Split(',')[0];
@@ -1365,7 +1377,11 @@ namespace Umbrella.Controllers
             archivo.FechaCreacion = DateTime.Now;
             archivo.Descripcion = "[CARGO EN CUENTA] Cargo cuenta masivo de la empresa Fin Pagos.";
             archivo.IdCP_Archivo = null;
+            Guid x = Guid.NewGuid();
+            archivo.IdReferencia = x;
+            archivo.EsRespuesta = false;
             archivo.ReferenciaOrigen = "Estado de cuenta operaciones de prestamos";
+            archivo.ReferenciaArchivoBanco = ordencobroreferencia;
             CP_ArchivoREPO.AddEntity(archivo);
             CP_ArchivoREPO.SaveChanges();
 
@@ -1518,8 +1534,9 @@ namespace Umbrella.Controllers
             var port = 5522;
             var username = "instapag";
             var password = "540144017";
-            var workingdirectory = "/IN";
-            // path for file you want to upload
+            var workingdirectory = "/INtoAS400p";
+            // path for file you want to upload 
+            // path for file you want to upload 
             var uploadFile = uploadfile;
 
             using (var client = new SftpClient(host, port, username, password))
