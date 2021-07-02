@@ -184,6 +184,9 @@ namespace Umbrella.Controllers
             List<string> _fechas = new List<string>();
             List<decimal> _montos = new List<decimal>();
             List<decimal> _montobase = new List<decimal>();
+            
+            decimal interesevigtentes = 0;
+
             decimal montointereses = _item.Reembolso - _item.Avance;
             decimal porcentajeoperacion = (_item.Reembolso - _item.Avance) * 100 / _item.Avance;
             List<AvanceController.Interes> Interes = new List<Interes>();
@@ -223,10 +226,13 @@ namespace Umbrella.Controllers
                         Interes.Add(item);
                         FI = FI.AddMonths(1);
                         montointereses = montointereses + nuevosinteres;
+                        interesevigtentes = nuevosinteres;
+
                     }
+                    ViewBag.FechaVenceInteres = FI;
                 }
             }
-
+            
             DateTime _fechainicio = estadocuenta.First().FechaOperacion;
             if (_fechainicio > DateTime.Now)
             {
@@ -269,8 +275,21 @@ namespace Umbrella.Controllers
             ViewBag.montos = _montos.ToArray();
             ViewBag.montobase = _montobase.ToArray();
             ViewBag.sugeridointereses = montointereses;
+     
+        
             decimal totalpagado = estadocuenta.Where(u => u.Abono == false && u.SoloUtilidad == false).Sum(u => u.Monto);
             decimal totalintereses = estadocuenta.Where(u => u.Abono == false && u.SoloUtilidad == true).Sum(u => u.Monto);
+            if (totalintereses >= montointereses)
+            {
+                ViewBag.interesevigtentes = 0;
+            }
+            else {
+
+                ViewBag.interesevigtentes = interesevigtentes;
+                
+            }
+     
+
             ViewBag.totalpagado = totalpagado;
             ViewBag.totalintereses = totalintereses;
             decimal porcentaje = 0;

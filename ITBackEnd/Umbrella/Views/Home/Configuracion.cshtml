@@ -11,6 +11,7 @@
     List<InstaTransfer.DataAccess.AE_ValorAccion> ValorAccion = (List<InstaTransfer.DataAccess.AE_ValorAccion>)ViewBag.ValorAccion;
     List<InstaTransfer.DataAccess.AE_ValorAccionTR> ValorAccionTR = (List<InstaTransfer.DataAccess.AE_ValorAccionTR>)ViewBag.ValorAccionTR;
     List<InstaTransfer.DataAccess.AE_CambioDiario> CambioDiario = (List<InstaTransfer.DataAccess.AE_CambioDiario>)ViewBag.CambioDiario;
+    List<InstaTransfer.DataAccess.AE_Avance> ListaAvanceHistorico = (List<InstaTransfer.DataAccess.AE_Avance>)ViewBag.ListaAvanceHistorico;
     decimal TasaReportar = 0;
     decimal TasaAlta = 0;
     if (CambioDiario != null && CambioDiario.Count > 0)
@@ -168,6 +169,7 @@
                                 <th>Cuentas</th>
 
                                 <th>Capital PC</th>
+                                <th></th>
                                 <th>Total</th>
                                 <th>Variación</th>
                                 <th>G/P</th>
@@ -198,6 +200,42 @@
                                 diferencia = diferencia + (NuevoTotal - item.TotalCobroDiario);
                                 _diferencia = NuevoTotal - item.TotalCobroDiario;
 
+
+                                #region
+                                decimal  cobrado = 0;
+                                decimal reembolso = 0;
+                                decimal prestado = 0;
+                                foreach (var _elemento in ListaAvanceHistorico.Where(u => u.FechaInicioCobro != null &&  u.FechaInicioCobro.Value.Day <= item.FechaOperacion.Day && u.FechaInicioCobro.Value.Month <= item.FechaOperacion.Month && u.FechaInicioCobro.Value.Year <= item.FechaOperacion.Year))
+                                {
+                                    decimal porcentajeoperacion = (_elemento.Reembolso - _elemento.Avance) * 100 / _elemento.Avance;
+                                    decimal _cobrado = EstadoCuentaHistoria.Where(u => u.IdAvance == _elemento.Id && !u.Abono && !u.SoloUtilidad &&  u.FechaOperacion.Day <= item.FechaOperacion.Day && u.FechaOperacion.Month <= item.FechaOperacion.Month && u.FechaOperacion.Year <= item.FechaOperacion.Year).Sum(u => u.Monto);
+                                    reembolso = reembolso + (_elemento.Reembolso - _cobrado);
+                                    if (_elemento.Modalidad)
+                                    {
+                                        _cobrado = EstadoCuentaHistoria.Where(u => u.IdAvance == _elemento.Id && !u.Abono && !u.SoloUtilidad &&  u.FechaOperacion.Day <= item.FechaOperacion.Day && u.FechaOperacion.Month <= item.FechaOperacion.Month && u.FechaOperacion.Year <= item.FechaOperacion.Year).Sum(u => u.Monto);
+
+                                    }
+                                    else
+                                    {
+                                        decimal t_cobrado = EstadoCuentaHistoria.Where(u => u.IdAvance == _elemento.Id && !u.Abono && !u.SoloUtilidad && u.FechaOperacion.Day <= item.FechaOperacion.Day && u.FechaOperacion.Month <= item.FechaOperacion.Month && u.FechaOperacion.Year <= item.FechaOperacion.Year).Sum(u => u.Monto);
+
+                                        _cobrado = t_cobrado / (1 + (porcentajeoperacion / 100));
+                                    }
+                                    cobrado = cobrado + (_cobrado);
+
+                                    if (_elemento.Modalidad)
+                                    {
+                                        prestado = prestado + (_elemento.Avance - _cobrado);
+                                    }
+                                    else
+                                    {
+                                        prestado = prestado + (_elemento.Avance - _cobrado);
+                                    }
+                                }
+                                #endregion
+
+
+
                                 <tr>
                                     <td>@item.FechaOperacion.ToShortDateString()</td>
                                     <td style="@(item.PagoUtilidadAdministrador < 0 ? "background-color:#f37272; color:black;" : "" )">@item.PagoUtilidadAdministrador.ToString("N2") $</td>
@@ -220,6 +258,7 @@
                                     <td><strong>@item.SaldoUSD.ToString("N2") $</strong> </td>
 
                                     <td><strong>@item.CapitalPorCobrar.ToString("N2") $</strong> </td>
+                                    <td>@prestado.ToString("N2") $</td>
                                     <td><strong>@item.NuevoCapital.ToString("N2") $</strong></td>
                                     <td> @((item.NuevoCapital - item.CapitalInicial).ToString() ) $</td>
                                     <td style="@(variacion < -1 ? "background-color:#f37272; color:black;" : variacion > 1 ? "background-color:#5cc35c; color:black;" : "background-color:white;color:black;" )"> @variacion.ToString("N2") $</td>
@@ -610,7 +649,7 @@
                                                 }
                                                 else
                                                 {
-                                                    <td>@(((MontoConGasto - diferenciatasa) * porcen / 100).ToString("N") ) $</td>
+                                            <td>@(((MontoConGasto - diferenciatasa) -  ((MontoConGasto - diferenciatasa) / ((porcen / 100) + 1))).ToString("N") ) $</td>
                                                 }
 
 
@@ -622,7 +661,7 @@
                                             valorbruto = valorbruto + _item.Monto;
                                             if (_item.AE_Avance.Modalidad && _item.SoloUtilidad)
                                             {
-                                                totalganancia = totalganancia + MontoConGasto;
+                                                totalganancia = totalganancia + (MontoConGasto - diferenciatasa);
                                             }
                                             else if (_item.AE_Avance.Modalidad && !_item.SoloUtilidad)
                                             {
@@ -631,7 +670,7 @@
                                             else
                                             {
 
-                                                totalganancia = totalganancia + ((MontoConGasto) * porcen / 100) - diferenciatasa;
+                                                totalganancia = (totalganancia + ((MontoConGasto - diferenciatasa) - ((MontoConGasto - diferenciatasa) / ((porcen / 100)+1))));
                                             }
 
                                         }
@@ -695,7 +734,7 @@
                                                 }
                                                 else
                                                 {
-                                                    <td>@((MontoConGasto * porcen / 100).ToString("N") ) $</td>
+                                                    <td>@( (MontoConGasto - (MontoConGasto  / ((porcen / 100) + 1))).ToString("N") ) $</td>
                                                 }
 
 
@@ -715,7 +754,7 @@
                                             else
                                             {
 
-                                                totalganancia = totalganancia + ((MontoConGasto) * porcen / 100);
+                                                totalganancia = totalganancia + (MontoConGasto - ((MontoConGasto) / ((porcen / 100) + 1)));
                                             }
 
                                         }
@@ -798,7 +837,7 @@
                         <input type="hidden" value="0" readonly id="nuevovalor" name="nuevovalor" class="activo">
                         <input type="hidden" style="border-color:green;" value="" id="totalcapital" name="totalcapital" class="">
                         <input type="hidden" value="@Dolar.FirstOrDefault().Tasa.ToString("F0")" id="tasadolares" name="tasadolares" class="activo">
-                        <input type="hidden" value="@TasaReportar.ToString("F0").Replace(',','.')" name="TasaUtilizada" />
+                        <input type="hidden" value="@TasaReportar.ToString("F2").Replace(',','.')" name="TasaUtilizada" />
                         <input type="hidden" value="@acumuladotasa.ToString("F0").Replace(',','.')" name="AcumuladoTasa" />
                         @*<div class="col-lg-12">
                                 <h4 class="header-title">

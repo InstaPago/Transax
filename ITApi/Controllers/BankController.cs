@@ -189,7 +189,7 @@ namespace ITApi.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, result);
         }
 
-        public CP_Archivo  _GenerarArchivoBANPOL(Cobro Cobros)
+        public CP_Archivo _GenerarArchivoBANPOL(Cobro Cobros)
         {          
             Guid referencia = Guid.NewGuid();
             int cantidadmovimientos = Cobros.Cliente.Count();

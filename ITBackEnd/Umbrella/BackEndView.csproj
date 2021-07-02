@@ -66,6 +66,9 @@
       <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FileHelpers, Version=3.4.1.0, Culture=neutral, PublicKeyToken=3e0c08d59cc3d657, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FileHelpers.3.4.1\lib\net45\FileHelpers.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.AI.Agent.Intercept, Version=2.0.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.ApplicationInsights.Agent.Intercept.2.0.7\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
       <Private>True</Private>
@@ -3179,7 +3182,7 @@
       <Name>BLL</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\DataAccess\DataAccess.csproj">
-      <Project>{82076147-BC7C-42A7-853C-B8E2C07C39D6}</Project>
+      <Project>{82076147-bc7c-42a7-853c-b8e2c07c39d6}</Project>
       <Name>DataAccess</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ITExceptions\ITExceptions.csproj">

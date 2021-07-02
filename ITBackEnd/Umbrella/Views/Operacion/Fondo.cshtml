@@ -18,9 +18,9 @@
             </div>
             @if (User.IsInRole(UserRoleConstant.TransaXAdmin) || (User.IsInRole(UserRoleConstant.CommerceAdmin)))
             {
-                    <a href="#" class="btn waves-effect waves-light btn-primary m-b-5 addcuser">
-                        Crear Operación &nbsp; <i class="fa fa-user-plus"></i>
-                    </a>
+                <a href="#" class="btn waves-effect waves-light btn-primary m-b-5 addcuser">
+                    Crear Operación &nbsp; <i class="fa fa-user-plus"></i>
+                </a>
             }
             <div class="clearfix"></div>
             <div class="clearfix"></div>
@@ -33,7 +33,7 @@
                         <th>Periodos</th>
                         <th>Porcentaje</th>
                         <th>Monto</th>
-                        <th>Participacion</th>
+
                         <th>Estatus</th>
                         <th>Retira Utilidad Mes?</th>
                         <th>Se Retira del Fondo?</th>
@@ -50,8 +50,8 @@
                             <td>@item.FechaFinOperacion</td>
                             <td>@(item.TipoPago == 1 ? "Bimensual" : item.TipoPago == 2 ? "Trimestral" : item.TipoPago == 3 ? "Semestral" : "Anual" )</td>
                             <td>@item.PorcentajeGanancia %</td>
-                            <td>@item.Monto $</td>    
-                            <td>@item.RepresentacionFondo</td>
+                            <td>@item.Monto $</td>
+
                             <td>Activo</td>
                             <td class="text-center">
                                 <input type="checkbox" class="js-switch mes" _target="@item.Id" @(item.RetiraUtilidadMes ? "checked" : "") />
@@ -59,11 +59,76 @@
                             <td class="text-center">
                                 <input type="checkbox" class="js-switch fondo" _target="@item.Id" @(item.SeRetiraFondo ? "checked" : "") />
                             </td>
-                    
-                  
+
+
 
                             <td>
-                                <a href="@Url.Action("Reporte", "Operacion", new { id = item.Id })" class="btn btn-primary waves-effect waves-light btn-sm" commerceid="@item.Id">Detalles</a>
+                                <div style="float:left; width:100%;">
+                                    <div class="col-lg-4 text-left">
+                                        <a href="@Url.Action("Reporte", "Operacion", new { id = item.Id })" class="btn btn-primary waves-effect waves-light btn-sm" commerceid="@item.Id">Detalles</a>
+                                    </div>
+
+                                    <div class="col-lg-4 text-left">
+
+                                        <a data-target="#@item.Id" data-toggle="modal" class="btn btn-success waves-effect waves-light btn-sm">Agregar Capital</a>
+
+                                    </div>
+                                    <div class="col-lg-4 text-left">
+                                        <a href="@Url.Action("Reporte", "Operacion", new { id = item.Id })" class="btn btn-danger waves-effect waves-light btn-sm" commerceid="@item.Id">Retirar Capital</a>
+                                    </div>
+
+
+
+                                    <div id="@item.Id" class="modal fade " role="dialog">
+                                        <div class="modal-dialog modal-lg" style="">
+
+                                            <!-- Modal content-->
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                    <h4 class="modal-title">Agregar Capital a la operación de: @item.CUser.Name @item.CUser.LastName </h4>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <div class="col-sm-6 col-xs-12">
+                                                            <form role="form" class="addcapital">
+
+                                                                <input type="hidden" name="idoperacion" value="@item.Id" />
+                                                                <input type="hidden" name="Inversionista" value="@item.IdInversionista" />
+
+
+                                                                <div class="form-group">
+                                                                    <label for="rif">Monto usd</label>
+                                                                    <input type="text" pattern="^\$\d{1,3}(,\d{3})*(\.\d+)?$" required value="" data-type="currency" class="form-control">
+                                                                    <input type="hidden" name="Monto" id="_montoadd" />
+                                                                    <input type="hidden" value="@DateTime.Now" name="cambiofecha" />
+                                                                </div>
+
+
+                                                                <div class="col-xs-12 text-center">
+                                                                    <button  class="btn btn-primary waves-effect waves-light w-md" type="submit">
+                                                                        Guardar
+                                                                        <i class="md md-save"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="modal-footer">
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+
+
+                                    </div>
+                                </div>
                             </td>
                             @*<td><input onclick="switchTestMode(this)" data-size="small" type="checkbox" data-plugin="switchery" data-color="#00b19d"></td>*@
                         </tr>
@@ -78,13 +143,20 @@
                             <td>@(item.TipoPago == 1 ? "Bimensual" : item.TipoPago == 2 ? "Trimestral" : item.TipoPago == 3 ? "Semestral" : "Anual" )</td>
                             <td>@item.PorcentajeGanancia %</td>
                             <td>@item.Monto $</td>
-                            <td>@item.RepresentacionFondo</td>
+
 
                             <td style="color:red;" colspan="3">FINALIZADA</td>
 
 
                             <td>
-                                <a href="@Url.Action("Reporte", "Operacion", new { id = item.Id })" class="btn btn-primary waves-effect waves-light btn-sm" commerceid="@item.Id">Detalles</a>
+                                <div style="float:left; width:40%;">
+                                    <div class="col-lg-4 text-left">
+                                        <a href="@Url.Action("Reporte", "Operacion", new { id = item.Id })" class="btn btn-primary waves-effect waves-light btn-sm" commerceid="@item.Id">Detalles</a>
+                                    </div>
+                                </div>
+
+
+
                             </td>
                         </tr>
                     }
@@ -109,6 +181,124 @@
     <script src="~/plugins/garlicjs/garlic.min.js"></script>
 
     <script type="text/javascript">
+
+        $(".addcapital").on("submit", function () {
+
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("AddCapitalOperacion", "Operacion")",
+                    data: $(this).serialize(),
+                })
+                .done(function (r) {
+
+                    if (r.success) {
+
+                        toastr.success("Valores guardados con exito!", 'Éxito!');
+                        window.setTimeout(location.reload(), 4000);
+                    } else {
+                        // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                        toastr.error(r.message, 'Error!');
+                    }
+                });
+                Pace.stop();
+        });
+
+        $("input[data-type='currency']").on({
+            keyup: function () {
+                formatCurrency($(this));
+            },
+            blur: function () {
+                formatCurrency($(this), "blur");
+            }
+        });
+
+
+        function formatNumber(n) {
+            // format number 1000000 to 1,234,567
+            return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        }
+
+
+        function formatCurrency(input, blur) {
+            // appends $ to value, validates decimal side
+            // and puts cursor back in right position.
+
+            // get input value
+            var input_val = input.val();
+
+            // don't validate empty input
+            if (input_val === "") { return; }
+
+            // original length
+            var original_len = input_val.length;
+
+            // initial caret position
+            var caret_pos = input.prop("selectionStart");
+
+            // check for decimal
+            if (input_val.indexOf(",") >= 0) {
+
+                // get position of first decimal
+                // this prevents multiple decimals from
+                // being entered
+                var decimal_pos = input_val.indexOf(",");
+
+                // split number by decimal point
+                var left_side = input_val.substring(0, decimal_pos);
+                var right_side = input_val.substring(decimal_pos);
+
+
+                // add commas to left side of number
+                left_side = formatNumber(left_side);
+
+                // validate right side
+                right_side = formatNumber(right_side);
+
+
+
+                // On blur make sure 2 numbers after decimal
+                if (blur === "blur") {
+                    right_side += "00";
+                }
+
+                // Limit decimal to only 2 digits
+                right_side = right_side.substring(0, 2);
+
+                // join number by .
+                input_val = left_side + "," + right_side;
+                $(input).next('input').val(left_side.split('.').join("") + "," + right_side);
+
+
+            } else {
+                // no decimal entered
+                // add commas to number
+                // remove all non-digits
+
+                input_val = formatNumber(input_val);
+                input_val = input_val;
+
+                // final formatting
+                if (blur === "blur") {
+                    input_val += ",00";
+
+                }
+
+                $(input).next('input').val(input_val.split('.').join(""));
+            }
+
+            // send updated string to input
+            input.val(input_val);
+
+            // put caret back in the right position
+            var updated_len = input_val.length;
+            caret_pos = updated_len - original_len + caret_pos;
+            input[0].setSelectionRange(caret_pos, caret_pos);
+
+
+        }
+
+
         $(".fondo").on("change", function () {
             Pace.start();
             //alert(this.checked);

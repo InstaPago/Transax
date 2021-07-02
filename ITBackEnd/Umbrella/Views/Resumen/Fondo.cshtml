@@ -17,9 +17,11 @@
     decimal rendimiento = ViewBag.RendimientoTotal;
     decimal rendimientomes = ViewBag.RendimientoMes;
     rendimiento = (rendimientomes / 100) + 1;
-    decimal elemento = 365 / DateTime.Now.DayOfYear;
+    decimal elemento = 365 / decimal.Parse(DateTime.Now.DayOfYear.ToString());
     DateTime inicio = DateTime.Parse("01-06-2019");
     double RTYT = (Math.Pow(double.Parse(rendimiento.ToString()), double.Parse(elemento.ToString())) - 1) * 100;
+
+    //DateTime Obj = new DateTime()
     DateTime dt = DateTime.Now;
 }
 @*<div class="row">

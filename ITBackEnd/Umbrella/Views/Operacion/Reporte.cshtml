@@ -7,6 +7,7 @@
     List<InstaTransfer.DataAccess.AE_Dolar> Dolar = (List<InstaTransfer.DataAccess.AE_Dolar>)ViewBag.Dolar;
     List<InstaTransfer.DataAccess.AE_BalanceDiario> Balance = (List<InstaTransfer.DataAccess.AE_BalanceDiario>)ViewBag.Balance;
     List<InstaTransfer.DataAccess.AE_ValorAccionTR> Acciones = (List<InstaTransfer.DataAccess.AE_ValorAccionTR>)ViewBag.Acciones;
+    List<InstaTransfer.DataAccess.AE_OperacionAporteCapital> Aporte = (List<InstaTransfer.DataAccess.AE_OperacionAporteCapital>)ViewBag.AporteCapital;
     decimal capital = (Variables.Where(u => u.Descripcion.Contains("Activos")).Sum(u => u.Monto) - Variables.Where(u => u.Descripcion.Contains("Pasivos")).Sum(u => u.Monto) - (Model.Monto * Dolar.FirstOrDefault().Tasa));
     decimal capitalneto = Math.Round((capital * Model.PorcentajeGanancia / 100), 2);
     decimal capitalnetodolares = Math.Round((capitalneto * Model.PorcentajeGanancia / 100) / Dolar.FirstOrDefault().Tasa, 2);
@@ -197,7 +198,7 @@
                 <div class="col-lg-2 text-center" style="background-color:#22bdd6;height:50px;    border: 1px solid gray;">
                     <label style="font-size:13px; color:white; margin-top:4%;">MONTO APERTURA</label>
                 </div>
-                <div class="col-lg-2 text-center" style="background-color:#22bdd6;height:50px;    border: 1px solid gray;">
+                <div class="col-lg-1 text-center" style="background-color:#22bdd6;height:50px;    border: 1px solid gray;">
                     <label style="font-size:13px; color:white; margin-top:4%;">GANANCIA </label>
                 </div>
 
@@ -206,6 +207,9 @@
                 </div>
                 <div class="col-lg-1 text-center" style="background-color:#22bdd6;height:50px;    border: 1px solid gray;">
                     <label style="font-size:13px; color:white; margin-top:8%;">RETIRO CAPITAL </label>
+                </div>
+                <div class="col-lg-1 text-center" style="background-color:#22bdd6;height:50px;    border: 1px solid gray;">
+                    <label style="font-size:13px; color:white; margin-top:8%;">APORTE CAPITAL </label>
                 </div>
 
                 <div class="col-lg-2 text-center" style="background-color:#22bdd6;height:50px;    border: 1px solid gray;">
@@ -222,9 +226,9 @@
                 {
                     if (item.TipoPagoCapital)
                     {
-                        decimal _rendimiento = 0;
 
-                        acumulado = acumulado - item.Monto;
+                        decimal gananciamonto = item.Monto - acumulado;
+                        decimal _rendimiento = gananciamonto * 100 / acumulado;
                         DateTime FechaTope = DateTime.Parse("31/08/2019");
                         if (J == 0)
                         {
@@ -251,10 +255,73 @@
                             <label style="font-size:13px;  margin-top:4%;">@acumulado.ToString("N2") $</label>
                         </div>
                         <div class="col-lg-2 text-center" style="background-color:white;height:50px;     border: 1px solid gray;">
+                            <label style="font-size:13px;  margin-top:4%;">@gananciamonto.ToString("N2") $</label>
+                        </div>
+                        if (item.TipoReinversionUtilidad)
+                        {
+                            acumulado += item.Monto;
+                        }
+
+                        <div class="col-lg-1 text-center" style="background-color:white;height:50px; border: 1px solid gray;">
+                            @if (item.TipoPagoUtilidad)
+                            {
+                                <label style="font-size:13px;  margin-top:8%;">@item.Monto.ToString("N2") $</label>
+                            }
+                            else
+                            {
+                                <label style="font-size:13px;  margin-top:8%;">0,00 $</label>
+                            }
+                        </div>
+                        <div class="col-lg-1 text-center" style="background-color:white; height:50px;     border: 1px solid gray;">
+                            <label style="font-size:13px;  margin-top:8%;">0,00 $</label>
+                        </div>
+                        <div class="col-lg-2 text-center" style="background-color:white; height:50px;     border: 1px solid gray;">
+                            <label style="font-size:13px;  margin-top:4%;">@((acumulado + gananciamonto).ToString("N2")) $</label>
+                        </div>
+                        <div class="col-lg-1 text-center" style="background-color:white;height:50px;     border: 1px solid gray;">
+                            <label style="font-size:13px;  margin-top:4%;">@_rendimiento.ToString("N2") %</label>
+                        </div>
+
+
+                        fechaInicio = fechaInicio.AddMonths(1);
+                        J++;
+
+
+                        //decimal _rendimiento = 0;
+
+                        acumulado = acumulado - item.Monto;
+                        //DateTime FechaTope = DateTime.Parse("31/08/2019");
+                        if (J == 0)
+                        {
+                            if (fechaInicio < FechaTope)
+                            {
+                                <div class="col-lg-2 text-center" style="background-color:white; height:50px;     border: 1px solid gray;">
+                                    <label style="font-size:13px;  margin-top:4%;"> @fechaInicio.Day de @fechaInicio.ToString("MMMM") @fechaInicio.ToString("yyyy") al 31 de Agosto 2019 </label>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-lg-2 text-center" style="background-color:white; height:50px;     border: 1px solid gray;">
+                                    <label style="font-size:13px;  margin-top:4%;"> @fechaInicio.Day de @fechaInicio.ToString("MMMM") @fechaInicio.ToString("yyyy") </label>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-lg-2 text-center" style="background-color:white; height:50px;     border: 1px solid gray;">
+                                <label style="font-size:13px;  margin-top:4%;"> @item.Date.AddMonths(-1).ToString("MMMM") @item.Date.AddMonths(-1).ToString("yyyy") </label>
+                            </div>
+                        }
+                        <div class="col-lg-2 text-center" style="background-color:white;height:50px;     border: 1px solid gray;">
                             <label style="font-size:13px;  margin-top:4%;">0,00 $</label>
                         </div>
-               
-                     
+                        <div class="col-lg-2 text-center" style="background-color:white;height:50px;     border: 1px solid gray;">
+                            <label style="font-size:13px;  margin-top:4%;">0,00 $</label>
+                        </div>
+                        <div class="col-lg-1 text-center" style="background-color:white; height:50px;     border: 1px solid gray;">
+                            <label style="font-size:13px;  margin-top:8%;">0,00 $</label>
+                        </div>
+
                         <div class="col-lg-1 text-center" style="background-color:white; height:50px;     border: 1px solid gray;">
                             <label style="font-size:13px;  margin-top:8%;">0,00 $</label>
                         </div>
@@ -262,7 +329,7 @@
                             <label style="font-size:13px;  margin-top:8%;">@item.Monto.ToString("N2") $</label>
                         </div>
                         <div class="col-lg-2 text-center" style="background-color:white;height:50px;     border: 1px solid gray;">
-                            <label style="font-size:13px;  margin-top:4%;">@( (acumulado).ToString("N2") ) $</label>
+                            <label style="font-size:13px;  margin-top:4%;">0,00 $</label>
                         </div>
                         <div class="col-lg-2 text-center" style="background-color:white;height:50px;     border: 1px solid gray;">
                             <label style="font-size:13px;  margin-top:4%;"> - </label>
@@ -305,7 +372,7 @@
                         <div class="col-lg-2 text-center" style="background-color:white;height:50px;     border: 1px solid gray;">
                             <label style="font-size:13px;  margin-top:4%;">@acumulado.ToString("N2") $</label>
                         </div>
-                        <div class="col-lg-2 text-center" style="background-color:white;height:50px;     border: 1px solid gray;">
+                        <div class="col-lg-1 text-center" style="background-color:white;height:50px;     border: 1px solid gray;">
                             <label style="font-size:13px;  margin-top:4%;">@item.Monto.ToString("N2") $</label>
                         </div>
                         if (item.TipoReinversionUtilidad)
@@ -323,9 +390,21 @@
                                 <label style="font-size:13px;  margin-top:8%;">0,00 $</label>
                             }
                         </div>
-                        <div class="col-lg-1 text-center" style="background-color:white; height:50px;     border: 1px solid gray;">
+                        <div class="col-lg-1 text-center" style="background-color:white;height:50px; border: 1px solid gray;">
                             <label style="font-size:13px;  margin-top:8%;">0,00 $</label>
                         </div>
+                        if (Aporte.Where(u => u.FechaRegistro.Month == item.FechaPago.Month && u.FechaRegistro.Year == item.FechaPago.Year).Count() > 0)
+                        {
+                            <div class="col-lg-1 text-center" style="background-color:white; height:50px;     border: 1px solid gray;">
+                                <label style="font-size:13px;  margin-top:8%;"> @Aporte.Where(u => u.FechaRegistro.Month == item.FechaPago.Month && u.FechaRegistro.Year == item.FechaPago.Year).Sum(u => u.Monto) $</label>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-lg-1 text-center" style="background-color:white; height:50px;     border: 1px solid gray;">
+                                <label style="font-size:13px;  margin-top:8%;"> 0,00 $</label>
+                            </div>
+                        }
                         <div class="col-lg-2 text-center" style="background-color:white; height:50px;     border: 1px solid gray;">
                             <label style="font-size:13px;  margin-top:4%;">@acumulado.ToString("N2") $</label>
                         </div>
@@ -337,7 +416,13 @@
                         fechaInicio = fechaInicio.AddMonths(1);
                         J++;
                     }
+
+
+
                 }
+
+
+
 
                 @if (Operacion.IdEstatus == 1)
                 {
@@ -348,8 +433,11 @@
                     <div class="col-lg-2 text-center" style="background-color:white;height:50px;     border: 1px solid gray;">
                         <label style="font-size:13px;  margin-top:4%;">@acumulado.ToString("N2") $</label>
                     </div>
-                    <div class="col-lg-2 text-center" style="background-color:white;height:50px;     border: 1px solid gray;">
+                    <div class="col-lg-1 text-center" style="background-color:white;height:50px;     border: 1px solid gray;">
                         <label style="font-size:13px;  margin-top:4%;">@((((Model.RepresentacionFondo * Acciones.FirstOrDefault().ValorAccion) - Model.Monto) * Model.PorcentajeGanancia / 100).ToString("N2")  ) $</label>
+                    </div>
+                    <div class="col-lg-1 text-center" style="background-color:white; height:50px;     border: 1px solid gray;">
+                        <label style="font-size:13px;  margin-top:8%;">0,00 $</label>
                     </div>
                     <div class="col-lg-1 text-center" style="background-color:white; height:50px;     border: 1px solid gray;">
                         <label style="font-size:13px;  margin-top:8%;">0,00 $</label>
@@ -364,7 +452,7 @@
                     <div class="col-lg-2 text-center" style="background-color:white;height:50px;     border: 1px solid gray;">
                         <label style="font-size:13px;  margin-top:4%;">@((((((Model.RepresentacionFondo * Acciones.FirstOrDefault().ValorAccion) - Model.Monto) * Model.PorcentajeGanancia / 100) * 100) / Model.Monto).ToString("N2")  ) %</label>
                     </div>
-                
+
                 }
                 else if (Operacion.IdEstatus == 2)
                 {

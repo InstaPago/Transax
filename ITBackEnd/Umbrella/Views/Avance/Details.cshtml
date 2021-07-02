@@ -21,6 +21,12 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
     decimal[] _montobase = ViewBag.montobase;
     decimal totalpagado = ViewBag.totalpagado;
     decimal totalintereses = ViewBag.totalintereses;
+    decimal interesvigente = ViewBag.interesevigtentes;
+    DateTime FechaVenceInteres = DateTime.Now;
+    if (ViewBag.FechaVenceInteres != null)
+    {
+        FechaVenceInteres = ViewBag.FechaVenceInteres;
+    }
     decimal porcentaje = ViewBag.porcentaje;
     decimal sugeridointereses = ViewBag.sugeridointereses;
     decimal saldoinicial = 0;
@@ -147,7 +153,8 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
                         <div class="col-lg-6">
                             <h4 class="text-dark" style="font-size:15px;"> Intereses Cobrado: <strong>@moneda @totalintereses.ToString("N2")  </strong> </h4>
                             <h4 class="text-dark" style="font-size:15px;"> Intereses Generados: <strong>  @moneda @sugeridointereses.ToString("N2") </strong> </h4>
-                            <h4 class="text-dark" style="font-size:15px;"> Intereses Pendientes por pagar: <strong style="color:red">  @moneda @((sugeridointereses - totalintereses).ToString("N2")) </strong> </h4>
+                            <h4 class="text-dark" style="font-size:15px;"> Intereses Vencido : <strong style="color:red">  @moneda @((sugeridointereses - totalintereses).ToString("N2")) </strong> </h4>
+                            <h4 class="text-dark" style="font-size:15px;"> Intereses Vigente : <strong style="color:green">  @moneda @((interesvigente).ToString("N2") ) </strong> <label>y vencen el: @(FechaVenceInteres != null ? FechaVenceInteres.ToShortDateString() : "-" )</label>   </h4>
                             <input type="button" class="btn btn-default " data-toggle="modal" data-target="#interes" value="Detalle" />
                             <div id="interes" class="modal fade" role="dialog">
                                 <div class="modal-dialog modal-lg" style="min-width:1000px;">
@@ -164,7 +171,8 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
                                                 <thead>
                                                     <tr>
 
-                                                        <th>Fecha</th>
+                                                        <th>Fecha Generación</th>
+                                                        <th>Fecha Vencimiento</th>
                                                         <th>Capital Evaluado</th>
                                                         <th>Interes Generado</th>
 
@@ -177,6 +185,7 @@ Archivos = (List<InstaTransfer.DataAccess.AE_Archivo>
                                                     {
                                                         <tr>
                                                             <td>@(_item.fecha == null ? "No Definido" : _item.fecha.ToShortDateString())</td>
+                                                            <td>@(_item.fecha == null ? "No Definido" : _item.fecha.AddMonths(1).ToShortDateString())</td>
                                                             <td>@_item.capital.ToString("N2") </td>
                                                             <td>@_item.monto.ToString("N2") </td>
 

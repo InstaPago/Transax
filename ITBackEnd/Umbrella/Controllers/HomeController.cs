@@ -88,6 +88,7 @@ namespace Umbrella.Controllers
                 acciones = AE_ValorAccionREPO.GetAllRecords().Take(5).OrderByDescending(u => u.FechaOperacion).FirstOrDefault().ValorAccion;
                 accionesExistentes = balanceAcciones.FirstOrDefault().TotalAcciones;
             }
+            ViewBag.ListaAvanceHistorico = AE_AvanceREPO.GetAllRecords().Where(u => (u.Id == 192 || u.Id == 193 || u.Id == 198 || u.Id == 200 || u.Id == 201 || u.Id == 203 || u.Id == 205 || u.Id > 205 ) && (u.IdEstatus == 1 || u.IdEstatus == 2)).ToList();
             ViewBag.MovimientosHistorico = AE_EstadoCuentaREPO.GetAllRecords().Where(u => !u.Abono && (u.AE_Avance.IdEstatus == 1 || u.AE_Avance.IdEstatus == 2)).ToList();
             ViewBag.Acciones = acciones;
             ViewBag.AccionesExistentes = accionesExistentes;
@@ -169,7 +170,8 @@ namespace Umbrella.Controllers
                 //montocobrado = (montocobrado - (montocobrado * item.GastoBanco / 100));
                 Cobros = Cobros + montocobrado;
                 decimal _PendientePorcobrar = item.Reembolso - montocobrado;
-                _PendientePorcobrar = _PendientePorcobrar - (_PendientePorcobrar * porcen / 100);
+                //_PendientePorcobrar = _PendientePorcobrar - (_PendientePorcobrar * porcen / 100);
+                _PendientePorcobrar = _PendientePorcobrar - (_PendientePorcobrar / (1 + porcen));
                 PendientePorcobrar = PendientePorcobrar + _PendientePorcobrar;
             }
             ValorAccionTR.NuevoCapital = PendientePorcobrar + Montoencuenta;
@@ -470,7 +472,7 @@ namespace Umbrella.Controllers
             Nuevo.RetiroCapital = retitocapital;
             Nuevo.ValorAccionInicio = Ultimo.ValorAccionFin;
             Nuevo.ValorAccionFin = NewValorAccionTR.ValorAccion;
-            Nuevo.Rendimiento = ((Nuevo.ValorAccionFin - Nuevo.ValorAccionInicio) * 100 )/ Nuevo.ValorAccionInicio;
+            Nuevo.Rendimiento = ((Nuevo.ValorAccionFin - Nuevo.ValorAccionInicio) * 100) / Nuevo.ValorAccionInicio;
             AE_CierreREPO.AddEntity(Nuevo);
             AE_CierreREPO.SaveChanges();
 
@@ -576,7 +578,8 @@ namespace Umbrella.Controllers
                 }
                 else {
                     decimal t_cobrado = item.AE_EstadoCuentas.Where(u => !u.Abono && !u.SoloUtilidad).Sum(u => u.Monto);
-                    _cobrado = t_cobrado - (t_cobrado * porcentajeoperacion / 100);
+
+                    _cobrado = t_cobrado / (1 + (porcentajeoperacion/100));
                 }
                 cobrado = cobrado + (_cobrado);
             
@@ -2319,200 +2322,198 @@ namespace Umbrella.Controllers
                     message = "PIN Incorrecto!"
                 }, JsonRequestBehavior.DenyGet);
             }
-            else { 
-            
-            
-            
-         
-            List<AE_EstadoCuenta> EstadoCuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.AE_Avance.IdEstatus == 1 && u.FechaOperacion.Day == DateTime.Now.AddDays(0).Day && u.FechaOperacion.Month == DateTime.Now.Month && u.FechaOperacion.Year == DateTime.Now.Year && !u.Abono && !u.RecibidoEnDolares).ToList();
-
-            foreach (var item in EstadoCuenta)
-            {
-                item.Tasa = decimal.Parse(TasaUtilizada.Replace('.', ','));
-                item.Monto = item.MontoBs.Value / decimal.Parse(TasaUtilizada.Replace('.', ','));
-                AE_EstadoCuentaREPO.SaveChanges();
-
-            }
-
-            List<AE_ValorAccionTR> ListValorAccionTR = AE_ValorAccionTRREPO.GetAllRecords().OrderByDescending(u => u.FechaCreacionRegistro).Take(5).ToList();
-            if (ListValorAccionTR.Count > 0)
-            {
-                AE_ValorAccionTR Ultimo = ListValorAccionTR.FirstOrDefault();
-                AE_ValorAccionTR ValorAccionTR = new AE_ValorAccionTR();
-                ValorAccionTR.FechaCreacionRegistro = DateTime.Now.AddDays(0);
-                ValorAccionTR.FechaOperacion = DateTime.Now.AddDays(0);
-                ValorAccionTR.FechaUltimaActualizacion = DateTime.Now.AddDays(0);
-
-                ValorAccionTR.GastoReportado = decimal.Parse(totalgastos.Replace('.', ',')) * -1;
-                ValorAccionTR.CapitalInicial = Ultimo.NuevoCapital;
-                ValorAccionTR.CapitalPorCobrar = Ultimo.CapitalPorCobrar - (decimal.Parse(totalcobrodiario.Replace('.', ',')) - decimal.Parse(totalgananciadiaria.Replace('.', ',')));
-                ValorAccionTR.AbonoCapital = decimal.Parse(totalcobrodiario.Replace('.', ',')) - decimal.Parse(totalgananciadiaria.Replace('.', ','));
-                ValorAccionTR.UtilidadReportada = decimal.Parse(totalgananciadiaria.Replace('.', ','));
-                //ValorAccionTR.SaldoUSD = Ultimo.SaldoUSD + decimal.Parse(totalcobrodiario.Replace('.', ','));
-                ValorAccionTR.SaldoUSD = decimal.Parse(totaldolares.Replace('.', ',')) + (decimal.Parse(totalbancosBS.Replace('.', ',')) / decimal.Parse(tasadolares.Replace('.', ',')));
-                ValorAccionTR.TotalCobroDiario = decimal.Parse(totalcobrodiariobruto.Replace('.', ','));
-                //ValorAccionTR.NuevoCapital = Ultimo.NuevoCapital + decimal.Parse(totalgananciadiaria.Replace('.', ','));
-
-                ValorAccionTR.UsdTransito = decimal.Parse(dolarestransito.Replace('.', ','));
-                ValorAccionTR.UsdVenezuela = decimal.Parse(totalbancosBS.Replace('.', ',')) / decimal.Parse(tasadolares.Replace('.', ','));
-                ValorAccionTR.CuentaVenezuela = decimal.Parse(totalbancosBS.Replace('.', ','));
-                ValorAccionTR.NuevoCapital = ValorAccionTR.CapitalPorCobrar + ValorAccionTR.SaldoUSD;
-
-                ValorAccionTR.PagoCapitalInversionista = 0;
-                ValorAccionTR.PagoUtilidadMesInversionista = 0;
-                ValorAccionTR.TotalAcciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.FechaRegistro).FirstOrDefault().TotalAcciones;
-                ValorAccionTR.PagoUtilidadAdministrador = 0;
-                ValorAccionTR.ValorAccion = ValorAccionTR.NuevoCapital / ValorAccionTR.TotalAcciones;
-                ValorAccionTR.Tasa = decimal.Parse(TasaUtilizada.Replace('.', ','));
-                ValorAccionTR.TasaDiferencia = decimal.Parse(AcumuladoTasa.Replace('.', ','));
-
-                AE_ValorAccionTRREPO.AddEntity(ValorAccionTR);
-                AE_ValorAccionTRREPO.SaveChanges();
-            }
             else
             {
 
-                AE_ValorAccionTR ValorAccionTR = new AE_ValorAccionTR();
-                ValorAccionTR.FechaCreacionRegistro = DateTime.Now.AddDays(0);
-                ValorAccionTR.FechaOperacion = DateTime.Now.AddDays(0);
-                ValorAccionTR.FechaUltimaActualizacion = DateTime.Now.AddDays(0);
-                //ValorAccionTR.UtilidadReportada = decimal.Parse(totalgananciadiaria.Replace('.', ','));
-                ValorAccionTR.GastoReportado = 0;
-                decimal Montoencuenta = decimal.Parse(totaldolares.Replace('.', ','));
-                decimal Cobros = 0;
-                decimal PendientePorcobrar = 0;
+                List<AE_EstadoCuenta> EstadoCuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.AE_Avance.IdEstatus == 1 && u.FechaOperacion.Day == DateTime.Now.AddDays(-3).Day && u.FechaOperacion.Month == DateTime.Now.Month && u.FechaOperacion.Year == DateTime.Now.Year && !u.Abono && !u.RecibidoEnDolares).ToList();
 
-                foreach (var item in AE_AvanceREPO.GetAllRecords().Where(u => u.IdEstatus == 1))
+                foreach (var item in EstadoCuenta)
                 {
-                    decimal porcen = (item.Reembolso - item.Avance) * 100 / item.Avance;
-                    decimal montocobrado = item.AE_EstadoCuentas.Where(u => u.Abono == false).Sum(u => u.Monto);
-                    //montocobrado = (montocobrado - (montocobrado * item.GastoBanco / 100));
-                    Cobros = Cobros + montocobrado;
-                    decimal _PendientePorcobrar = item.Reembolso - montocobrado;
-                    _PendientePorcobrar = _PendientePorcobrar - (_PendientePorcobrar * porcen / 100);
-                    PendientePorcobrar = PendientePorcobrar + _PendientePorcobrar;
-                }
-                ValorAccionTR.NuevoCapital = PendientePorcobrar + Montoencuenta;
-                ValorAccionTR.CapitalInicial = 0;
-                ValorAccionTR.PagoCapitalInversionista = 0;
-                ValorAccionTR.PagoUtilidadMesInversionista = 0;
-                ValorAccionTR.TotalAcciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.FechaRegistro).FirstOrDefault().TotalAcciones;
-                ValorAccionTR.PagoUtilidadAdministrador = 0;
-                ValorAccionTR.ValorAccion = (PendientePorcobrar + Montoencuenta) / ValorAccionTR.TotalAcciones;
-                ValorAccionTR.UtilidadReportada = decimal.Parse(totalgananciadiaria.Replace('.', ','));
-                AE_ValorAccionTRREPO.AddEntity(ValorAccionTR);
-                AE_ValorAccionTRREPO.SaveChanges();
-            }
+                    item.Tasa = decimal.Parse(TasaUtilizada.Replace('.', ','));
+                    item.Monto = item.MontoBs.Value / decimal.Parse(TasaUtilizada.Replace('.', ','));
+                    AE_EstadoCuentaREPO.SaveChanges();
 
-            try
-            {
-                AE_BalanceDiario NuevoBalance = new AE_BalanceDiario();
-                NuevoBalance.FechaCreacionRegistro = DateTime.Now.AddDays(0);
-                NuevoBalance.FechaUltimaActualizacion = DateTime.Now.AddDays(0);
-                if (fechaoperacion != null)
-                    NuevoBalance.FechaOperaicon = fechaoperacion.Value;
+                }
+
+                List<AE_ValorAccionTR> ListValorAccionTR = AE_ValorAccionTRREPO.GetAllRecords().OrderByDescending(u => u.FechaCreacionRegistro).Take(5).ToList();
+                if (ListValorAccionTR.Count > 0)
+                {
+                    AE_ValorAccionTR Ultimo = ListValorAccionTR.FirstOrDefault();
+                    AE_ValorAccionTR ValorAccionTR = new AE_ValorAccionTR();
+                    ValorAccionTR.FechaCreacionRegistro = DateTime.Now.AddDays(-3);
+                    ValorAccionTR.FechaOperacion = DateTime.Now.AddDays(-3);
+                    ValorAccionTR.FechaUltimaActualizacion = DateTime.Now.AddDays(-3);
+
+                    ValorAccionTR.GastoReportado = decimal.Parse(totalgastos.Replace('.', ',')) * -1;
+                    ValorAccionTR.CapitalInicial = Ultimo.NuevoCapital;
+                    ValorAccionTR.CapitalPorCobrar = Ultimo.CapitalPorCobrar - (decimal.Parse(totalcobrodiario.Replace('.', ',')) - decimal.Parse(totalgananciadiaria.Replace('.', ',')));
+                    ValorAccionTR.AbonoCapital = decimal.Parse(totalcobrodiario.Replace('.', ',')) - decimal.Parse(totalgananciadiaria.Replace('.', ','));
+                    ValorAccionTR.UtilidadReportada = decimal.Parse(totalgananciadiaria.Replace('.', ','));
+                    //ValorAccionTR.SaldoUSD = Ultimo.SaldoUSD + decimal.Parse(totalcobrodiario.Replace('.', ','));
+                    ValorAccionTR.SaldoUSD = decimal.Parse(totaldolares.Replace('.', ',')) + (decimal.Parse(totalbancosBS.Replace('.', ',')) / decimal.Parse(tasadolares.Replace('.', ',')));
+                    ValorAccionTR.TotalCobroDiario = decimal.Parse(totalcobrodiariobruto.Replace('.', ','));
+                    //ValorAccionTR.NuevoCapital = Ultimo.NuevoCapital + decimal.Parse(totalgananciadiaria.Replace('.', ','));
+
+                    ValorAccionTR.UsdTransito = decimal.Parse(dolarestransito.Replace('.', ','));
+                    ValorAccionTR.UsdVenezuela = decimal.Parse(totalbancosBS.Replace('.', ',')) / decimal.Parse(tasadolares.Replace('.', ','));
+                    ValorAccionTR.CuentaVenezuela = decimal.Parse(totalbancosBS.Replace('.', ','));
+                    ValorAccionTR.NuevoCapital = ValorAccionTR.CapitalPorCobrar + ValorAccionTR.SaldoUSD;
+
+                    ValorAccionTR.PagoCapitalInversionista = 0;
+                    ValorAccionTR.PagoUtilidadMesInversionista = 0;
+                    ValorAccionTR.TotalAcciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.FechaRegistro).FirstOrDefault().TotalAcciones;
+                    ValorAccionTR.PagoUtilidadAdministrador = 0;
+                    ValorAccionTR.ValorAccion = ValorAccionTR.NuevoCapital / ValorAccionTR.TotalAcciones;
+                    ValorAccionTR.Tasa = decimal.Parse(TasaUtilizada.Replace('.', ','));
+                    ValorAccionTR.TasaDiferencia = decimal.Parse(AcumuladoTasa.Replace('.', ','));
+
+                    AE_ValorAccionTRREPO.AddEntity(ValorAccionTR);
+                    AE_ValorAccionTRREPO.SaveChanges();
+                }
                 else
-                    NuevoBalance.FechaOperaicon = DateTime.Now.AddDays(0);
-
-                //ACTIVOS
-                NuevoBalance.TotalCuentaBs = decimal.Parse(totalbancosBS.Replace('.', ','));
-                NuevoBalance.TotalCuentaEstimadoUsd = decimal.Parse(montodolaresBS.Replace('.', ','));
-                NuevoBalance.TotalCuentaUsd = decimal.Parse(totaldolares.Replace('.', ','));
-                NuevoBalance.TotalPorCobrarEstimadoUsd = decimal.Parse(pendienteporcobrar.Replace('.', ','));
-                NuevoBalance.TotalPorCobrarBs = decimal.Parse(pendienteporcobrar.Replace('.', ',')) * decimal.Parse(tasadolares.Replace('.', ','));
-                NuevoBalance.TotalActivos = decimal.Parse(totalactivos.Replace('.', ','));
-                //PASIVOS
-                NuevoBalance.TotalPasivoBs = decimal.Parse(totalbancospBS.Replace('.', ','));
-                NuevoBalance.TotalPasivosEstimadoUsd = decimal.Parse(montodolarespBS.Replace('.', ','));
-                NuevoBalance.TotalPasivoUsd = decimal.Parse(totaldolaresp.Replace('.', ','));
-                NuevoBalance.TotalPasivos = decimal.Parse(totalpasivos.Replace('.', ','));
-                //CAPITAL
-                NuevoBalance.TotalCapital = decimal.Parse(totalactivos.Replace('.', ',')) - decimal.Parse(totalpasivos.Replace('.', ','));
-                NuevoBalance.TasaUtilizada = decimal.Parse(tasadolares.Replace('.', ','));
-                //TRANSITO
-                NuevoBalance.TotalExcluirUsd = decimal.Parse(dolarestransito.Replace('.', ','));
-                NuevoBalance.TotalExcluirBs = decimal.Parse(totalgastos.Replace('.', ','));
-                NuevoBalance.TotalCobroDiario = decimal.Parse(totalcobrodiario.Replace('.', ','));
-                NuevoBalance.TotalGananciaDiaria = decimal.Parse(totalgananciadiaria.Replace('.', ','));
-                AE_BalanceDiarioREPO.AddEntity(NuevoBalance);
-                AE_BalanceDiarioREPO.SaveChanges();
-
-                var balanceacciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.FechaOperacion).FirstOrDefault();
-                var valoracciones = AE_ValorAccionREPO.GetAllRecords().OrderByDescending(u => u.Id).Take(10).ToList();
-                if (valoracciones != null && valoracciones.Count() > 0)
                 {
-                    AE_ValorAccion item = valoracciones.FirstOrDefault();
 
-                    AE_ValorAccion NuevoItem = new AE_ValorAccion();
-                    NuevoItem.FechaCreacionRegistro = DateTime.Now.AddDays(0);
-                    NuevoItem.FechaOperacion = DateTime.Now.AddDays(0);
-                    NuevoItem.FechaUltimaActualizacion = DateTime.Now.AddDays(0);
-                    NuevoItem.TotalAcciones = balanceacciones.TotalAcciones;
-                    NuevoItem.TotalCapitalusd = NuevoBalance.TotalCapital;
-                    NuevoItem.ValorAccion = NuevoBalance.TotalCapital / balanceacciones.TotalAcciones;
-                    NuevoItem.IdBalanceDiario = NuevoBalance.Id;
-                    NuevoItem.IdBalanceAcciones = item.IdBalanceAcciones;
-                    AE_ValorAccionREPO.AddEntity(NuevoItem);
-                    AE_ValorAccionREPO.SaveChanges();
+                    AE_ValorAccionTR ValorAccionTR = new AE_ValorAccionTR();
+                    ValorAccionTR.FechaCreacionRegistro = DateTime.Now.AddDays(-3);
+                    ValorAccionTR.FechaOperacion = DateTime.Now.AddDays(-3);
+                    ValorAccionTR.FechaUltimaActualizacion = DateTime.Now.AddDays(-3);
+                    //ValorAccionTR.UtilidadReportada = decimal.Parse(totalgananciadiaria.Replace('.', ','));
+                    ValorAccionTR.GastoReportado = 0;
+                    decimal Montoencuenta = decimal.Parse(totaldolares.Replace('.', ','));
+                    decimal Cobros = 0;
+                    decimal PendientePorcobrar = 0;
 
+                    foreach (var item in AE_AvanceREPO.GetAllRecords().Where(u => u.IdEstatus == 1))
+                    {
+                        decimal porcen = (item.Reembolso - item.Avance) * 100 / item.Avance;
+                        decimal montocobrado = item.AE_EstadoCuentas.Where(u => u.Abono == false).Sum(u => u.Monto);
+                        //montocobrado = (montocobrado - (montocobrado * item.GastoBanco / 100));
+                        Cobros = Cobros + montocobrado;
+                        decimal _PendientePorcobrar = item.Reembolso - montocobrado;
+                        _PendientePorcobrar = _PendientePorcobrar - (_PendientePorcobrar * porcen / 100);
+                        PendientePorcobrar = PendientePorcobrar + _PendientePorcobrar;
+                    }
+                    ValorAccionTR.NuevoCapital = PendientePorcobrar + Montoencuenta;
+                    ValorAccionTR.CapitalInicial = 0;
+                    ValorAccionTR.PagoCapitalInversionista = 0;
+                    ValorAccionTR.PagoUtilidadMesInversionista = 0;
+                    ValorAccionTR.TotalAcciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.FechaRegistro).FirstOrDefault().TotalAcciones;
+                    ValorAccionTR.PagoUtilidadAdministrador = 0;
+                    ValorAccionTR.ValorAccion = (PendientePorcobrar + Montoencuenta) / ValorAccionTR.TotalAcciones;
+                    ValorAccionTR.UtilidadReportada = decimal.Parse(totalgananciadiaria.Replace('.', ','));
+                    AE_ValorAccionTRREPO.AddEntity(ValorAccionTR);
+                    AE_ValorAccionTRREPO.SaveChanges();
                 }
 
-                //decimal nuevaacciones = 0;
-                //AE_BalanceAccione elemento = new AE_BalanceAccione();
-                //var balanceAcciones = AE_BalanceAccioneREPO.GetAllRecords().ToList();
-                //if (balanceAcciones.Count > 0)
-                //{
-                //    var _valoracciones = AE_ValorAccionREPO.GetAllRecords().OrderByDescending(u => u.Id).Take(10).ToList();
-                //    var item = balanceAcciones.OrderByDescending(u => u.Id).FirstOrDefault();
-                //    nuevaacciones = 0;
-                //    elemento.TotaCapital = NuevoBalance.TotalCapital;
-                //    elemento.AccionesRetiradas = 0;
-                //    elemento.CapitalEntrada = 0;
-                //    elemento.CapitalSalida = 0;
-                //    elemento.FactorInicial = item.FactorInicial;
-                //    elemento.FechaOperacion = DateTime.Now;
-                //    elemento.FechaRegistro = DateTime.Now;
-                //    elemento.FechaUltimaActualizacion = DateTime.Now;
-                //    elemento.TotalAccionesExistentes = item.TotalAccionesExistentes;
-                //    elemento.AccionesEntrantes = nuevaacciones;
-                //    elemento.TotalAcciones = item.TotalAcciones + nuevaacciones;
-                //    elemento.IdInversionista = Guid.Parse(Inversionista);
-                //    elemento.ValorAcciones = item.ValorAcciones;
-                //    AE_BalanceAccioneREPO.AddEntity(elemento);
-                //    AE_BalanceAccioneREPO.SaveChanges();
-
-                //    Operacion.RepresentacionFondo = nuevaacciones;
-                //    AE_OperacionREPO.SaveChanges();
-
-                //}
                 try
                 {
-                    List<AE_Dolar> Dolar = AE_DolarREPO.GetAllRecords().Where(u => u.FechaValor.Day == DateTime.Now.AddDays(0).Day && u.FechaValor.Month == DateTime.Now.Month && u.FechaValor.Year == DateTime.Now.Year).ToList();
-                    if (Dolar != null && Dolar.Count > 0)
+                    AE_BalanceDiario NuevoBalance = new AE_BalanceDiario();
+                    NuevoBalance.FechaCreacionRegistro = DateTime.Now.AddDays(-3);
+                    NuevoBalance.FechaUltimaActualizacion = DateTime.Now.AddDays(-3);
+                    if (fechaoperacion != null)
+                        NuevoBalance.FechaOperaicon = fechaoperacion.Value;
+                    else
+                        NuevoBalance.FechaOperaicon = DateTime.Now.AddDays(-3);
+
+                    //ACTIVOS
+                    NuevoBalance.TotalCuentaBs = decimal.Parse(totalbancosBS.Replace('.', ','));
+                    NuevoBalance.TotalCuentaEstimadoUsd = decimal.Parse(montodolaresBS.Replace('.', ','));
+                    NuevoBalance.TotalCuentaUsd = decimal.Parse(totaldolares.Replace('.', ','));
+                    NuevoBalance.TotalPorCobrarEstimadoUsd = decimal.Parse(pendienteporcobrar.Replace('.', ','));
+                    NuevoBalance.TotalPorCobrarBs = decimal.Parse(pendienteporcobrar.Replace('.', ',')) * decimal.Parse(tasadolares.Replace('.', ','));
+                    NuevoBalance.TotalActivos = decimal.Parse(totalactivos.Replace('.', ','));
+                    //PASIVOS
+                    NuevoBalance.TotalPasivoBs = decimal.Parse(totalbancospBS.Replace('.', ','));
+                    NuevoBalance.TotalPasivosEstimadoUsd = decimal.Parse(montodolarespBS.Replace('.', ','));
+                    NuevoBalance.TotalPasivoUsd = decimal.Parse(totaldolaresp.Replace('.', ','));
+                    NuevoBalance.TotalPasivos = decimal.Parse(totalpasivos.Replace('.', ','));
+                    //CAPITAL
+                    NuevoBalance.TotalCapital = decimal.Parse(totalactivos.Replace('.', ',')) - decimal.Parse(totalpasivos.Replace('.', ','));
+                    NuevoBalance.TasaUtilizada = decimal.Parse(tasadolares.Replace('.', ','));
+                    //TRANSITO
+                    NuevoBalance.TotalExcluirUsd = decimal.Parse(dolarestransito.Replace('.', ','));
+                    NuevoBalance.TotalExcluirBs = decimal.Parse(totalgastos.Replace('.', ','));
+                    NuevoBalance.TotalCobroDiario = decimal.Parse(totalcobrodiario.Replace('.', ','));
+                    NuevoBalance.TotalGananciaDiaria = decimal.Parse(totalgananciadiaria.Replace('.', ','));
+                    AE_BalanceDiarioREPO.AddEntity(NuevoBalance);
+                    AE_BalanceDiarioREPO.SaveChanges();
+
+                    var balanceacciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.FechaOperacion).FirstOrDefault();
+                    var valoracciones = AE_ValorAccionREPO.GetAllRecords().OrderByDescending(u => u.Id).Take(10).ToList();
+                    if (valoracciones != null && valoracciones.Count() > 0)
                     {
-                        AE_Dolar tt = Dolar.FirstOrDefault();
-                        tt.TasaUtilizada = decimal.Parse(TasaUtilizada.Replace('.', ','));
-                        AE_DolarREPO.SaveChanges();
+                        AE_ValorAccion item = valoracciones.FirstOrDefault();
+
+                        AE_ValorAccion NuevoItem = new AE_ValorAccion();
+                        NuevoItem.FechaCreacionRegistro = DateTime.Now.AddDays(-3);
+                        NuevoItem.FechaOperacion = DateTime.Now.AddDays(-3);
+                        NuevoItem.FechaUltimaActualizacion = DateTime.Now.AddDays(-3);
+                        NuevoItem.TotalAcciones = balanceacciones.TotalAcciones;
+                        NuevoItem.TotalCapitalusd = NuevoBalance.TotalCapital;
+                        NuevoItem.ValorAccion = NuevoBalance.TotalCapital / balanceacciones.TotalAcciones;
+                        NuevoItem.IdBalanceDiario = NuevoBalance.Id;
+                        NuevoItem.IdBalanceAcciones = item.IdBalanceAcciones;
+                        AE_ValorAccionREPO.AddEntity(NuevoItem);
+                        AE_ValorAccionREPO.SaveChanges();
+
                     }
+
+                    //decimal nuevaacciones = 0;
+                    //AE_BalanceAccione elemento = new AE_BalanceAccione();
+                    //var balanceAcciones = AE_BalanceAccioneREPO.GetAllRecords().ToList();
+                    //if (balanceAcciones.Count > 0)
+                    //{
+                    //    var _valoracciones = AE_ValorAccionREPO.GetAllRecords().OrderByDescending(u => u.Id).Take(10).ToList();
+                    //    var item = balanceAcciones.OrderByDescending(u => u.Id).FirstOrDefault();
+                    //    nuevaacciones = 0;
+                    //    elemento.TotaCapital = NuevoBalance.TotalCapital;
+                    //    elemento.AccionesRetiradas = 0;
+                    //    elemento.CapitalEntrada = 0;
+                    //    elemento.CapitalSalida = 0;
+                    //    elemento.FactorInicial = item.FactorInicial;
+                    //    elemento.FechaOperacion = DateTime.Now;
+                    //    elemento.FechaRegistro = DateTime.Now;
+                    //    elemento.FechaUltimaActualizacion = DateTime.Now;
+                    //    elemento.TotalAccionesExistentes = item.TotalAccionesExistentes;
+                    //    elemento.AccionesEntrantes = nuevaacciones;
+                    //    elemento.TotalAcciones = item.TotalAcciones + nuevaacciones;
+                    //    elemento.IdInversionista = Guid.Parse(Inversionista);
+                    //    elemento.ValorAcciones = item.ValorAcciones;
+                    //    AE_BalanceAccioneREPO.AddEntity(elemento);
+                    //    AE_BalanceAccioneREPO.SaveChanges();
+
+                    //    Operacion.RepresentacionFondo = nuevaacciones;
+                    //    AE_OperacionREPO.SaveChanges();
+
+                    //}
+                    try
+                    {
+                        List<AE_Dolar> Dolar = AE_DolarREPO.GetAllRecords().Where(u => u.FechaValor.Day == DateTime.Now.AddDays(-3).Day && u.FechaValor.Month == DateTime.Now.Month && u.FechaValor.Year == DateTime.Now.Year).ToList();
+                        if (Dolar != null && Dolar.Count > 0)
+                        {
+                            AE_Dolar tt = Dolar.FirstOrDefault();
+                            tt.TasaUtilizada = decimal.Parse(TasaUtilizada.Replace('.', ','));
+                            AE_DolarREPO.SaveChanges();
+                        }
+                    }
+                    catch { }
+
+
+
                 }
-                catch { }
-
-
-
-            }
-            catch (Exception e)
-            {
+                catch (Exception e)
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = e.Message
+                    }, JsonRequestBehavior.DenyGet);
+                }
                 return Json(new
                 {
-                    success = false,
-                    message = e.Message
+                    success = true,
+                    message = "Balance agregado de forma correcta!"
                 }, JsonRequestBehavior.DenyGet);
-            }
-            return Json(new
-            {
-                success = true,
-                message = "Balance agregado de forma correcta!"
-            }, JsonRequestBehavior.DenyGet);
             }
 
         }

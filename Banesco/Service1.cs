@@ -31,7 +31,7 @@ namespace Banesco
         private string LastRun;
         public Service1()
         {
-            this.ServiceName = "CobroMasivoBanescoTransax";
+            this.ServiceName = "CobroMasivoBanescoFinPgo";
             InitializeComponent();
 
         }
@@ -39,14 +39,14 @@ namespace Banesco
         protected override void OnStart(string[] args)
         {
             System.Globalization.CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.GetCultureInfo("es-VE");
-            this.TimerLecturaArchivoSalidaBanesco = new System.Timers.Timer(75000D);  // 30000 milliseconds = 30 seconds
+            this.TimerLecturaArchivoSalidaBanesco = new System.Timers.Timer(600000D);  // 30000 milliseconds = 30 seconds
             this.TimerLecturaArchivoSalidaBanesco.AutoReset = true;
             this.TimerLecturaArchivoSalidaBanesco.Elapsed += new System.Timers.ElapsedEventHandler(this.timer_LecturaArchivoSalidaBanesco);
             this.TimerLecturaArchivoSalidaBanesco.Start();
 
 
             
-            this.TimerDownloadAll = new System.Timers.Timer(75000D);  // 30000 milliseconds = 30 seconds
+            this.TimerDownloadAll = new System.Timers.Timer(300000D);  // 30000 milliseconds = 30 seconds
             this.TimerDownloadAll.AutoReset = true;
             this.TimerDownloadAll.Elapsed += new System.Timers.ElapsedEventHandler(this.timer_DownloadAll);
             this.TimerDownloadAll.Start();
@@ -69,6 +69,7 @@ namespace Banesco
             string texto = "";
             try
             {
+                string codigo = "210374095";
                 var host = "10.148.174.215";
                 var port = 5522;
                 var username = "instapag";
@@ -98,17 +99,28 @@ namespace Banesco
                             {
                                 texto = texto + "encontre y recorro " + file.Name + " | ";
                                 string remoteFileName = file.Name;
-                                if ((!file.Name.StartsWith(".")) && ((file.LastWriteTime.Date == DateTime.Today)))
+                                if ((!file.Name.StartsWith(".")) && ((file.LastWriteTime.Date == DateTime.Today)) && file.Name.Contains(codigo))
                                 {
                                     texto = texto + "encontre y recorro " + localDirectory + remoteFileName + " | ";
-                                    using (Stream file1 = System.IO.File.OpenWrite(localDirectory + remoteFileName))
+                                    try
                                     {
-                                        texto = texto + "intento descargar | ";
-                                        sftp.DownloadFile(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName, file1);
-                                        texto = texto + "lo descargue | ";
-                                        var inFile = sftp.Get(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName);
-                                        texto = texto + "lo muevo " + sftp.WorkingDirectory + backupDirectory + " | ";
-                                        inFile.MoveTo(sftp.WorkingDirectory + backupDirectory + remoteFileName);
+                                        using (Stream file1 = System.IO.File.OpenWrite(localDirectory + remoteFileName))
+                                        {
+
+                                            sftp.DownloadFile(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName, file1);
+                                            texto = texto + "lo descargue | ";
+
+                                            var inFile = sftp.Get(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName);
+                                            texto = texto + "lo muevo " + sftp.WorkingDirectory + backupDirectory + " | ";
+                                            inFile.MoveTo(sftp.WorkingDirectory + backupDirectory + remoteFileName);
+                                        }
+                                    }
+                                    catch (Exception e)
+                                    {
+
+
+                                        texto = texto + "intento descargar y fallo : " + e.Message + " | ";
+
                                     }
                                 }
                             }
