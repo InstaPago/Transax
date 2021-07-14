@@ -173,7 +173,7 @@
                                     <th>Banco</th>
                                     <th>Origen</th>
                                     <th>Cobro</th>
-                                    <th>Accion</th>
+                                    @*<th>Accion</th>*@
                                     <th>Respuesta</th>
                                     <th>Fecha Respuesta</th>
                                 </tr>
@@ -182,7 +182,7 @@
                                 @foreach (InstaTransfer.DataAccess.CP_Archivo item in Archivos)
                                 {
                                     <tr dtaction="@Url.Action("Details", "Avance", new { id = item.Id })">
-                                        <td>@item.FechaLectura.ToShortDateString()</td>
+                                        <td>@item.FechaCreacion.ToShortDateString()</td>
 
                                         <td>@item.Nombre  </td>
                                         <td>@item.Descripcion   </td>
@@ -220,12 +220,12 @@
 
                                             </div>
                                         </td>
-                                        <td>
+                                        @*<td>
                                             <form action="@Url.Action("EnviarArchivoBanco", "Avance")" _target="@item.Id " class="sendbank" typeof="post" >
                                                 <input type="hidden" name="id" value="@item.Id" />
                                                 <input type="submit" style="width:200px;" class="btn btn-primary " value="Enviar" />
                                             </form>
-                                        </td>
+                                        </td>*@
                                         <td>
                                             @if (item.EsRespuesta)
                                             {

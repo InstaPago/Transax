@@ -409,7 +409,7 @@ namespace ProcesoCOB
 
 
                         //aqui validacion de flag nuevo agregado en el clic
-                        if (DateTime.Now < DateTime.Parse(__item.FechaVencimiento) && beneficiario.FechaVencimiento)
+                        if (DateTime.Now.AddHours(-DateTime.Now.Hour) < DateTime.Parse(__item.FechaVencimiento) && beneficiario.FechaVencimiento)
                         {
                             __item.CodigoError = 003;
                             __item.DescripcionError = "REGISTRO NO VENCIDO";
