@@ -2336,7 +2336,7 @@ namespace Umbrella.Controllers
         #region POLARCOB
         public bool COB_LecturaPOLAR()
         {
-            DirectoryInfo d = new DirectoryInfo(@"C:\Users\carmelo\Desktop\POLAR\_COBPOLAR");//Assuming Test is your Folder
+            DirectoryInfo d = new DirectoryInfo(@"C:\Users\CarmeloLarez\POLAR\_COBPOLAR");//Assuming Test is your Folder
             List<CP_ArchivoItem> ListItemsFile = new List<CP_ArchivoItem>();
             FileInfo[] Files = d.GetFiles(); //Getting Text files
             string referencia = "";
@@ -2476,7 +2476,7 @@ namespace Umbrella.Controllers
 
 
                             //aqui validacion de flag nuevo agregado en el clic
-                            if (DateTime.Now < DateTime.Parse(__item.FechaVencimiento) && beneficiario.FechaVencimiento)
+                            if (DateTime.Now.Date <= DateTime.Parse(__item.FechaVencimiento) && beneficiario.FechaVencimiento)
                             {
                                 __item.CodigoError = 003;
                                 __item.DescripcionError = "REGISTRO NO VENCIDO";

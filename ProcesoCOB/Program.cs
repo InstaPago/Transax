@@ -407,9 +407,9 @@ namespace ProcesoCOB
                             goto Finish;
                         }
 
-
+                        
                         //aqui validacion de flag nuevo agregado en el clic
-                        if (DateTime.Now.AddHours(-DateTime.Now.Hour) < DateTime.Parse(__item.FechaVencimiento) && beneficiario.FechaVencimiento)
+                        if (DateTime.Now.Date <= DateTime.Parse(__item.FechaVencimiento) && beneficiario.FechaVencimiento)
                         {
                             __item.CodigoError = 003;
                             __item.DescripcionError = "REGISTRO NO VENCIDO";
@@ -887,7 +887,7 @@ namespace ProcesoCOB
                 }
 
                 string tipo = "03";
-                string recibo = cobro.NumeroDocumento.Substring(cobro.NumeroDocumento.Length - 7, 7).PadLeft(8, '0');
+                string recibo = cobro.NumeroDocumento.Substring(cobro.NumeroDocumento.Length - 8, 8).PadLeft(8, '0');
                 decimal _cambio = Math.Round(cobro.TotalArchivo, 2);
                 _cambio = _cambio * 100;
                 total = total + _cambio;
@@ -910,7 +910,7 @@ namespace ProcesoCOB
 
                 //registro credito
                 string _tipo2 = "02";
-                string _recibo = cobro.NumeroDocumento.Substring(cobro.NumeroDocumento.Length - 7, 7).PadLeft(8, '0');
+                string _recibo = cobro.NumeroDocumento.Substring(cobro.NumeroDocumento.Length - 8, 8).PadLeft(8, '0');
                 //Cobros.First().Id.ToString().PadLeft(8, '0');
 
 
