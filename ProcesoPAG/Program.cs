@@ -423,7 +423,7 @@ namespace ProcesoPAG
             List<String> ListaPendientes =  COB_ValidacionArchivoSalidaBanesco();
 
 
-            foreach (var pendiente in ListaPendientes)
+            foreach (var pendiente in ListaPendientes.Distinct().ToList())
             {
                 CP_Archivo _getCP = new CP_Archivo();
                 List<CP_ArchivoEstadoCuenta> _ItemsArchivo = new List<CP_ArchivoEstadoCuenta>();
@@ -668,7 +668,7 @@ namespace ProcesoPAG
                             Registro.TipoRegistro = line.Substring(16, 2).ToString().TrimEnd();
                             Registro.__NumeroReferenciaRespuesta = line.Substring(19, 10).ToString().TrimEnd();
 
-                            ArchivosRepsuesta.Add(Registro.__NumeroReferenciaRespuesta + " - Empresa :" + departamento);
+                            ArchivosRepsuesta.Add(Registro.__NumeroReferenciaRespuesta);
 
 
                         }
@@ -753,7 +753,7 @@ namespace ProcesoPAG
 
                             EstructuraSalidaBanescoEncabezado Registro = new EstructuraSalidaBanescoEncabezado();
                             Registro.__NumeroReferenciaRespuesta = line.Substring(37, 10).ToString().TrimEnd();
-                            ArchivosEnviados.Add(Registro.__NumeroReferenciaRespuesta + " - Empresa :" + departamento);
+                            ArchivosEnviados.Add(Registro.__NumeroReferenciaRespuesta);
                             break;
 
                         }
