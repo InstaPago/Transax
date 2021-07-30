@@ -307,6 +307,17 @@ namespace ProcesoCOB
                 }
 
             }
+
+            foreach (var ele in Files)
+            {
+                string rutaIniBackUp = ConfigurationManager.AppSettings["rutaIniBackUp"].ToString();
+                string final = rutaIniBackUp + ele.Name + DateTime.Now.ToString("dd-MM-yy-mm-ss");
+                string[] _lines = System.IO.File.ReadAllLines(ele.FullName);
+                System.IO.File.WriteAllLines(final, _lines);
+                //texto = texto + "borrando :" + ele.Name + "\r\n";
+                Console.WriteLine("borrando \r\n");
+                ele.Delete();
+            }
             return true;
         }
 
@@ -413,7 +424,7 @@ namespace ProcesoCOB
             texto = texto + "se encontraron:" + Files.Count() + "archivos \r\n";
             foreach (FileInfo file in Files)
             {
-                if (file.Name.Contains("Afilia."))
+                if (file.Name.Contains("afilia."))
                 {
                     Console.WriteLine("procesando:" + file.Name + " \r\n");
                     string uploadFile = file.FullName.ToString();
@@ -463,7 +474,16 @@ namespace ProcesoCOB
                 }
 
             }
-
+            foreach (var ele in Files)
+            {
+                string rutaIniBackUp = ConfigurationManager.AppSettings["rutaIniBackUp"].ToString();
+                string final = rutaIniBackUp + ele.Name + DateTime.Now.ToString("dd-MM-yy-mm-ss");
+                string[] _lines = System.IO.File.ReadAllLines(ele.FullName);
+                System.IO.File.WriteAllLines(final, _lines);
+                //texto = texto + "borrando :" + ele.Name + "\r\n";
+                Console.WriteLine("borrando \r\n");
+                ele.Delete();
+            }
             return texto;
         }
 
