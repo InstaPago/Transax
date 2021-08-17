@@ -107,13 +107,15 @@ namespace ProcesoCOB
             //string rutainipolar = 
             DirectoryInfo d = new DirectoryInfo(rutainipolar);//Assuming Test is your Folder
             FileInfo[] Files = d.GetFiles("*"); //Getting Text files
-            List<EstructuraINI> Lista = new List<EstructuraINI>();
-            List<CP_INI> ListaINI = new List<CP_INI>();
-            CP_Archivo item = new CP_Archivo();
-            string rifreferencia = "";
-            string nombrearchivo = "";
+
             foreach (FileInfo file in Files)
             {
+                List<EstructuraINI> Lista = new List<EstructuraINI>();
+                List<CP_INI> ListaINI = new List<CP_INI>();
+                CP_Archivo item = new CP_Archivo();
+                string rifreferencia = "";
+                string nombrearchivo = "";
+
                 if (file.Name.Contains("BANINI0001"))
                 {
                     //ALIMENTOS POLAR  J000413126 - IBS :540133497
@@ -474,16 +476,16 @@ namespace ProcesoCOB
                 }
 
             }
-            foreach (var ele in Files)
-            {
-                string rutaIniBackUp = ConfigurationManager.AppSettings["rutaIniBackUp"].ToString();
-                string final = rutaIniBackUp + ele.Name + DateTime.Now.ToString("dd-MM-yy-mm-ss");
-                string[] _lines = System.IO.File.ReadAllLines(ele.FullName);
-                System.IO.File.WriteAllLines(final, _lines);
-                //texto = texto + "borrando :" + ele.Name + "\r\n";
-                Console.WriteLine("borrando \r\n");
-                ele.Delete();
-            }
+            //foreach (var ele in Files)
+            //{
+            //    string rutaIniBackUp = ConfigurationManager.AppSettings["rutaIniBackUp"].ToString();
+            //    string final = rutaIniBackUp + ele.Name + DateTime.Now.ToString("dd-MM-yy-mm-ss");
+            //    string[] _lines = System.IO.File.ReadAllLines(ele.FullName);
+            //    System.IO.File.WriteAllLines(final, _lines);
+            //    //texto = texto + "borrando :" + ele.Name + "\r\n";
+            //    Console.WriteLine("borrando \r\n");
+            //    ele.Delete();
+            //}
             return texto;
         }
 
@@ -642,13 +644,14 @@ namespace ProcesoCOB
             DirectoryInfo d = new DirectoryInfo(rutaLecturaRespuestaBanesco);
             //Assuming Test is your Folder
             string rutafinal = rutaIniBackUp;
-            string nombrearchivo = "";
+
             FileInfo[] Files = d.GetFiles("*"); //Getting Text files
 
-            CP_Archivo item = new CP_Archivo();
-            CP_Archivo getCP = new CP_Archivo();
             foreach (FileInfo file in Files)
             {
+                string nombrearchivo = "";
+                CP_Archivo item = new CP_Archivo();
+                CP_Archivo getCP = new CP_Archivo();
                 if (file.Name.Contains("RAFIL"))
                 {
                     if (file.Name.Contains("540133497RAFIL"))

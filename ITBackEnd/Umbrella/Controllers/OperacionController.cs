@@ -748,9 +748,9 @@ namespace Umbrella.Controllers
                     AE_BalanceAccionesREPO.SaveChanges();
 
                     AE_ValorAccionTR _NewValorAccionTR = new AE_ValorAccionTR();
-                    _NewValorAccionTR.FechaCreacionRegistro = DateTime.Now.AddDays(-3);
-                    _NewValorAccionTR.FechaOperacion = DateTime.Now.AddDays(-3); ;
-                    _NewValorAccionTR.FechaUltimaActualizacion = DateTime.Now.AddDays(-3); ;
+                    _NewValorAccionTR.FechaCreacionRegistro = DateTime.Now.AddDays(-0);
+                    _NewValorAccionTR.FechaOperacion = DateTime.Now.AddDays(-0);
+                    _NewValorAccionTR.FechaUltimaActualizacion = DateTime.Now.AddDays(-0);
                     _NewValorAccionTR.GastoReportado = 0;
                     _NewValorAccionTR.CapitalInicial = ValorAccionTR.NuevoCapital;
                     _NewValorAccionTR.CapitalPorCobrar = ValorAccionTR.CapitalPorCobrar;

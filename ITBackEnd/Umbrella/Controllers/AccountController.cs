@@ -435,12 +435,15 @@ namespace Umbrella.Controllers
         }
 
         [HttpPost]
-        public JsonResult ChangePass(string correo, string clave, string idusuario)
+        public JsonResult ChangePass(string correo, string clave, string current, string idusuario)
         {
+            var user =  UserManager.FindById(idusuario);
 
-            UserManager.RemovePassword(idusuario);
-            UserManager.AddPassword(idusuario, clave);
-            //aff48ec0 - 2e6e - 45ab - 86e6 - 57c7a82b24ef
+            var code =  UserManager.GeneratePasswordResetToken(user.Id);
+
+            var test =  UserManager.ResetPassword(user.Id, code, clave);
+
+
             return Json(new
             {
                 success = true,

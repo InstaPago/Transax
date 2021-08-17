@@ -9,11 +9,11 @@
             <div class="thumb-xl member-thumb m-b-10 center-block">
                 <div class="bnwstyle">
                     @*<span class="fa-stack fa-lg profileedit">
-                        <a href="#">
-                            <i class="fa fa-circle fa-stack-2x"></i>
-                            <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-                        </a>
-                    </span>*@
+                            <a href="#">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                            </a>
+                        </span>*@
                     <img src="@Url.Content("~/Content/images/user-default.png")" class="img-circle img-thumbnail" alt="">
                 </div>
             </div>
@@ -65,20 +65,37 @@
                     </span>
                 </p>
 
+                <hr />
+                <form typeof="post" id="FormCambioClave">
+                    <div class="modal-body">
+                        <input type="hidden" name="idusuario" value="@Model.IdAspNetUser" />
+                        <input type="hidden" name="correo" value="@Model.AspNetUser.Email" />
+                        <label>Contraseña Vieja</label>
+                        <input type="text" class="form-control" name="current" autocomplete="off" value="" required="required" />
+                        <label>Nueva Contraseña</label>
+                        <input type="password" class="form-control" name="clave" autocomplete="off" value="" required="required" />
+
+                    </div>
+                    <div class="modal-footer">
+                        <input type="button" id="add_pass" class="btn btn-primary" value="Editar" />
+                    </div>
+                </form>
+
+
                 @*<button class="btn btn-default" id="update-profile">Actualizar perfil</button>*@
             </div>
 
             @*<ul class="social-links list-inline m-t-30">
-                <li>
-                    <a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Facebook"><i class="fa fa-facebook"></i></a>
-                </li>
-                <li>
-                    <a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Twitter"><i class="fa fa-twitter"></i></a>
-                </li>
-                <li>
-                    <a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Skype"><i class="fa fa-skype"></i></a>
-                </li>
-            </ul>*@
+                    <li>
+                        <a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Facebook"><i class="fa fa-facebook"></i></a>
+                    </li>
+                    <li>
+                        <a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Twitter"><i class="fa fa-twitter"></i></a>
+                    </li>
+                    <li>
+                        <a title="" data-placement="top" data-toggle="tooltip" class="tooltips" href="" data-original-title="Skype"><i class="fa fa-skype"></i></a>
+                    </li>
+                </ul>*@
 
         </div>
 
