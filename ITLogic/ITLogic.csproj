@@ -75,7 +75,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="WebGrease">
-      <HintPath>..\..\..\..\..\Documents\WebGrease.dll</HintPath>
+      <HintPath>..\..\..\..\..\OneDrive\Documents\bin\WebGrease.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

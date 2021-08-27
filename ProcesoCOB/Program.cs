@@ -429,7 +429,7 @@ namespace ProcesoCOB
 
                             //debo ir base de datos y ver si ya fue cobrado
                             var duplicado = EstadoCuentaREPO.GetAllRecords().Where(u => u.CodigoComercio == beneficiario.CodigoCliente && u.NumeroDocumento == __item.DocumentoComercial && u.Estatus == 2).ToList();
-                            if (duplicado.Count() > 1)
+                            if (duplicado.Count() > 0)
                             {
                                 foreach (var objeto in duplicado)
                                 {

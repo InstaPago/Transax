@@ -174,7 +174,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Renci.SshNet">
-      <HintPath>..\..\..\..\..\..\Documents\Renci.SshNet.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\OneDrive\Documents\bin\Renci.SshNet.dll</HintPath>
     </Reference>
     <Reference Include="Rotativa">
       <HintPath>..\..\ITResources\Library\Rotativa.dll</HintPath>
