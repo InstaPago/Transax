@@ -407,7 +407,7 @@ namespace ProcesoCOB
                             goto Finish;
                         }
 
-                        
+
                         //aqui validacion de flag nuevo agregado en el clic
                         if (DateTime.Now.Date <= DateTime.Parse(__item.FechaVencimiento) && beneficiario.FechaVencimiento)
                         {
@@ -475,7 +475,7 @@ namespace ProcesoCOB
 
 
                     }
-                    Finish:
+                Finish:
                     string hola = "";
                 }
 
@@ -743,6 +743,34 @@ namespace ProcesoCOB
             return "todo ok";
         }
 
+
+        public string ChangeString(string factura)
+        {
+
+            string str = factura;
+        
+            string[] alpha = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+            string nuevostring = string.Empty;
+
+            foreach (char c in str)
+            {
+                bool isnumber = alpha.Contains(c.ToString());
+                if (isnumber)
+                    nuevostring = nuevostring + c.ToString();
+                else
+                    nuevostring = nuevostring + "7";
+            }
+
+
+            //Console.Write("The letters in '{0}' are: '", str);
+        
+            //Console.WriteLine("'");
+            //Console.WriteLine("Each letter in '{0}' is:", nuevostring);
+
+
+            return nuevostring;
+        }
+
         public bool ERRORCOB_GenerarPOLAR(List<CP_ArchivoItem> _items, string codigo)
         {
             CultureInfo __newCulture;
@@ -887,7 +915,8 @@ namespace ProcesoCOB
                 }
 
                 string tipo = "03";
-                string recibo = cobro.NumeroDocumento.Substring(cobro.NumeroDocumento.Length - 8, 8).PadLeft(8, '0');
+                string __NumeroDocumento = ChangeString(cobro.NumeroDocumento.ToString());
+                string recibo = __NumeroDocumento.Substring(__NumeroDocumento.Length - 8, 8).PadLeft(8, '0');
                 decimal _cambio = Math.Round(cobro.TotalArchivo, 2);
                 _cambio = _cambio * 100;
                 total = total + _cambio;
@@ -896,7 +925,7 @@ namespace ProcesoCOB
                 string numerocuenta = _cuenta;
                 string swift = "UNIOVECA";
                 //string _rif = Cobros.FirstOrDefault().AE_Avance.Commerce.Rif;
-                string nombre = _nombrecomercial.Replace(".", " ").Replace(",", " ").Replace("Ñ","N").ToUpper().TrimEnd();
+                string nombre = _nombrecomercial.Replace(".", " ").Replace(",", " ").Replace("Ñ", "N").ToUpper().TrimEnd();
                 string libre = "423";
                 string contrato = _rifc;
                 string fechavencimiento = "       ";
@@ -910,7 +939,7 @@ namespace ProcesoCOB
 
                 //registro credito
                 string _tipo2 = "02";
-                string _recibo = cobro.NumeroDocumento.Substring(cobro.NumeroDocumento.Length - 8, 8).PadLeft(8, '0');
+                string _recibo = __NumeroDocumento.Substring(__NumeroDocumento.Length - 8, 8).PadLeft(8, '0');
                 //Cobros.First().Id.ToString().PadLeft(8, '0');
 
 
@@ -1130,6 +1159,7 @@ namespace ProcesoCOB
             Thread.CurrentThread.CurrentUICulture = __newCulture;
 
             Program p = new Program();
+
             StringBuilder Logs = new StringBuilder();
             Logs.Append("Iniciamos busqueda en ftp\r\n");
             string result = p.COB_DownloadAndMove(); // Calling method

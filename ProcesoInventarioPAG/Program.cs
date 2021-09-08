@@ -146,7 +146,8 @@ namespace ProcesoInventarioPAG
 
             string RUTABACKCOB = ConfigurationManager.AppSettings["rutaLecturaBackupCobrosBanescoR"].ToString();
             DirectoryInfo e = new DirectoryInfo(RUTABACKCOB);
-            FileInfo[] _Files = e.GetFiles().Where(u => u.LastWriteTime > DateTime.Now.AddHours(-(int.Parse(DateTime.Now.Hour.ToString())))).ToArray();
+            //FileInfo[] _Files = e.GetFiles().Where(u => u.LastWriteTime > DateTime.Now.AddHours(-(int.Parse(DateTime.Now.Hour.ToString())))).ToArray();
+            FileInfo[] _Files = e.GetFiles();
 
             foreach (var file in _Files)
             {
@@ -252,8 +253,8 @@ namespace ProcesoInventarioPAG
                 }
             }
 
-            string RUTALOGS = @"D:\AppsTest\DebugVALIDADOR\" + "LOGS-VALIDADOR" + DateTime.Now.ToString("dd-MM-yy-ss-mm") + ".txt";
-            System.IO.File.WriteAllText(RUTALOGS, valores.ToString());
+            //string RUTALOGS = @"C:\" + "LOGS-VALIDADOR" + DateTime.Now.ToString("dd-MM-yy-ss-mm") + ".txt";
+            //System.IO.File.WriteAllText(RUTALOGS, valores.ToString());
             
 
             return true;
