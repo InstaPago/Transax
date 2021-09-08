@@ -2325,7 +2325,7 @@ namespace Umbrella.Controllers
             else
             {
 
-                List<AE_EstadoCuenta> EstadoCuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.AE_Avance.IdEstatus == 1 && u.FechaOperacion.Day == DateTime.Now.AddDays(-3).Day && u.FechaOperacion.Month == DateTime.Now.Month && u.FechaOperacion.Year == DateTime.Now.Year && !u.Abono && !u.RecibidoEnDolares).ToList();
+                List<AE_EstadoCuenta> EstadoCuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.AE_Avance.IdEstatus == 1 && u.FechaOperacion.Day == DateTime.Now.AddDays(-0).Day && u.FechaOperacion.Month == DateTime.Now.Month && u.FechaOperacion.Year == DateTime.Now.Year && !u.Abono && !u.RecibidoEnDolares).ToList();
 
                 foreach (var item in EstadoCuenta)
                 {
@@ -2340,9 +2340,9 @@ namespace Umbrella.Controllers
                 {
                     AE_ValorAccionTR Ultimo = ListValorAccionTR.FirstOrDefault();
                     AE_ValorAccionTR ValorAccionTR = new AE_ValorAccionTR();
-                    ValorAccionTR.FechaCreacionRegistro = DateTime.Now.AddDays(-3);
-                    ValorAccionTR.FechaOperacion = DateTime.Now.AddDays(-3);
-                    ValorAccionTR.FechaUltimaActualizacion = DateTime.Now.AddDays(-3);
+                    ValorAccionTR.FechaCreacionRegistro = DateTime.Now.AddDays(-0);
+                    ValorAccionTR.FechaOperacion = DateTime.Now.AddDays(-0);
+                    ValorAccionTR.FechaUltimaActualizacion = DateTime.Now.AddDays(-0);
 
                     ValorAccionTR.GastoReportado = decimal.Parse(totalgastos.Replace('.', ',')) * -1;
                     ValorAccionTR.CapitalInicial = Ultimo.NuevoCapital;
@@ -2374,9 +2374,9 @@ namespace Umbrella.Controllers
                 {
 
                     AE_ValorAccionTR ValorAccionTR = new AE_ValorAccionTR();
-                    ValorAccionTR.FechaCreacionRegistro = DateTime.Now.AddDays(-3);
-                    ValorAccionTR.FechaOperacion = DateTime.Now.AddDays(-3);
-                    ValorAccionTR.FechaUltimaActualizacion = DateTime.Now.AddDays(-3);
+                    ValorAccionTR.FechaCreacionRegistro = DateTime.Now.AddDays(-0);
+                    ValorAccionTR.FechaOperacion = DateTime.Now.AddDays(-0);
+                    ValorAccionTR.FechaUltimaActualizacion = DateTime.Now.AddDays(-0);
                     //ValorAccionTR.UtilidadReportada = decimal.Parse(totalgananciadiaria.Replace('.', ','));
                     ValorAccionTR.GastoReportado = 0;
                     decimal Montoencuenta = decimal.Parse(totaldolares.Replace('.', ','));
@@ -2408,12 +2408,12 @@ namespace Umbrella.Controllers
                 try
                 {
                     AE_BalanceDiario NuevoBalance = new AE_BalanceDiario();
-                    NuevoBalance.FechaCreacionRegistro = DateTime.Now.AddDays(-3);
-                    NuevoBalance.FechaUltimaActualizacion = DateTime.Now.AddDays(-3);
+                    NuevoBalance.FechaCreacionRegistro = DateTime.Now.AddDays(-0);
+                    NuevoBalance.FechaUltimaActualizacion = DateTime.Now.AddDays(-0);
                     if (fechaoperacion != null)
                         NuevoBalance.FechaOperaicon = fechaoperacion.Value;
                     else
-                        NuevoBalance.FechaOperaicon = DateTime.Now.AddDays(-3);
+                        NuevoBalance.FechaOperaicon = DateTime.Now.AddDays(-0);
 
                     //ACTIVOS
                     NuevoBalance.TotalCuentaBs = decimal.Parse(totalbancosBS.Replace('.', ','));
@@ -2445,9 +2445,9 @@ namespace Umbrella.Controllers
                         AE_ValorAccion item = valoracciones.FirstOrDefault();
 
                         AE_ValorAccion NuevoItem = new AE_ValorAccion();
-                        NuevoItem.FechaCreacionRegistro = DateTime.Now.AddDays(-3);
-                        NuevoItem.FechaOperacion = DateTime.Now.AddDays(-3);
-                        NuevoItem.FechaUltimaActualizacion = DateTime.Now.AddDays(-3);
+                        NuevoItem.FechaCreacionRegistro = DateTime.Now.AddDays(-0);
+                        NuevoItem.FechaOperacion = DateTime.Now.AddDays(-0);
+                        NuevoItem.FechaUltimaActualizacion = DateTime.Now.AddDays(-0);
                         NuevoItem.TotalAcciones = balanceacciones.TotalAcciones;
                         NuevoItem.TotalCapitalusd = NuevoBalance.TotalCapital;
                         NuevoItem.ValorAccion = NuevoBalance.TotalCapital / balanceacciones.TotalAcciones;
@@ -2488,7 +2488,7 @@ namespace Umbrella.Controllers
                     //}
                     try
                     {
-                        List<AE_Dolar> Dolar = AE_DolarREPO.GetAllRecords().Where(u => u.FechaValor.Day == DateTime.Now.AddDays(-3).Day && u.FechaValor.Month == DateTime.Now.Month && u.FechaValor.Year == DateTime.Now.Year).ToList();
+                        List<AE_Dolar> Dolar = AE_DolarREPO.GetAllRecords().Where(u => u.FechaValor.Day == DateTime.Now.AddDays(-0).Day && u.FechaValor.Month == DateTime.Now.Month && u.FechaValor.Year == DateTime.Now.Year).ToList();
                         if (Dolar != null && Dolar.Count > 0)
                         {
                             AE_Dolar tt = Dolar.FirstOrDefault();

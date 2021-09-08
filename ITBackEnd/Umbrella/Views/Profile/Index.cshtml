@@ -90,6 +90,30 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+
+            $(document).on("click", "#add_pass", function () {
+                alert('test');
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("ChangePass", "Account")",
+                    data: $("#FormCambioClave").serialize(),
+                })
+                    .done(function (r) {
+
+                        if (r.success) {
+
+                            toastr.success("Clave modificada de manera correcta!", 'Éxito!');
+                            window.setTimeout(location.reload(), 2000);
+                        } else {
+                            // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                            toastr.error(r.message, 'Error!');
+                        }
+                    });
+                Pace.stop();
+                return false;
+            });
+
             function switcheryInit() {
                 var elem = document.querySelector('.js-switch');
                 var init = new Switchery(elem);
@@ -289,5 +313,5 @@
 
         });
     </script>
-  
+
 }

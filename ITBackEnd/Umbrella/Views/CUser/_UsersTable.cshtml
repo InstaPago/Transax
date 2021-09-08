@@ -84,12 +84,14 @@
                                     <div class="modal-body">
                                         <input type="hidden" name="idusuario" value="@item.IdAspNetUser" />
                                         <input type="hidden" name="correo" value="@item.AspNetUser.Email" />
+                                        <label>Contraseña Vieja</label>
+                                        <input type="text" class="form-control" name="current" autocomplete="off" value="" required="required" />
                                         <label>Nueva Contraseña</label>
                                         <input type="text" class="form-control" name="clave" autocomplete="off" value="" required="required" />
 
                                     </div>
                                     <div class="modal-footer">
-                                        <input type="submit" id="add_pass" class="btn btn-primary" value="Editar" />
+                                        <input type="button" id="add_pass" class="btn btn-primary" value="Editar" />
                                     </div>
                                 </form>
                             </div>
@@ -105,7 +107,7 @@
 <script type="text/javascript">
 
     
-    $("#FormCambioClave").on("submit", function () {
+    $("#add_pass").on("click", function () {
         //alert('test');
         Pace.start();
         $.ajax({

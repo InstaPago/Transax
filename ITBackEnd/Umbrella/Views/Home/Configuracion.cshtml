@@ -16,8 +16,8 @@
     decimal TasaAlta = 0;
     if (CambioDiario != null && CambioDiario.Count > 0)
     {
-        TasaAlta = CambioDiario.OrderByDescending(u => u.TasaUtilizada).FirstOrDefault().TasaUtilizada;
-        TasaReportar = TasaAlta * decimal.Parse("1,03");
+        TasaAlta = CambioDiario.Sum(u => u.TasaUtilizada) / CambioDiario.Count();
+        TasaReportar = TasaAlta * decimal.Parse("1,015");
     }
 
 

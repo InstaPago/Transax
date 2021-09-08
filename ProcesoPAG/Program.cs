@@ -119,6 +119,8 @@ namespace ProcesoPAG
             List<CP_ArchivoEstadoCuenta> ItemsArchivo = new List<CP_ArchivoEstadoCuenta>();
             List<PAG> ListaPAG = new List<PAG>();
             List<string> Empresas = new List<string>();
+            List<String> ListaPendientes = new List<String>();
+            List<String> ListaPendientesTemporal = new List<String>();
             foreach (FileInfo file in Files)
             {
                 try
@@ -435,10 +437,7 @@ namespace ProcesoPAG
                 }
             }
 
-            List<String> ListaPendientes = COB_ValidacionArchivoSalidaBanesco();
-
-
-            foreach (var pendiente in ListaPendientes)
+            foreach (var pendiente in ListaPendientes.Distinct().ToList())
             {
                 CP_Archivo _getCP = new CP_Archivo();
                 List<CP_ArchivoEstadoCuenta> _ItemsArchivo = new List<CP_ArchivoEstadoCuenta>();
@@ -576,9 +575,10 @@ namespace ProcesoPAG
 
             PAG_Construir(ListaPAG, Empresas.Distinct().ToList());
 
-            
-            FileInfo[] _Files = d.GetFiles(); //Getting Text files
-            foreach (var ele in _Files)
+            string RUTAOUTCOB2 = ConfigurationManager.AppSettings["rutaLecturaSalidaBanescoR"].ToString();
+            DirectoryInfo d2 = new DirectoryInfo(RUTAOUTCOB2);
+            FileInfo[] Files2 = d2.GetFiles();
+            foreach (var ele in Files2)
             {
                 string final = RUTABACKCOBROS + ele.Name + DateTime.Now.ToString("dd-MM-yy-mm-ss");
                 string[] lines = System.IO.File.ReadAllLines(ele.FullName);
