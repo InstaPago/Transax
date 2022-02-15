@@ -209,7 +209,7 @@ namespace ProcesoPAG
                                 //Array.Resize(ref linesArchivo, linesArchivo.Length + 1);
                                 //linesArchivo[linesArchivo.Length - 1] = _line;
 
-                                getCP = ArchivoREPO.GetAllRecords().Where(u => u.ReferenciaArchivoBanco == Registro.__NumeroReferenciaRespuesta).FirstOrDefault();
+                                getCP = ArchivoREPO.GetAllRecords().Where(u => u.ReferenciaArchivoBanco == Registro.__NumeroReferenciaRespuesta).OrderByDescending(u => u.FechaCreacion).FirstOrDefault();
                                 ItemsArchivo = EstadoCuentaREPO.GetAllRecords().Where(u => u.ArchivoLecturaPolar == getCP.Id).ToList();
 
                             }
@@ -291,7 +291,7 @@ namespace ProcesoPAG
                                     //AQUI DEBO ITERAR ENTRE DEBITOS Y CREDITOS ... VAMOS CON LA FACTURA PRIMERO
                                     List<PAGLinea2> listalinea2 = new List<PAGLinea2>();
 
-
+                                    
                                     string[] Debito = elemento.DetalleDebito.Split('|');
                                     foreach (var _debito in Debito)
                                     {
@@ -436,6 +436,8 @@ namespace ProcesoPAG
 
                 }
             }
+
+            ListaPendientes = COB_ValidacionArchivoSalidaBanesco();
 
             foreach (var pendiente in ListaPendientes.Distinct().ToList())
             {
@@ -732,7 +734,7 @@ namespace ProcesoPAG
 
             foreach (var file in _Files)
             {
-                if (file.Name.Contains("I0005"))
+                if (file.Name.Contains("IXDP"))
                 {
                     string departamento = "";
                     string ordenante = "";
@@ -1166,7 +1168,7 @@ namespace ProcesoPAG
             p.COB_LecturaArchivoSalidaBanesco();
 
             Console.WriteLine("Procesamos cobros para generar pag \r\n");
-            p.PAG_UploadAndMove();
+            //p.PAG_UploadAndMove();
             Console.WriteLine("Fin procesamiento \r\n");
 
 

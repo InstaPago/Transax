@@ -127,7 +127,7 @@ namespace ProcesoCOB
             texto = texto + "se encontraron:" + Files.Count() + "archivos \r\n";
             foreach (FileInfo file in Files)
             {
-                if (file.Name.Contains("I0005."))
+                if (file.Name.Contains("IXDP."))
                 {
                     Console.WriteLine("procesando:" + file.Name + " \r\n");
                     string uploadFile = file.FullName.ToString();
@@ -420,12 +420,12 @@ namespace ProcesoCOB
                         Regex regex = new Regex(@"^[0-9]{0,15}$");
                         if (__item.TipoDocumento == "01" || __item.TipoDocumento == "03")
                         {
-                            //if (!regex.IsMatch(__item.DocumentoComercial) || __item.DocumentoComercial.ToString().Length < 1)
-                            //{
-                            //    __item.CodigoError = 073;
-                            //    __item.DescripcionError = "NUMERO DE DOCUMENTO NO VALIDO";
-                            //    goto Finish;
-                            //}
+                            if (__item.DocumentoComercial.ToString().Length < 1 || __item.DocumentoComercial.ToString() == "X")
+                            {
+                                __item.CodigoError = 073;
+                                __item.DescripcionError = "NUMERO DE DOCUMENTO NO VALIDO";
+                                goto Finish;
+                            }
 
                             //debo ir base de datos y ver si ya fue cobrado
                             var duplicado = EstadoCuentaREPO.GetAllRecords().Where(u => u.CodigoComercio == beneficiario.CodigoCliente && u.NumeroDocumento == __item.DocumentoComercial && u.Estatus == 2).ToList();
@@ -841,7 +841,7 @@ namespace ProcesoCOB
             Thread.CurrentThread.CurrentCulture = __newCulture;
             string RUTACOBRO = ConfigurationManager.AppSettings["rutaCobroBanesco"].ToString();
             List<CP_Archivo> Archivos = new List<CP_Archivo>();
-            int i = 0;
+            int i = 1;
             foreach (var cobro in Cobros)
             {
                 string lineas = "";
@@ -916,7 +916,8 @@ namespace ProcesoCOB
 
                 string tipo = "03";
                 string __NumeroDocumento = ChangeString(cobro.NumeroDocumento.ToString());
-                string recibo = __NumeroDocumento.Substring(__NumeroDocumento.Length - 8, 8).PadLeft(8, '0');
+                int _length = __NumeroDocumento.Length >= 8 ? 8 : __NumeroDocumento.Length;
+                string recibo = __NumeroDocumento.Substring(__NumeroDocumento.Length - _length, _length).PadLeft(8, '0');
                 decimal _cambio = Math.Round(cobro.TotalArchivo, 2);
                 _cambio = _cambio * 100;
                 total = total + _cambio;
@@ -939,7 +940,9 @@ namespace ProcesoCOB
 
                 //registro credito
                 string _tipo2 = "02";
-                string _recibo = __NumeroDocumento.Substring(__NumeroDocumento.Length - 8, 8).PadLeft(8, '0');
+                int __length = __NumeroDocumento.Length >= 8 ? 8 : __NumeroDocumento.Length;
+                string _recibo = __NumeroDocumento.Substring(__NumeroDocumento.Length - __length, __length).PadLeft(8, '0');
+                
                 //Cobros.First().Id.ToString().PadLeft(8, '0');
 
 
@@ -1010,17 +1013,17 @@ namespace ProcesoCOB
 
                 // WriteAllLines creates a file, wregistrodecontrolrites a collection of strings to the file,
                 // and then closes the file.  You do NOT need to call Flush() or Close().
-                string ruta = RUTACOBRO + "I0005." + asociado + "." + fechaarchivo + i++;
+                string ruta = RUTACOBRO + "IXDP" + i.ToString().PadLeft(5, '0') + "." + asociado + "." + fechaarchivo + i++;
                 System.IO.File.WriteAllLines(ruta, lines);
                 item.Contenido = registrodecontrol + "|" + encabezado + "|" + credito;
                 item.ReferenciaArchivoBanco = numeroorden;
-                item.Nombre = "I0005." + asociado + "." + fechaarchivo + ".txt";
+                item.Nombre = "IXDP" + i.ToString().PadLeft(5, '0') + "." + asociado + "." + fechaarchivo + ".txt";
                 item.Ruta = ruta;
 
                 CP_ArchivoREPO.AddEntity(item);
                 CP_ArchivoREPO.SaveChanges();
                 cobro.ArchivoLecturaPolar = item.Id;
-
+                i++;
             }
 
             EstadoCuentaREPO.SaveChanges();

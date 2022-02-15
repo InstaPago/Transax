@@ -52,7 +52,7 @@
       <HintPath>..\ProcesoPAG\bin\Debug\FileHelpers.dll</HintPath>
     </Reference>
     <Reference Include="Renci.SshNet">
-      <HintPath>..\..\..\..\..\Documents\Renci.SshNet.dll</HintPath>
+      <HintPath>..\..\..\..\..\OneDrive\Documents\Renci.SshNet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

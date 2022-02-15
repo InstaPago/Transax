@@ -182,14 +182,22 @@
                         <tbody>
                             @foreach (InstaTransfer.DataAccess.AE_ValorAccionTR item in ValorAccionTR)
                             {
+                                decimal NuevoTotal = 0;
+                                //if (item.Id == 1970)
+                                //{
+                                //    NuevoTotal = EstadoCuentaHistoria.Where(u => u.FechaOperacion.Day == item.FechaOperacion.Day && u.FechaOperacion.Month == item.FechaOperacion.Month && u.FechaOperacion.Year == item.FechaOperacion.Year).Sum(u => u.Monto);
+
+                                //}
+
                                 //decimal NuevoTotal = EstadoCuentaHistoria.Where(u => u.FechaOperacion.Day == item.FechaOperacion.Day && u.FechaOperacion.Month == item.FechaOperacion.Month && u.FechaOperacion.Year == item.FechaOperacion.Year).Sum(u => u.Monto);
                                 decimal _diferencia = 0;
-                                decimal NuevoTotal = 0;
+
                                 decimal TD = item.TasaDiferencia == null ? 0 : item.TasaDiferencia.Value;
                                 decimal variacion = item.NuevoCapital - item.CapitalInicial;
                                 if (item.UtilidadReportada == 0)
                                 {
                                     variacion = 0;
+                                    NuevoTotal = EstadoCuentaHistoria.Where(u => u.FechaOperacion.Day == item.FechaOperacion.Day && u.FechaOperacion.Month == item.FechaOperacion.Month && u.FechaOperacion.Year == item.FechaOperacion.Year).Sum(u => u.Monto);
                                 }
                                 else
                                 {
@@ -200,19 +208,26 @@
                                 diferencia = diferencia + (NuevoTotal - item.TotalCobroDiario);
                                 _diferencia = NuevoTotal - item.TotalCobroDiario;
 
+                                if (item.PagoUtilidadAdministrador < 0 || item.PagoUtilidadMesInversionista < 0 || item.PagoCapitalInversionista < 0 || item.CapitalNuevoIngreso > 0 || item.Prestamo > 0)
+                                {
+                                    NuevoTotal = 0;
+                                    _diferencia = NuevoTotal - item.TotalCobroDiario;
+                                }
+
+
 
                                 #region
-                                decimal  cobrado = 0;
+                                decimal cobrado = 0;
                                 decimal reembolso = 0;
                                 decimal prestado = 0;
-                                foreach (var _elemento in ListaAvanceHistorico.Where(u => u.FechaInicioCobro != null &&  u.FechaInicioCobro.Value.Day <= item.FechaOperacion.Day && u.FechaInicioCobro.Value.Month <= item.FechaOperacion.Month && u.FechaInicioCobro.Value.Year <= item.FechaOperacion.Year))
+                                foreach (var _elemento in ListaAvanceHistorico.Where(u => u.FechaInicioCobro != null && u.FechaInicioCobro.Value.Day <= item.FechaOperacion.Day && u.FechaInicioCobro.Value.Month <= item.FechaOperacion.Month && u.FechaInicioCobro.Value.Year <= item.FechaOperacion.Year))
                                 {
                                     decimal porcentajeoperacion = (_elemento.Reembolso - _elemento.Avance) * 100 / _elemento.Avance;
-                                    decimal _cobrado = EstadoCuentaHistoria.Where(u => u.IdAvance == _elemento.Id && !u.Abono && !u.SoloUtilidad &&  u.FechaOperacion.Day <= item.FechaOperacion.Day && u.FechaOperacion.Month <= item.FechaOperacion.Month && u.FechaOperacion.Year <= item.FechaOperacion.Year).Sum(u => u.Monto);
+                                    decimal _cobrado = EstadoCuentaHistoria.Where(u => u.IdAvance == _elemento.Id && !u.Abono && !u.SoloUtilidad && u.FechaOperacion.Day <= item.FechaOperacion.Day && u.FechaOperacion.Month <= item.FechaOperacion.Month && u.FechaOperacion.Year <= item.FechaOperacion.Year).Sum(u => u.Monto);
                                     reembolso = reembolso + (_elemento.Reembolso - _cobrado);
                                     if (_elemento.Modalidad)
                                     {
-                                        _cobrado = EstadoCuentaHistoria.Where(u => u.IdAvance == _elemento.Id && !u.Abono && !u.SoloUtilidad &&  u.FechaOperacion.Day <= item.FechaOperacion.Day && u.FechaOperacion.Month <= item.FechaOperacion.Month && u.FechaOperacion.Year <= item.FechaOperacion.Year).Sum(u => u.Monto);
+                                        _cobrado = EstadoCuentaHistoria.Where(u => u.IdAvance == _elemento.Id && !u.Abono && !u.SoloUtilidad && u.FechaOperacion.Day <= item.FechaOperacion.Day && u.FechaOperacion.Month <= item.FechaOperacion.Month && u.FechaOperacion.Year <= item.FechaOperacion.Year).Sum(u => u.Monto);
 
                                     }
                                     else
@@ -649,7 +664,7 @@
                                                 }
                                                 else
                                                 {
-                                            <td>@(((MontoConGasto - diferenciatasa) -  ((MontoConGasto - diferenciatasa) / ((porcen / 100) + 1))).ToString("N") ) $</td>
+                                                    <td>@(((MontoConGasto - diferenciatasa) -  ((MontoConGasto - diferenciatasa) / ((porcen / 100) + 1))).ToString("N") ) $</td>
                                                 }
 
 
@@ -670,7 +685,7 @@
                                             else
                                             {
 
-                                                totalganancia = (totalganancia + ((MontoConGasto - diferenciatasa) - ((MontoConGasto - diferenciatasa) / ((porcen / 100)+1))));
+                                                totalganancia = (totalganancia + ((MontoConGasto - diferenciatasa) - ((MontoConGasto - diferenciatasa) / ((porcen / 100) + 1))));
                                             }
 
                                         }
@@ -1494,15 +1509,15 @@
                     // split number by decimal point
                     var left_side = input_val.substring(0, decimal_pos);
                     var right_side = input_val.substring(decimal_pos);
-                 
-                    
+
+
                     // add commas to left side of number
                     left_side = formatNumber(left_side);
 
                     // validate right side
                     right_side = formatNumber(right_side);
 
-                    
+
 
                     // On blur make sure 2 numbers after decimal
                     if (blur === "blur") {
@@ -1521,7 +1536,7 @@
                     // no decimal entered
                     // add commas to number
                     // remove all non-digits
-           
+
                     input_val = formatNumber(input_val);
                     input_val = input_val;
 

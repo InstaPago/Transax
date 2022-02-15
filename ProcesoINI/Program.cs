@@ -531,24 +531,24 @@ namespace ProcesoCOB
                                 || file.Name.Contains("540132787RAFIL")
                                 || file.Name.Contains("205903844RAFIL"))
                                 {
-                                        texto = texto + "encontre: " + file.Name + "\r\n";
-                                        string remoteFileName = file.Name;
-                                        //texto = texto + "encontre y recorro " + localDirectory + remoteFileName + " | ";
-                                        try
+                                    texto = texto + "encontre: " + file.Name + "\r\n";
+                                    string remoteFileName = file.Name;
+                                    //texto = texto + "encontre y recorro " + localDirectory + remoteFileName + " | ";
+                                    try
+                                    {
+                                        using (Stream file1 = System.IO.File.OpenWrite(localDirectory + remoteFileName))
                                         {
-                                            using (Stream file1 = System.IO.File.OpenWrite(localDirectory + remoteFileName))
-                                            {
-                                                sftp.DownloadFile(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName, file1);
-                                                texto = texto + "lo descargue \r\n";
-                                                var inFile = sftp.Get(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName);
-                                                texto = texto + "lo movi \r\n" + sftp.WorkingDirectory + backupDirectory + " | ";
-                                                inFile.MoveTo(sftp.WorkingDirectory + backupDirectory + remoteFileName);
-                                            }
+                                            sftp.DownloadFile(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName, file1);
+                                            texto = texto + "lo descargue \r\n";
+                                            var inFile = sftp.Get(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName);
+                                            texto = texto + "lo movi \r\n" + sftp.WorkingDirectory + backupDirectory + " | ";
+                                            inFile.MoveTo(sftp.WorkingDirectory + backupDirectory + remoteFileName);
                                         }
-                                        catch (Exception e)
-                                        {
-                                            texto = texto + "intento descargar y fallo : " + e.Message + " \r\n ";
-                                        }
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        texto = texto + "intento descargar y fallo : " + e.Message + " \r\n ";
+                                    }
                                 }
                             }
                         }
@@ -571,7 +571,7 @@ namespace ProcesoCOB
 
         }
 
- 
+
         /// <summary>
         /// METODO 2 GENERA ARCHIVO AFILIA.TXT PARA BANESCO Y LO SUBE AL SFTP
         /// </summary>
@@ -590,7 +590,7 @@ namespace ProcesoCOB
             //BUSCAR RIF BASE DE DATOS
             string rif = rifreferencia;
             string Filler = "                          ";
-            string Referencia = DateTime.Now.AddDays(0).ToString("ddMMyyyyhhmm");
+            string Referencia = DateTime.Now.AddDays(0).ToString("ddMMyyyyffff");
             idarchivo = Referencia;
             string documento = "AFILIA";
             string registrodecontrol = registro + rif + Filler + Referencia.PadRight(30) + documento;
@@ -827,7 +827,7 @@ namespace ProcesoCOB
                 // and then closes the file.  You do NOT need to call Flush() or Close().
 
                 string rutainierror = ConfigurationManager.AppSettings["rutaErrorIniPolar"].ToString();
-                string ruta = rutainierror + nombrearchivo;
+                string ruta = rutainierror + nombrearchivo + ".txt";
                 System.IO.File.WriteAllLines(ruta, lines);
             }
             else
@@ -836,7 +836,7 @@ namespace ProcesoCOB
                 string line = "Sin Error";
                 // WriteAllLines creates a file, wregistrodecontrolrites a collection of strings to the file,
                 // and then closes the file.  You do NOT need to call Flush() or Close().
-                string ruta = rutainierror + nombrearchivo;
+                string ruta = rutainierror + nombrearchivo + ".txt";
                 System.IO.File.WriteAllText(ruta, line);
 
             }
