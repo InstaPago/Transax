@@ -22,7 +22,7 @@ namespace ProcesoCOB
         URepository<CP_Archivo> CP_ArchivoREPO = new URepository<CP_Archivo>();
         URepository<CP_INI> CP_IniRepo = new URepository<CP_INI>();
         URepository<CP_ArchivoItem> CP_ArchivoItemRepo = new URepository<CP_ArchivoItem>();
-
+        static int GlobalCounter = 1;
 
         public string COBERROR_UploadAndMove()
         {
@@ -127,7 +127,7 @@ namespace ProcesoCOB
             texto = texto + "se encontraron:" + Files.Count() + "archivos \r\n";
             foreach (FileInfo file in Files)
             {
-                if (file.Name.Contains("IXDP."))
+                if (file.Name.Contains("IXDP"))
                 {
                     Console.WriteLine("procesando:" + file.Name + " \r\n");
                     string uploadFile = file.FullName.ToString();
@@ -260,6 +260,7 @@ namespace ProcesoCOB
 
         public string COB_LecturaPOLAR()
         {
+            GlobalCounter = 1;
             CultureInfo __newCulture;
             __newCulture = new CultureInfo("es-VE");
             Thread.CurrentThread.CurrentUICulture = __newCulture;
@@ -841,7 +842,7 @@ namespace ProcesoCOB
             Thread.CurrentThread.CurrentCulture = __newCulture;
             string RUTACOBRO = ConfigurationManager.AppSettings["rutaCobroBanesco"].ToString();
             List<CP_Archivo> Archivos = new List<CP_Archivo>();
-            int i = 1;
+            //int i = 1;
             foreach (var cobro in Cobros)
             {
                 string lineas = "";
@@ -1013,17 +1014,18 @@ namespace ProcesoCOB
 
                 // WriteAllLines creates a file, wregistrodecontrolrites a collection of strings to the file,
                 // and then closes the file.  You do NOT need to call Flush() or Close().
-                string ruta = RUTACOBRO + "IXDP" + i.ToString().PadLeft(5, '0') + "." + asociado + "." + fechaarchivo + i++;
+                //string ruta = RUTACOBRO + "IXDP" + i.ToString().PadLeft(5, '0') + "." + asociado + "." + fechaarchivo + i++;
+                string ruta = RUTACOBRO + "IXDP" + GlobalCounter.ToString().PadLeft(5, '0');
                 System.IO.File.WriteAllLines(ruta, lines);
                 item.Contenido = registrodecontrol + "|" + encabezado + "|" + credito;
                 item.ReferenciaArchivoBanco = numeroorden;
-                item.Nombre = "IXDP" + i.ToString().PadLeft(5, '0') + "." + asociado + "." + fechaarchivo + ".txt";
+                item.Nombre = "IXDP" + GlobalCounter.ToString().PadLeft(5, '0')+".txt";
                 item.Ruta = ruta;
 
                 CP_ArchivoREPO.AddEntity(item);
                 CP_ArchivoREPO.SaveChanges();
                 cobro.ArchivoLecturaPolar = item.Id;
-                i++;
+                GlobalCounter++;
             }
 
             EstadoCuentaREPO.SaveChanges();
