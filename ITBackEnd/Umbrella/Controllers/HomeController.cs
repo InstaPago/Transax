@@ -570,17 +570,27 @@ namespace Umbrella.Controllers
             {
                 decimal porcentajeoperacion = (item.Reembolso - item.Avance) * 100 / item.Avance;
                 decimal _cobrado = item.AE_EstadoCuentas.Where(u => !u.Abono && !u.SoloUtilidad).Sum(u => u.Monto);
-                reembolso = reembolso + (item.Reembolso - _cobrado);
+                //reembolso = reembolso + (item.Reembolso - _cobrado);
                 if (item.Modalidad)
                 {
+
+                    if (item.Id == 234)
+                    { 
+                    
+                    }
+
                     _cobrado = item.AE_EstadoCuentas.Where(u => !u.Abono && !u.SoloUtilidad).Sum(u => u.Monto);
-  
+
+                    reembolso = reembolso + (item.Avance - _cobrado);
                 }
                 else {
                     decimal t_cobrado = item.AE_EstadoCuentas.Where(u => !u.Abono && !u.SoloUtilidad).Sum(u => u.Monto);
 
                     _cobrado = t_cobrado / (1 + (porcentajeoperacion/100));
+
+                    reembolso = reembolso + (item.Reembolso - _cobrado);
                 }
+
                 cobrado = cobrado + (_cobrado);
             
                 if (item.Modalidad)

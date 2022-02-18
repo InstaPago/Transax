@@ -453,21 +453,21 @@ namespace ProcesoPAG
                 string departamento = "";
                 string ordenante = "";
                 string _numerocuenta = "";
-                if (_getCP.Nombre.Contains("540132787"))
+                if (_getCP.Contenido.Contains("540132787"))
                 {
                     departamento = "0600";
                     ordenante = "EFE C A";
                     _numerocuenta = "01340850598503004455";
                     Empresas.Add(departamento);
                 }
-                else if (_getCP.Nombre.Contains("205903844"))
+                else if (_getCP.Contenido.Contains("205903844"))
                 {
                     departamento = "0100";
                     ordenante = "PEPSI C A";
                     _numerocuenta = "01340850598503004195";
                     Empresas.Add(departamento);
                 }
-                else if (_getCP.Nombre.Contains("540133497"))
+                else if (_getCP.Contenido.Contains("540133497"))
                 {
                     departamento = "0001";
                     ordenante = "ALIMENTOS POLAR C A";
@@ -475,7 +475,7 @@ namespace ProcesoPAG
                     Empresas.Add(departamento);
 
                 }
-                else if (_getCP.Nombre.Contains("540130908"))
+                else if (_getCP.Contenido.Contains("540130908"))
                 {
                     departamento = "0002";
                     ordenante = "CERVECERIA C A";
@@ -1168,7 +1168,7 @@ namespace ProcesoPAG
             p.COB_LecturaArchivoSalidaBanesco();
 
             Console.WriteLine("Procesamos cobros para generar pag \r\n");
-            //p.PAG_UploadAndMove();
+            p.PAG_UploadAndMove();
             Console.WriteLine("Fin procesamiento \r\n");
 
 
