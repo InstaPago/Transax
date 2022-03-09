@@ -772,6 +772,22 @@ namespace ProcesoCOB
             return nuevostring;
         }
 
+        public bool Test()
+        {
+
+            for (int i = 0; i < 1000; i++)
+            {
+                Random _Random = new Random();
+                string ram = _Random.Next(0, 99999).ToString();
+                Console.WriteLine(ram.ToString().PadLeft(6,'0') +  "\r\n");
+                System.Threading.Thread.Sleep(1);
+
+
+            }
+            Console.ReadLine();
+            return true;
+        }
+
         public bool ERRORCOB_GenerarPOLAR(List<CP_ArchivoItem> _items, string codigo)
         {
             CultureInfo __newCulture;
@@ -845,6 +861,7 @@ namespace ProcesoCOB
             //int i = 1;
             foreach (var cobro in Cobros)
             {
+                System.Threading.Thread.Sleep(250);
                 string lineas = "";
                 CP_Archivo item = new CP_Archivo();
 
@@ -872,13 +889,19 @@ namespace ProcesoCOB
                 //{
                 //    id = id.PadLeft(4, '0');
                 //}
-                string numeroorden = DateTime.Now.AddDays(0).ToString("yyMMddffff");
+                string __NumeroDocumento = ChangeString(cobro.NumeroDocumento.ToString());
+                int _length = __NumeroDocumento.Length >= 8 ? 8 : __NumeroDocumento.Length;
+                string recibo = __NumeroDocumento.Substring(__NumeroDocumento.Length - _length, _length).PadLeft(8, '0');
+                string reciboX = __NumeroDocumento.Substring(__NumeroDocumento.Length - 3, 3).PadLeft(3, '0');
+                Random _Random = new Random();
+                string ram = _Random.Next(0, 999).ToString();
+                string asociado = _asociado;
+                string numeroorden = DateTime.Now.AddDays(0).ToString("ddss") + ram.PadLeft(3,'0') + reciboX.PadLeft(3, '0') + asociado.Substring(asociado.Length - 2, 2);
                 string _fecha = DateTime.Now.AddDays(0).ToString("yyyyMMdd");
                 //numeroorden = numeroorden;
                 //datos fijos
                 string registro = "00";
                 //string idtransaccion = "2020040801";Codigo
-                string asociado = _asociado;
                 //
                 //asociado = "540207829";
                 string _rif = "";
@@ -916,9 +939,9 @@ namespace ProcesoCOB
                 }
 
                 string tipo = "03";
-                string __NumeroDocumento = ChangeString(cobro.NumeroDocumento.ToString());
-                int _length = __NumeroDocumento.Length >= 8 ? 8 : __NumeroDocumento.Length;
-                string recibo = __NumeroDocumento.Substring(__NumeroDocumento.Length - _length, _length).PadLeft(8, '0');
+                //string __NumeroDocumento = ChangeString(cobro.NumeroDocumento.ToString());
+                //int _length = __NumeroDocumento.Length >= 8 ? 8 : __NumeroDocumento.Length;
+                //string recibo = __NumeroDocumento.Substring(__NumeroDocumento.Length - _length, _length).PadLeft(8, '0');
                 decimal _cambio = Math.Round(cobro.TotalArchivo, 2);
                 _cambio = _cambio * 100;
                 total = total + _cambio;
@@ -1156,6 +1179,8 @@ namespace ProcesoCOB
 
         }
 
+
+
         static void Main(string[] args)
         {
             CultureInfo __newCulture;
@@ -1166,6 +1191,8 @@ namespace ProcesoCOB
             Program p = new Program();
 
             StringBuilder Logs = new StringBuilder();
+            //p.Test();
+
             Logs.Append("Iniciamos busqueda en ftp\r\n");
             string result = p.COB_DownloadAndMove(); // Calling method
             Logs.Append(result);

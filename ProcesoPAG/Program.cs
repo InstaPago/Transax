@@ -130,8 +130,10 @@ namespace ProcesoPAG
                         string departamento = "";
                         string ordenante = "";
                         string _numerocuenta = "";
+                        string empresaid = "";
                         if (file.Name.Contains("540132787"))
                         {
+                            empresaid = "540132787";
                             departamento = "0600";
                             ordenante = "EFE C A";
                             _numerocuenta = "01340850598503004455";
@@ -139,6 +141,7 @@ namespace ProcesoPAG
                         }
                         else if (file.Name.Contains("205903844"))
                         {
+                            empresaid = "205903844";
                             departamento = "0100";
                             ordenante = "PEPSI C A";
                             _numerocuenta = "01340850598503004195";
@@ -146,6 +149,7 @@ namespace ProcesoPAG
                         }
                         else if (file.Name.Contains("540133497"))
                         {
+                            empresaid = "540133497";
                             departamento = "0001";
                             ordenante = "ALIMENTOS POLAR C A";
                             _numerocuenta = "01340375913751013514";
@@ -154,6 +158,7 @@ namespace ProcesoPAG
                         }
                         else if (file.Name.Contains("540130908"))
                         {
+                            empresaid = "540130908";
                             departamento = "0002";
                             ordenante = "CERVECERIA C A";
                             _numerocuenta = "01340850598503004357";
@@ -196,7 +201,17 @@ namespace ProcesoPAG
                                 Registro.Trading = line.Substring(0, 15).ToString().TrimEnd();
                                 Registro.Filler = line.Substring(15, 2).ToString().TrimEnd();
                                 Registro.TipoRegistro = line.Substring(16, 2).ToString().TrimEnd();
-                                Registro.__NumeroReferenciaRespuesta = line.Substring(19, 10).ToString().TrimEnd();
+                                Registro.__NumeroReferenciaRespuesta = line.Substring(19, 12).ToString().TrimEnd();
+                                if (Registro.__NumeroReferenciaRespuesta == "DCREPETIDO")
+                                {
+                                    string final = RUTABACKCOBROS + file.Name + DateTime.Now.ToString("dd-MM-yy-mm-ss");
+                                    string[] _lines = System.IO.File.ReadAllLines(file.FullName);
+                                    System.IO.File.WriteAllLines(final, _lines);
+                                    //texto = texto + "borrando :" + ele.Name + "\r\n";
+                                    Console.WriteLine("borrando \r\n");
+                                    file.Delete();
+                                    break;
+                                }
                                 //IDarchivo = line.Substring(19, 10).ToString().TrimEnd();
                                 //Registro.__FechaRespuesta = line.Substring(54, 67).ToString().TrimEnd();
                                 //Registro.__NumeroReferenciaOrdenPago = line.Substring(68, 102).ToString().TrimEnd();
@@ -208,8 +223,8 @@ namespace ProcesoPAG
                                 //string _line = Registro.__NumeroReferenciaOrdenPago + "|1|";
                                 //Array.Resize(ref linesArchivo, linesArchivo.Length + 1);
                                 //linesArchivo[linesArchivo.Length - 1] = _line;
-
-                                getCP = ArchivoREPO.GetAllRecords().Where(u => u.ReferenciaArchivoBanco == Registro.__NumeroReferenciaRespuesta).OrderByDescending(u => u.FechaCreacion).FirstOrDefault();
+                                string __NumeroReferencia = lines[1].Substring(20, 8).ToString().TrimEnd();
+                                getCP = ArchivoREPO.GetAllRecords().Where(u => u.ReferenciaArchivoBanco == Registro.__NumeroReferenciaRespuesta && u.Contenido.Contains(empresaid) && u.Contenido.Contains(__NumeroReferencia)).OrderByDescending(u => u.FechaCreacion).FirstOrDefault();
                                 ItemsArchivo = EstadoCuentaREPO.GetAllRecords().Where(u => u.ArchivoLecturaPolar == getCP.Id).ToList();
 
                             }
@@ -711,9 +726,11 @@ namespace ProcesoPAG
                             Registro.Trading = line.Substring(0, 15).ToString().TrimEnd();
                             Registro.Filler = line.Substring(15, 2).ToString().TrimEnd();
                             Registro.TipoRegistro = line.Substring(16, 2).ToString().TrimEnd();
-                            Registro.__NumeroReferenciaRespuesta = line.Substring(19, 10).ToString().TrimEnd();
-
-                            ArchivosRepsuesta.Add(Registro.__NumeroReferenciaRespuesta);
+                            Registro.__NumeroReferenciaRespuesta = line.Substring(19, 12).ToString().TrimEnd();
+                            if (Registro.__NumeroReferenciaRespuesta != "DCREPETIDO")
+                            {
+                                ArchivosRepsuesta.Add(Registro.__NumeroReferenciaRespuesta);
+                            }
 
 
                         }
@@ -798,7 +815,7 @@ namespace ProcesoPAG
                         {
 
                             EstructuraSalidaBanescoEncabezado Registro = new EstructuraSalidaBanescoEncabezado();
-                            Registro.__NumeroReferenciaRespuesta = line.Substring(37, 10).ToString().TrimEnd();
+                            Registro.__NumeroReferenciaRespuesta = line.Substring(37, 12).ToString().TrimEnd();
                             ArchivosEnviados.Add(Registro.__NumeroReferenciaRespuesta);
                             break;
 

@@ -214,6 +214,11 @@
                                     _diferencia = NuevoTotal - item.TotalCobroDiario;
                                 }
 
+                                if (item.TotalCobroDiario == 0)
+                                {
+                                    _diferencia = 0;
+                                }
+
 
 
                                 #region
