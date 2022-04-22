@@ -410,6 +410,384 @@ namespace Umbrella.Controllers
 
         }
 
+        public bool BalancearFondo()
+        {
+
+            //OBTENER VALORES
+            decimal totalutilidafondo = 0;
+            decimal totalutilidinver = 0;
+            decimal utilidadacumulado = 0;
+            decimal retitocapital = 0;
+            AE_ValorAccionTR ValorAccionTR = AE_ValorAccionTRREPO.GetAllRecords().OrderByDescending(u => u.FechaCreacionRegistro).FirstOrDefault();
+            List<AE_Operacion> Operaciones = AE_OperacionREPO.GetAllRecords().Where(u => u.IdEstatus == 1).ToList();
+            foreach (var item in Operaciones)
+            {
+                ValorAccionTR = AE_ValorAccionTRREPO.GetAllRecords().OrderByDescending(u => u.FechaCreacionRegistro).FirstOrDefault();
+                decimal accionesviejas = item.RepresentacionFondo;
+                decimal total = item.RepresentacionFondo * ValorAccionTR.ValorAccion;
+                decimal utilidad = total - item.Monto;
+                decimal utilidadreal = utilidad * item.PorcentajeGanancia / 100;
+                decimal utilidadfondo = utilidad * (100 - item.PorcentajeGanancia) / 100;
+                decimal montoactual = item.Monto;
+                totalutilidinver = totalutilidinver + utilidadreal;
+                totalutilidafondo = totalutilidafondo + utilidadfondo;
+
+                //EVALUAMO SI NO HAY SOLICITUD DE RETIRO DE UTILIDAD
+                if (item.RetiraUtilidadMes)
+                {
+                    //CREAMOS REGISTRO PAGO REINVERSION
+                    AE_OperacionPago Pago = new AE_OperacionPago();
+                    Pago.Date = DateTime.Now;
+                    Pago.IdOperacion = item.Id;
+                    Pago.Moneda = 1;
+                    Pago.Monto = utilidadreal;
+                    Pago.Tasa = 1;
+                    Pago.FechaPago = DateTime.Now;
+                    Pago.TipoPagoCapital = false;
+                    Pago.TipoPagoUtilidad = true;
+                    Pago.TipoReinversionUtilidad = false;
+                    AE_OperacionPagoREPO.AddEntity(Pago);
+                    AE_OperacionPagoREPO.SaveChanges();
+                    utilidadacumulado = utilidadacumulado + utilidadreal;
+                    //AJUSTAMOS OPERACION
+                    decimal accionesnuevas = (montoactual) / ValorAccionTR.ValorAccion;
+                    item.Monto = item.Monto;
+                    item.MontoGanado = item.MontoGanado;
+                    item.RepresentacionFondo = accionesnuevas;
+                    AE_OperacionREPO.SaveChanges();
+
+                    //AJUSTAMOS EL BALANCE DE LAS ACCIONES
+                    decimal ajusteacciones = accionesnuevas - accionesviejas;
+                    AE_BalanceAccione elemento = new AE_BalanceAccione();
+                    var balanceAcciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.Id).FirstOrDefault();
+
+                    elemento.TotaCapital = item.Monto + utilidadreal;
+                    elemento.AccionesRetiradas = 0;
+                    elemento.CapitalEntrada = 0;
+                    elemento.CapitalSalida = 0;
+                    elemento.FactorInicial = 0;
+                    elemento.FechaOperacion = DateTime.Now;
+                    elemento.FechaRegistro = DateTime.Now;
+                    elemento.FechaUltimaActualizacion = DateTime.Now;
+                    elemento.TotalAccionesExistentes = 0;
+                    elemento.AccionesEntrantes = 0;
+                    elemento.AccionesRetiradas = 0;
+                    elemento.AccionesAjustadas = ajusteacciones;
+                    elemento.TotalAcciones = balanceAcciones.TotalAcciones + ajusteacciones;
+                    elemento.IdInversionista = item.IdInversionista;
+                    elemento.ValorAcciones = ValorAccionTR.ValorAccion;
+                    AE_BalanceAccionesREPO.AddEntity(elemento);
+                    AE_BalanceAccionesREPO.SaveChanges();
+
+                    AE_ValorAccionTR _NewValorAccionTR = new AE_ValorAccionTR();
+                    _NewValorAccionTR.FechaCreacionRegistro = DateTime.Now;
+                    _NewValorAccionTR.FechaOperacion = DateTime.Now;
+                    _NewValorAccionTR.FechaUltimaActualizacion = DateTime.Now;
+
+                    _NewValorAccionTR.GastoReportado = 0;
+                    _NewValorAccionTR.CapitalInicial = ValorAccionTR.NuevoCapital;
+                    _NewValorAccionTR.CapitalPorCobrar = ValorAccionTR.CapitalPorCobrar;
+                    _NewValorAccionTR.AbonoCapital = 0;
+                    _NewValorAccionTR.UtilidadReportada = 0;
+                    //ValorAccionTR.SaldoUSD = Ultimo.SaldoUSD + decimal.Parse(totalcobrodiario.Replace('.', ','));
+                    _NewValorAccionTR.SaldoUSD = ValorAccionTR.SaldoUSD - utilidadreal;
+                    _NewValorAccionTR.TotalCobroDiario = 0;
+                    //ValorAccionTR.NuevoCapital = Ultimo.NuevoCapital + decimal.Parse(totalgananciadiaria.Replace('.', ','));
+
+                    _NewValorAccionTR.UsdTransito = 0;
+                    _NewValorAccionTR.UsdVenezuela = 0;
+                    _NewValorAccionTR.CuentaVenezuela = 0;
+                    _NewValorAccionTR.NuevoCapital = ValorAccionTR.NuevoCapital - utilidadreal;
+
+                    _NewValorAccionTR.PagoCapitalInversionista = 0;
+                    _NewValorAccionTR.PagoUtilidadMesInversionista = utilidadreal * -1;
+                    _NewValorAccionTR.PagoUtilidadAdministrador = 0;
+                    _NewValorAccionTR.TotalAcciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.FechaRegistro).FirstOrDefault().TotalAcciones;
+                    _NewValorAccionTR.ValorAccion = ValorAccionTR.ValorAccion;
+
+                    AE_ValorAccionTRREPO.AddEntity(_NewValorAccionTR);
+                    AE_ValorAccionTRREPO.SaveChanges();
+
+                }
+                else if (item.SeRetiraFondo)
+                {
+                    //CREAMOS REGISTRO PAGO REINVERSION
+                    AE_OperacionPago Pago = new AE_OperacionPago();
+                    Pago.Date = DateTime.Now;
+                    Pago.IdOperacion = item.Id;
+                    Pago.Moneda = 1;
+                    Pago.Monto = item.Monto + utilidadreal;
+                    Pago.Tasa = 1;
+                    Pago.FechaPago = DateTime.Now;
+                    Pago.TipoPagoCapital = true;
+                    Pago.TipoPagoUtilidad = false;
+                    Pago.TipoReinversionUtilidad = false;
+                    AE_OperacionPagoREPO.AddEntity(Pago);
+                    AE_OperacionPagoREPO.SaveChanges();
+                    retitocapital = retitocapital + (item.Monto + utilidadreal);
+                    //AJUSTAMOS OPERACION
+                    decimal accionesnuevas = (montoactual + utilidadreal) / ValorAccionTR.ValorAccion;
+                    item.Monto = item.Monto + utilidadreal;
+                    item.MontoGanado = item.MontoGanado + utilidadreal;
+                    item.RepresentacionFondo = accionesnuevas;
+                    item.IdEstatus = 2;
+                    AE_OperacionREPO.SaveChanges();
+
+                    //AJUSTAMOS EL BALANCE DE LAS ACCIONES
+                    decimal ajusteacciones = accionesnuevas - accionesviejas;
+                    AE_BalanceAccione elemento = new AE_BalanceAccione();
+                    var balanceAcciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.Id).FirstOrDefault();
+
+                    elemento.TotaCapital = item.Monto + utilidadreal;
+                    elemento.AccionesRetiradas = 0;
+                    elemento.CapitalEntrada = 0;
+                    elemento.CapitalSalida = 0;
+                    elemento.FactorInicial = 0;
+                    elemento.FechaOperacion = DateTime.Now;
+                    elemento.FechaRegistro = DateTime.Now;
+                    elemento.FechaUltimaActualizacion = DateTime.Now;
+                    elemento.TotalAccionesExistentes = 0;
+                    elemento.AccionesEntrantes = 0;
+                    elemento.AccionesRetiradas = accionesviejas;
+                    elemento.AccionesAjustadas = 0;
+                    elemento.TotalAcciones = balanceAcciones.TotalAcciones - accionesviejas;
+                    elemento.IdInversionista = item.IdInversionista;
+                    elemento.ValorAcciones = ValorAccionTR.ValorAccion;
+                    AE_BalanceAccionesREPO.AddEntity(elemento);
+                    AE_BalanceAccionesREPO.SaveChanges();
+
+                    AE_ValorAccionTR _NewValorAccionTR = new AE_ValorAccionTR();
+                    _NewValorAccionTR.FechaCreacionRegistro = DateTime.Now;
+                    _NewValorAccionTR.FechaOperacion = DateTime.Now;
+                    _NewValorAccionTR.FechaUltimaActualizacion = DateTime.Now;
+
+                    _NewValorAccionTR.GastoReportado = 0;
+                    _NewValorAccionTR.CapitalInicial = ValorAccionTR.NuevoCapital;
+                    _NewValorAccionTR.CapitalPorCobrar = ValorAccionTR.CapitalPorCobrar;
+                    _NewValorAccionTR.AbonoCapital = 0;
+                    _NewValorAccionTR.UtilidadReportada = 0;
+                    //ValorAccionTR.SaldoUSD = Ultimo.SaldoUSD + decimal.Parse(totalcobrodiario.Replace('.', ','));
+                    _NewValorAccionTR.SaldoUSD = ValorAccionTR.SaldoUSD - item.Monto;
+                    _NewValorAccionTR.TotalCobroDiario = 0;
+                    //ValorAccionTR.NuevoCapital = Ultimo.NuevoCapital + decimal.Parse(totalgananciadiaria.Replace('.', ','));
+
+                    _NewValorAccionTR.UsdTransito = 0;
+                    _NewValorAccionTR.UsdVenezuela = 0;
+                    _NewValorAccionTR.CuentaVenezuela = 0;
+                    _NewValorAccionTR.NuevoCapital = ValorAccionTR.NuevoCapital - item.Monto;
+
+                    _NewValorAccionTR.PagoCapitalInversionista = item.Monto * -1;
+                    _NewValorAccionTR.PagoUtilidadMesInversionista = 0;
+                    _NewValorAccionTR.PagoUtilidadAdministrador = 0;
+                    _NewValorAccionTR.TotalAcciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.FechaRegistro).FirstOrDefault().TotalAcciones;
+                    _NewValorAccionTR.ValorAccion = ValorAccionTR.ValorAccion;
+
+                    AE_ValorAccionTRREPO.AddEntity(_NewValorAccionTR);
+                    AE_ValorAccionTRREPO.SaveChanges();
+
+                }
+                else
+                {
+                    //CREAMOS REGISTRO PAGO REINVERSION
+                    AE_OperacionPago Pago = new AE_OperacionPago();
+                    Pago.Date = DateTime.Now;
+                    Pago.IdOperacion = item.Id;
+                    Pago.Moneda = 1;
+                    Pago.Monto = utilidadreal;
+                    Pago.Tasa = 1;
+                    Pago.FechaPago = DateTime.Now;
+                    Pago.TipoPagoCapital = false;
+                    Pago.TipoPagoUtilidad = false;
+                    Pago.TipoReinversionUtilidad = true;
+                    AE_OperacionPagoREPO.AddEntity(Pago);
+                    AE_OperacionPagoREPO.SaveChanges();
+
+                    //AJUSTAMOS OPERACION
+                    decimal accionesnuevas = (montoactual + utilidadreal) / ValorAccionTR.ValorAccion;
+                    item.Monto = item.Monto + utilidadreal;
+                    item.MontoGanado = item.MontoGanado + utilidadreal;
+                    item.RepresentacionFondo = accionesnuevas;
+                    AE_OperacionREPO.SaveChanges();
+
+                    //AJUSTAMOS EL BALANCE DE LAS ACCIONES
+                    decimal ajusteacciones = accionesnuevas - accionesviejas;
+                    AE_BalanceAccione elemento = new AE_BalanceAccione();
+                    var balanceAcciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.Id).FirstOrDefault();
+
+                    elemento.TotaCapital = item.Monto + utilidadreal;
+                    elemento.AccionesRetiradas = 0;
+                    elemento.CapitalEntrada = 0;
+                    elemento.CapitalSalida = 0;
+                    elemento.FactorInicial = 0;
+                    elemento.FechaOperacion = DateTime.Now;
+                    elemento.FechaRegistro = DateTime.Now;
+                    elemento.FechaUltimaActualizacion = DateTime.Now;
+                    elemento.TotalAccionesExistentes = 0;
+                    elemento.AccionesEntrantes = 0;
+                    elemento.AccionesRetiradas = 0;
+                    elemento.AccionesAjustadas = ajusteacciones;
+                    elemento.TotalAcciones = balanceAcciones.TotalAcciones + ajusteacciones;
+                    elemento.IdInversionista = item.IdInversionista;
+                    elemento.ValorAcciones = ValorAccionTR.ValorAccion;
+                    AE_BalanceAccionesREPO.AddEntity(elemento);
+                    AE_BalanceAccionesREPO.SaveChanges();
+
+
+                }
+
+                //PAGAMOS AL FONDO
+                AE_AdministradorPago Admin = new AE_AdministradorPago();
+                Admin.FechaRegistro = DateTime.Now;
+                Admin.IdOperacion = item.Id;
+                Admin.Moneda = 1;
+                Admin.Monto = utilidadfondo;
+                Admin.PagoUtilidad = true;
+                Admin.Tasa = 1;
+                AE_AdministradorPagoREPO.AddEntity(Admin);
+                AE_AdministradorPagoREPO.SaveChanges();
+
+                //AJUSTAMOS EL BALANCE
+                //List<AE_ValorAccionTR> ListValorAccionTR = AE_ValorAccionTRREPO.GetAllRecords().OrderByDescending(u => u.FechaCreacionRegistro).Take(5).ToList();
+
+
+            }
+            ValorAccionTR = AE_ValorAccionTRREPO.GetAllRecords().OrderByDescending(u => u.FechaCreacionRegistro).FirstOrDefault();
+            //var _balanceAcciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.Id).FirstOrDefault();
+            AE_ValorAccionTR NewValorAccionTR = new AE_ValorAccionTR();
+            NewValorAccionTR.FechaCreacionRegistro = DateTime.Now;
+            NewValorAccionTR.FechaOperacion = DateTime.Now;
+            NewValorAccionTR.FechaUltimaActualizacion = DateTime.Now;
+
+            NewValorAccionTR.GastoReportado = 0;
+            NewValorAccionTR.CapitalInicial = ValorAccionTR.NuevoCapital;
+            NewValorAccionTR.CapitalPorCobrar = ValorAccionTR.CapitalPorCobrar;
+            NewValorAccionTR.AbonoCapital = 0;
+            NewValorAccionTR.UtilidadReportada = 0;
+            //ValorAccionTR.SaldoUSD = Ultimo.SaldoUSD + decimal.Parse(totalcobrodiario.Replace('.', ','));
+            NewValorAccionTR.SaldoUSD = ValorAccionTR.SaldoUSD - totalutilidafondo;
+            NewValorAccionTR.TotalCobroDiario = 0;
+            //ValorAccionTR.NuevoCapital = Ultimo.NuevoCapital + decimal.Parse(totalgananciadiaria.Replace('.', ','));
+
+            NewValorAccionTR.UsdTransito = 0;
+            NewValorAccionTR.UsdVenezuela = 0;
+            NewValorAccionTR.CuentaVenezuela = 0;
+            NewValorAccionTR.NuevoCapital = ValorAccionTR.NuevoCapital - totalutilidafondo;
+
+            NewValorAccionTR.PagoCapitalInversionista = 0;
+            NewValorAccionTR.PagoUtilidadAdministrador = totalutilidafondo * -1;
+            NewValorAccionTR.PagoUtilidadMesInversionista = 0;
+            NewValorAccionTR.TotalAcciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.FechaRegistro).FirstOrDefault().TotalAcciones;
+            NewValorAccionTR.ValorAccion = ValorAccionTR.ValorAccion;
+
+            AE_ValorAccionTRREPO.AddEntity(NewValorAccionTR);
+            AE_ValorAccionTRREPO.SaveChanges();
+
+
+            AE_Cierre Ultimo = AE_CierreREPO.GetAllRecords().OrderByDescending(u => u.Date).FirstOrDefault();
+            AE_Cierre Nuevo = new AE_Cierre();
+            Nuevo.CapitalFInalMes = NewValorAccionTR.CapitalNuevoIngreso;
+            Nuevo.CapitalPrimeroMes = Ultimo.CapitalFInalMes;
+            Nuevo.Date = DateTime.Now;
+            Nuevo.Mes = DateTime.Now.AddMonths(-1).ToString("MMMM");
+            Nuevo.MontoAdministrador = totalutilidafondo;
+            Nuevo.MontoInversionista = totalutilidinver;
+            Nuevo.PagoUtilida = utilidadacumulado;
+            Nuevo.RetiroCapital = retitocapital;
+            Nuevo.ValorAccionInicio = Ultimo.ValorAccionFin;
+            Nuevo.ValorAccionFin = NewValorAccionTR.ValorAccion;
+            Nuevo.Rendimiento = ((Nuevo.ValorAccionFin - Nuevo.ValorAccionInicio) * 100) / Nuevo.ValorAccionInicio;
+            AE_CierreREPO.AddEntity(Nuevo);
+            AE_CierreREPO.SaveChanges();
+
+            return true;
+        }
+
+
+
+        public bool CerrarFondo()
+        {
+            List<AE_Avance> Avances = AE_AvanceREPO.GetAllRecords(u => u.IdEstatus == 1).ToList();
+
+            foreach (var item in Avances)
+            {
+                List<AE_EstadoCuenta> estadocuenta = AE_EstadoCuentaREPO.GetAllRecords().Where(u => u.IdAvance == item.Id).ToList();
+                decimal totalpagado = estadocuenta.Where(u => u.Abono == false && u.SoloUtilidad == false).Sum(u => u.Monto);
+                decimal capitalprestado = 0;
+                if (item.Modalidad)
+                {
+                    capitalprestado = item.Avance;
+                }
+                else
+                {
+                    capitalprestado = item.Reembolso;
+                }
+
+                decimal resto = capitalprestado - totalpagado;
+                AE_EstadoCuenta estadocuentapago = new AE_EstadoCuenta();
+                estadocuentapago.Abono = false;
+                estadocuentapago.Descripcion = "Pago";
+                estadocuentapago.Efectivo = false;
+                estadocuentapago.EfectivoCambiado = false;
+                estadocuentapago.Estatus = 1;
+                estadocuentapago.FechaOperacion = DateTime.Now;
+                estadocuentapago.FechaRegistro = DateTime.Now;
+                estadocuentapago.IdAvance = item.Id;
+                estadocuentapago.Lote = 99;
+                estadocuentapago.Monto = resto;
+                estadocuentapago.MontoBase = 0;
+                estadocuentapago.MontoBs = 0;
+                estadocuentapago.SaldoFinal = 0;
+                estadocuentapago.SaldoInicial = 0;
+                estadocuentapago.SoloUtilidad = false;
+                estadocuentapago.Tasa = 0;
+                AE_EstadoCuentaREPO.AddEntity(estadocuentapago);
+                AE_EstadoCuentaREPO.SaveChanges();
+
+
+            }
+            return true;
+        }
+
+
+        public bool AjustarValorAccion()
+        {
+
+            //OBTENER VALORES
+            AE_ValorAccionTR ValorAccionTR = new AE_ValorAccionTR();
+            ValorAccionTR.FechaCreacionRegistro = DateTime.Now;
+            ValorAccionTR.FechaOperacion = DateTime.Now;
+            ValorAccionTR.FechaUltimaActualizacion = DateTime.Now;
+            //ValorAccionTR.UtilidadReportada = decimal.Parse(totalgananciadiaria.Replace('.', ','));
+            AE_BalanceDiario Balance = AE_BalanceDiarioREPO.GetAllRecords().OrderByDescending(u => u.FechaCreacionRegistro).FirstOrDefault();
+            ValorAccionTR.GastoReportado = 0;
+            decimal Montoencuenta = Balance.TotalCuentaUsd;
+            decimal Cobros = 0;
+            decimal PendientePorcobrar = 0;
+
+            foreach (var item in AE_AvanceREPO.GetAllRecords().Where(u => u.IdEstatus == 1))
+            {
+                decimal porcen = (item.Reembolso - item.Avance) * 100 / item.Avance;
+                decimal montocobrado = item.AE_EstadoCuentas.Where(u => u.Abono == false && u.FechaOperacion < DateTime.Parse("01/09/2019")).Sum(u => u.Monto);
+                //montocobrado = (montocobrado - (montocobrado * item.GastoBanco / 100));
+                Cobros = Cobros + montocobrado;
+                decimal _PendientePorcobrar = item.Reembolso - montocobrado;
+                //_PendientePorcobrar = _PendientePorcobrar - (_PendientePorcobrar * porcen / 100);
+                _PendientePorcobrar = _PendientePorcobrar - (_PendientePorcobrar / (1 + porcen));
+                PendientePorcobrar = PendientePorcobrar + _PendientePorcobrar;
+            }
+            ValorAccionTR.NuevoCapital = PendientePorcobrar + Montoencuenta;
+            ValorAccionTR.CapitalInicial = 0;
+            ValorAccionTR.PagoCapitalInversionista = 0;
+            ValorAccionTR.PagoUtilidadMesInversionista = 0;
+            ValorAccionTR.TotalAcciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.FechaRegistro).FirstOrDefault().TotalAcciones;
+            ValorAccionTR.PagoUtilidadAdministrador = 0;
+            ValorAccionTR.ValorAccion = (PendientePorcobrar + Montoencuenta) / ValorAccionTR.TotalAcciones;
+            ValorAccionTR.UtilidadReportada = 0;
+            //AE_ValorAccionTRREPO.AddEntity(ValorAccionTR);
+            //AE_ValorAccionTRREPO.SaveChanges();
+            return true;
+        }
+
         #region Transax
 
         #region UBankStatementEntries
