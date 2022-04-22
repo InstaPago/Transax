@@ -749,44 +749,7 @@ namespace Umbrella.Controllers
         }
 
 
-        public bool AjustarValorAccion()
-        {
-
-            //OBTENER VALORES
-            AE_ValorAccionTR ValorAccionTR = new AE_ValorAccionTR();
-            ValorAccionTR.FechaCreacionRegistro = DateTime.Now;
-            ValorAccionTR.FechaOperacion = DateTime.Now;
-            ValorAccionTR.FechaUltimaActualizacion = DateTime.Now;
-            //ValorAccionTR.UtilidadReportada = decimal.Parse(totalgananciadiaria.Replace('.', ','));
-            AE_BalanceDiario Balance = AE_BalanceDiarioREPO.GetAllRecords().OrderByDescending(u => u.FechaCreacionRegistro).FirstOrDefault();
-            ValorAccionTR.GastoReportado = 0;
-            decimal Montoencuenta = Balance.TotalCuentaUsd;
-            decimal Cobros = 0;
-            decimal PendientePorcobrar = 0;
-
-            foreach (var item in AE_AvanceREPO.GetAllRecords().Where(u => u.IdEstatus == 1))
-            {
-                decimal porcen = (item.Reembolso - item.Avance) * 100 / item.Avance;
-                decimal montocobrado = item.AE_EstadoCuentas.Where(u => u.Abono == false && u.FechaOperacion < DateTime.Parse("01/09/2019")).Sum(u => u.Monto);
-                //montocobrado = (montocobrado - (montocobrado * item.GastoBanco / 100));
-                Cobros = Cobros + montocobrado;
-                decimal _PendientePorcobrar = item.Reembolso - montocobrado;
-                //_PendientePorcobrar = _PendientePorcobrar - (_PendientePorcobrar * porcen / 100);
-                _PendientePorcobrar = _PendientePorcobrar - (_PendientePorcobrar / (1 + porcen));
-                PendientePorcobrar = PendientePorcobrar + _PendientePorcobrar;
-            }
-            ValorAccionTR.NuevoCapital = PendientePorcobrar + Montoencuenta;
-            ValorAccionTR.CapitalInicial = 0;
-            ValorAccionTR.PagoCapitalInversionista = 0;
-            ValorAccionTR.PagoUtilidadMesInversionista = 0;
-            ValorAccionTR.TotalAcciones = AE_BalanceAccionesREPO.GetAllRecords().OrderByDescending(u => u.FechaRegistro).FirstOrDefault().TotalAcciones;
-            ValorAccionTR.PagoUtilidadAdministrador = 0;
-            ValorAccionTR.ValorAccion = (PendientePorcobrar + Montoencuenta) / ValorAccionTR.TotalAcciones;
-            ValorAccionTR.UtilidadReportada = 0;
-            //AE_ValorAccionTRREPO.AddEntity(ValorAccionTR);
-            //AE_ValorAccionTRREPO.SaveChanges();
-            return true;
-        }
+  
 
         #region Transax
 
