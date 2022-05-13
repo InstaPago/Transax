@@ -949,8 +949,10 @@ namespace ProcesoCOB
                 string moneda = "VES";
                 string numerocuenta = _cuenta;
                 string swift = "UNIOVECA";
-                //string _rif = Cobros.FirstOrDefault().AE_Avance.Commerce.Rif;
-                string nombre = _nombrecomercial.Replace(".", " ").Replace(",", " ").Replace("Ñ", "N").ToUpper().TrimEnd();
+                //string _rif = Cobros.FirstOrDefault().AE_Avance.Commerce.Rif;              
+
+                //string nombre = _nombrecomercial.Replace(".", " ").Replace(",", " ").Replace("Ñ", "N").ToUpper().TrimEnd();
+                string nombre = Regex.Replace(_nombrecomercial, @"[^A-Za-z0-9- ]+", "");
                 string libre = "423";
                 string contrato = _rifc;
                 string fechavencimiento = "       ";
