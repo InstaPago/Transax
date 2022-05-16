@@ -958,8 +958,8 @@ namespace ProcesoCOB
                 string fechavencimiento = "       ";
                 string debito = tipo + recibo.PadRight(30)
                     + montoacobrar.PadLeft(15, '0') + moneda + numerocuenta.PadRight(30)
-                    + swift.PadRight(11) + _rifc.PadRight(17) + nombre.PadRight(35)
-                    + libre + contrato.PadRight(35) + fechavencimiento;
+                    + swift.PadRight(11) + _rifc.PadRight(17) + nombre.Truncate(34).PadRight(35)
+                    + libre + contrato.Truncate(35).PadRight(35) + fechavencimiento;
                 _cobros.Add(debito);
 
 
@@ -1221,5 +1221,15 @@ namespace ProcesoCOB
         }
 
     }
+
+    public static class StringExt
+    {
+        public static string Truncate(this string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value)) return value;
+            return value.Length <= maxLength ? value : value.Substring(0, maxLength);
+        }
+    }
+
 
 }
