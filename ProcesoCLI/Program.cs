@@ -246,6 +246,8 @@ namespace ProcesoCLI
                                 {
                                     beneficiario.ActivoCLI = elemento[10] == "0" ? false : true;
                                     beneficiario.FechaVencimiento = elemento[16] == "1" ? true : false;
+                                    beneficiario.FechaActualizacion = DateTime.Now;
+
                                     CP_IniRepo.SaveChanges();
                                 }
                                 else
