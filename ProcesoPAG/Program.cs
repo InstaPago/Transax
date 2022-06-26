@@ -746,8 +746,8 @@ namespace ProcesoPAG
 
             string RUTABACKCOB = ConfigurationManager.AppSettings["rutaLecturaBackupCobrosBanescoR"].ToString();
             DirectoryInfo e = new DirectoryInfo(RUTABACKCOB);
-            FileInfo[] _Files = e.GetFiles().Where(u => u.LastWriteTime > DateTime.Now.AddHours(-(int.Parse(DateTime.Now.Hour.ToString())))).ToArray();
-            //FileInfo[] _Files = e.GetFiles().ToArray();
+            //FileInfo[] _Files = e.GetFiles().Where(u => u.LastWriteTime > DateTime.Now.AddHours(-(int.Parse(DateTime.Now.Hour.ToString())))).ToArray();
+            FileInfo[] _Files = e.GetFiles().ToArray();
 
             foreach (var file in _Files)
             {
@@ -1192,7 +1192,7 @@ namespace ProcesoPAG
             string RUTALOGS = ConfigurationManager.AppSettings["rutaLogs"].ToString() + "LOGS" + DateTime.Now.ToString("dd-MM-yy-ss-mm") + ".txt";
             System.IO.File.WriteAllText(RUTALOGS, Logs.ToString());
 
-            //Console.ReadLine();
+            Console.ReadLine();
         }
 
     }

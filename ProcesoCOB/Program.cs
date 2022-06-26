@@ -140,6 +140,15 @@ namespace ProcesoCOB
             FileInfo[] Files = d.GetFiles(); //Getting Text files
             Console.WriteLine("procesando:" + Files.Count() + " archivos \r\n");
             texto = texto + "se encontraron:" + Files.Count() + "archivos \r\n";
+
+            string startPath = RUTACOBRO;
+            string zipPath = RUTACOBRO + @"\zipped\cobros.zip";
+  
+
+            ZipFile.CreateFromDirectory(startPath, zipPath);
+
+
+
             foreach (FileInfo file in Files)
             {
                 if (file.Name.Contains(".ZIP"))
@@ -339,14 +348,14 @@ namespace ProcesoCOB
                 int ultimalinea = lines.Count();
                 var contenidoultimalinea = lines[ultimalinea - 1];
                 string fechaarchivo = contenidoultimalinea.Substring(0, 4) + "/" + contenidoultimalinea.Substring(4, 2) + "/" + contenidoultimalinea.Substring(6, 2);
-                if (DateTime.Now > DateTime.Parse(fechaarchivo).AddHours(23))
-                {
-                    vencido = true;
-                    string line = "Sin Cobros";
-                    string RUTAERRORCOB = ConfigurationManager.AppSettings["rutaErrorCOB"].ToString();
-                    string ruta = RUTAERRORCOB + "BANPAG" + referencia + ".txt";
-                    System.IO.File.WriteAllText(ruta, line);
-                }
+                //if (DateTime.Now > DateTime.Parse(fechaarchivo).AddHours(23))
+                //{
+                //    vencido = true;
+                //    string line = "Sin Cobros";
+                //    string RUTAERRORCOB = ConfigurationManager.AppSettings["rutaErrorCOB"].ToString();
+                //    string ruta = RUTAERRORCOB + "BANPAG" + referencia + ".txt";
+                //    System.IO.File.WriteAllText(ruta, line);
+                //}
 
                 List<_EstructuraCOB> Archivo = new List<_EstructuraCOB>();
                 List<CP_ArchivoItem> CPITEMS = new List<CP_ArchivoItem>();
@@ -759,12 +768,11 @@ namespace ProcesoCOB
             return "todo ok";
         }
 
-
         public string ChangeString(string factura)
         {
 
             string str = factura;
-        
+
             string[] alpha = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
             string nuevostring = string.Empty;
 
@@ -779,7 +787,7 @@ namespace ProcesoCOB
 
 
             //Console.Write("The letters in '{0}' are: '", str);
-        
+
             //Console.WriteLine("'");
             //Console.WriteLine("Each letter in '{0}' is:", nuevostring);
 
@@ -794,7 +802,7 @@ namespace ProcesoCOB
             {
                 Random _Random = new Random();
                 string ram = _Random.Next(0, 99999).ToString();
-                Console.WriteLine(ram.ToString().PadLeft(6,'0') +  "\r\n");
+                Console.WriteLine(ram.ToString().PadLeft(6, '0') + "\r\n");
                 System.Threading.Thread.Sleep(1);
 
 
@@ -802,7 +810,6 @@ namespace ProcesoCOB
             Console.ReadLine();
             return true;
         }
-
         public bool ERRORCOB_GenerarPOLAR(List<CP_ArchivoItem> _items, string codigo)
         {
             CultureInfo __newCulture;
@@ -876,8 +883,7 @@ namespace ProcesoCOB
             //int i = 1;
             foreach (var cobro in Cobros)
             {
-                System.Threading.Thread.Sleep(250);
-                string lineas = "";
+                //System.Threading.Thread.Sleep(250);
                 CP_Archivo item = new CP_Archivo();
 
                 item.FechaLectura = DateTime.Now;
@@ -894,7 +900,7 @@ namespace ProcesoCOB
                 item.Tipo = 2;
                 //string comercio = Cobros.First().AE_Avance.Id;
                 //string rif = Cobros.First().AE_Avance.RifCommerce;
-                string fechaarchivo = DateTime.Now.AddDays(0).ToString("ddMMyy.ssff");
+                //string fechaarchivo = DateTime.Now.AddDays(0).ToString("ddMMyy.ssff");
                 //string id = Cobros.FirstOrDefault().Id.ToString();
                 //if (id.Length > 4)
                 //{
@@ -908,10 +914,27 @@ namespace ProcesoCOB
                 int _length = __NumeroDocumento.Length >= 8 ? 8 : __NumeroDocumento.Length;
                 string recibo = __NumeroDocumento.Substring(__NumeroDocumento.Length - _length, _length).PadLeft(8, '0');
                 string reciboX = __NumeroDocumento.Substring(__NumeroDocumento.Length - 3, 3).PadLeft(3, '0');
-                Random _Random = new Random();
-                string ram = _Random.Next(0, 999).ToString();
+               
+                
                 string asociado = _asociado;
-                string numeroorden = DateTime.Now.AddDays(0).ToString("ddss") + ram.PadLeft(3,'0') + reciboX.PadLeft(3, '0') + asociado.Substring(asociado.Length - 2, 2);
+                string __newrandom = string.Empty;
+                try
+                {
+                    __newrandom = Convert.ToInt64(Convert.ToDecimal(cobro.NumeroDocumento) * Convert.ToDecimal(cobro.CodigoComercio) / (Convert.ToDecimal(cobro.Id))).ToString();
+                    
+                    __newrandom = Regex.Match(__newrandom, @"(.{7})\s*$").ToString().PadLeft(7, '0');
+                    
+
+                }
+                catch (Exception)
+                {
+                    Random _Random = new Random(cobro.Id);
+                    string ram = _Random.Next(0, 999).ToString();
+                    __newrandom = DateTime.Now.AddDays(0).ToString("ddss") + ram.PadLeft(3, '0');
+
+                }
+
+                string numeroorden = __newrandom + reciboX.PadLeft(3, '0') + asociado.Substring(asociado.Length - 2, 2);
                 string _fecha = DateTime.Now.AddDays(0).ToString("yyyyMMdd");
                 //numeroorden = numeroorden;
                 //datos fijos
@@ -964,15 +987,17 @@ namespace ProcesoCOB
                 string moneda = "VES";
                 string numerocuenta = _cuenta;
                 string swift = "UNIOVECA";
-                //string _rif = Cobros.FirstOrDefault().AE_Avance.Commerce.Rif;
-                string nombre = _nombrecomercial.Replace(".", " ").Replace(",", " ").Replace("Ñ", "N").ToUpper().TrimEnd();
+                //string _rif = Cobros.FirstOrDefault().AE_Avance.Commerce.Rif;              
+
+                //string nombre = _nombrecomercial.Replace(".", " ").Replace(",", " ").Replace("Ñ", "N").ToUpper().TrimEnd();
+                string nombre = Regex.Replace(_nombrecomercial, @"[^A-Za-z0-9- ]+", "");
                 string libre = "423";
                 string contrato = _rifc;
                 string fechavencimiento = "       ";
                 string debito = tipo + recibo.PadRight(30)
                     + montoacobrar.PadLeft(15, '0') + moneda + numerocuenta.PadRight(30)
-                    + swift.PadRight(11) + _rifc.PadRight(17) + nombre.PadRight(35)
-                    + libre + contrato.PadRight(35) + fechavencimiento;
+                    + swift.PadRight(11) + _rifc.PadRight(17) + nombre.Truncate(34).PadRight(35)
+                    + libre + contrato.Truncate(35).PadRight(35) + fechavencimiento;
                 _cobros.Add(debito);
 
 
@@ -981,7 +1006,7 @@ namespace ProcesoCOB
                 string _tipo2 = "02";
                 int __length = __NumeroDocumento.Length >= 8 ? 8 : __NumeroDocumento.Length;
                 string _recibo = __NumeroDocumento.Substring(__NumeroDocumento.Length - __length, __length).PadLeft(8, '0');
-                
+
                 //Cobros.First().Id.ToString().PadLeft(8, '0');
 
 
@@ -1057,7 +1082,7 @@ namespace ProcesoCOB
                 System.IO.File.WriteAllLines(ruta, lines);
                 item.Contenido = registrodecontrol + "|" + encabezado + "|" + credito;
                 item.ReferenciaArchivoBanco = numeroorden;
-                item.Nombre = "IXDP" + GlobalCounter.ToString().PadLeft(5, '0')+".txt";
+                item.Nombre = "IXDP" + GlobalCounter.ToString().PadLeft(5, '0') + ".txt";
                 item.Ruta = ruta;
 
                 CP_ArchivoREPO.AddEntity(item);
@@ -1209,8 +1234,8 @@ namespace ProcesoCOB
             //p.Test();
 
             Logs.Append("Iniciamos busqueda en ftp\r\n");
-            string result = p.COB_DownloadAndMove(); // Calling method
-            Logs.Append(result);
+            //string result = p.COB_DownloadAndMove(); // Calling method
+           // Logs.Append(result);
             Console.WriteLine("Finalizada la Descarga \r\n");
             Console.WriteLine("Procesamos Lectura \r\n");
             string result2 = p.COB_LecturaPOLAR(); // Calling method
@@ -1218,10 +1243,10 @@ namespace ProcesoCOB
             Console.WriteLine("Fin procesamiento \r\n");
 
             Console.WriteLine("Subiendo errores COB y PAG sin cobros \r\n");
-            string result3 = p.COBERROR_UploadAndMove();
+           // string result3 = p.COBERROR_UploadAndMove();
 
             Console.WriteLine("Subiendo cobros \r\n");
-            string result4 = p.COBRO_UploadAndMove();
+          //  string result4 = p.COBRO_UploadAndMove();
 
             string RUTALOGS = ConfigurationManager.AppSettings["rutaLogs"].ToString() + "LOGS" + DateTime.Now.ToString("dd-MM-yy-ss-mm") + ".txt";
             System.IO.File.WriteAllText(RUTALOGS, Logs.ToString());
@@ -1234,5 +1259,15 @@ namespace ProcesoCOB
         }
 
     }
+
+    public static class StringExt
+    {
+        public static string Truncate(this string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value)) return value;
+            return value.Length <= maxLength ? value : value.Substring(0, maxLength);
+        }
+    }
+
 
 }
