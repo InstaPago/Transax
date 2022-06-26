@@ -860,6 +860,7 @@ namespace Umbrella.Controllers
 
             return View("_Propuesta", _Propuesta);
         }
+
         [AllowAnonymous]
         public JsonResult _EnviarPropuesta(string IdPropuesta, string _rif)
         {

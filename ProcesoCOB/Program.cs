@@ -12,6 +12,8 @@ using System.Text.RegularExpressions;
 using FileHelpers;
 using System.Globalization;
 using System.Threading;
+using System.IO.Compression;
+
 
 namespace ProcesoCOB
 {
@@ -23,6 +25,18 @@ namespace ProcesoCOB
         URepository<CP_INI> CP_IniRepo = new URepository<CP_INI>();
         URepository<CP_ArchivoItem> CP_ArchivoItemRepo = new URepository<CP_ArchivoItem>();
         static int GlobalCounter = 1;
+
+        public bool COMPRIMIR()
+        {
+            string RUTACOBRO = ConfigurationManager.AppSettings["rutaCobroBanesco"].ToString();
+            string RUTACOBROZIP = ConfigurationManager.AppSettings["rutaCobroBanescoZIP"].ToString();
+
+            ZipFile.CreateFromDirectory(RUTACOBRO, RUTACOBROZIP);
+
+            //ZipFile.ExtractToDirectory(zipPath, extractPath);
+
+            return true;
+        }
 
         public string COBERROR_UploadAndMove()
         {
@@ -118,16 +132,17 @@ namespace ProcesoCOB
             var workingdirectory = "/INtoAS400p";
             //var workingdirectory = "/OUT";
             // path for file you want to upload 
-            string RUTACOBRO = ConfigurationManager.AppSettings["rutaCobroBanescoR"].ToString();
+            //string RUTACOBRO = ConfigurationManager.AppSettings["rutaCobroBanescoR"].ToString();
+            string RUTACOBROZIP = ConfigurationManager.AppSettings["rutaCobroBanescoZIPR"].ToString();
             string RUTABACKUPCOB = ConfigurationManager.AppSettings["rutaBackUpCOB"].ToString();
             InstaTransfer.BLL.Concrete.URepository<CP_INI> CP_IniRepo = new URepository<CP_INI>();
-            DirectoryInfo d = new DirectoryInfo(RUTACOBRO);
+            DirectoryInfo d = new DirectoryInfo(RUTACOBROZIP);
             FileInfo[] Files = d.GetFiles(); //Getting Text files
             Console.WriteLine("procesando:" + Files.Count() + " archivos \r\n");
             texto = texto + "se encontraron:" + Files.Count() + "archivos \r\n";
             foreach (FileInfo file in Files)
             {
-                if (file.Name.Contains("IXDP"))
+                if (file.Name.Contains(".ZIP"))
                 {
                     Console.WriteLine("procesando:" + file.Name + " \r\n");
                     string uploadFile = file.FullName.ToString();

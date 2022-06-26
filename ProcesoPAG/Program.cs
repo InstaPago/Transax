@@ -1185,7 +1185,7 @@ namespace ProcesoPAG
             p.COB_LecturaArchivoSalidaBanesco();
 
             Console.WriteLine("Procesamos cobros para generar pag \r\n");
-            p.PAG_UploadAndMove();
+            //p.PAG_UploadAndMove();
             Console.WriteLine("Fin procesamiento \r\n");
 
 

@@ -281,9 +281,9 @@ namespace Umbrella.Controllers
                     AE_ValorAccionTR ultimovaloraacion = _valoraccionesTR.FirstOrDefault();
 
                     AE_ValorAccionTR NuevoItem = new AE_ValorAccionTR();
-                    NuevoItem.FechaCreacionRegistro = DateTime.Now.AddDays(-3);
-                    NuevoItem.FechaOperacion = DateTime.Now.AddDays(-3);
-                    NuevoItem.FechaUltimaActualizacion = DateTime.Now.AddDays(-3);
+                    NuevoItem.FechaCreacionRegistro = DateTime.Now.AddDays(0);
+                    NuevoItem.FechaOperacion = DateTime.Now.AddDays(0);
+                    NuevoItem.FechaUltimaActualizacion = DateTime.Now.AddDays(0);
                     NuevoItem.TotalAcciones = elemento.TotalAcciones;
                     NuevoItem.CapitalInicial = ultimovaloraacion.NuevoCapital;
                     NuevoItem.UtilidadReportada = 0;
