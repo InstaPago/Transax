@@ -11,6 +11,8 @@ using Renci.SshNet;
 using System.Globalization;
 using System.Threading;
 using FileHelpers;
+using System.Net.Mail;
+using System.Net;
 
 namespace ProcesoPAG
 {
@@ -21,6 +23,33 @@ namespace ProcesoPAG
         URepository<CP_Archivo> CP_ArchivoREPO = new URepository<CP_Archivo>();
         URepository<CP_INI> CP_IniRepo = new URepository<CP_INI>();
         URepository<CP_ArchivoItem> CP_ArchivoItemRepo = new URepository<CP_ArchivoItem>();
+
+        static void Main(string[] args)
+        {
+            CultureInfo __newCulture;
+            __newCulture = new CultureInfo("es-VE");
+            Thread.CurrentThread.CurrentUICulture = __newCulture;
+            Thread.CurrentThread.CurrentCulture = __newCulture;
+
+
+            Program p = new Program();
+            StringBuilder Logs = new StringBuilder();
+            //p.Test();
+            Logs.Append("Iniciamos busqueda en carpeta de cobros\r\n");
+            p.COB_LecturaArchivoSalidaBanesco();
+
+            Console.WriteLine("Procesamos cobros para generar pag \r\n");
+            p.PAG_UploadAndMove();
+            Console.WriteLine("Fin procesamiento \r\n");
+
+
+            //p.enviarCorreo(Logs);
+
+            string RUTALOGS = ConfigurationManager.AppSettings["rutaLogs"].ToString() + "LOGS" + DateTime.Now.ToString("dd-MM-yy-ss-mm") + ".txt";
+            System.IO.File.WriteAllText(RUTALOGS, Logs.ToString());
+
+            Console.ReadLine();
+        }
 
         public string PAG_UploadAndMove()
         {
@@ -121,475 +150,360 @@ namespace ProcesoPAG
             List<string> Empresas = new List<string>();
             List<String> ListaPendientes = new List<String>();
             List<String> ListaPendientesTemporal = new List<String>();
+
             foreach (FileInfo file in Files)
             {
                 try
                 {
-                    if (file.Name.Contains("_O0002"))
+                    ItemArchivo[] Registros;
+                    if (file.Name.Contains(".csv") || file.Name.Contains(".CSV"))
                     {
-                        string departamento = "";
-                        string ordenante = "";
-                        string _numerocuenta = "";
-                        string empresaid = "";
-                        if (file.Name.Contains("540132787"))
+                        Console.WriteLine(file.FullName);
+                        var fileHelperEngine = new FileHelperEngine<ItemArchivo>();
+                        Registros = fileHelperEngine.ReadFile(file.FullName);
+                        Console.WriteLine(Registros.ToList().Count);
+                        //VALIDACION RESPUESTAS RECIBIDAS 
+                        foreach (var __item in Registros)
                         {
-                            empresaid = "540132787";
-                            departamento = "0600";
-                            ordenante = "EFE C A";
-                            _numerocuenta = "01340850598503004455";
-                            Empresas.Add(departamento);
-                        }
-                        else if (file.Name.Contains("205903844"))
-                        {
-                            empresaid = "205903844";
-                            departamento = "0100";
-                            ordenante = "PEPSI C A";
-                            _numerocuenta = "01340850598503004195";
-                            Empresas.Add(departamento);
-                        }
-                        else if (file.Name.Contains("540133497"))
-                        {
-                            empresaid = "540133497";
-                            departamento = "0001";
-                            ordenante = "ALIMENTOS POLAR C A";
-                            _numerocuenta = "01340375913751013514";
-                            Empresas.Add(departamento);
-
-                        }
-                        else if (file.Name.Contains("540130908"))
-                        {
-                            empresaid = "540130908";
-                            departamento = "0002";
-                            ordenante = "CERVECERIA C A";
-                            _numerocuenta = "01340850598503004357";
-                            Empresas.Add(departamento);
-                        }
-                        //item.Nombre = file.Name;
-                        //item.Ruta = file.FullName;
-                        //item.FechaLectura = DateTime.Now;
-                        string lineas = "";
-                        int i = 0;
-                        string text = System.IO.File.ReadAllText(file.FullName);
-                        //System.Console.WriteLine("Contents of WriteText.txt = {0}", text);
-                        // Example #2
-                        // Read each line of the file into a string array. Each element
-                        // of the array is one line of the file.
-                        string[] lines = System.IO.File.ReadAllLines(file.FullName);
-                        // Display the file contents by using a foreach loop.
-                        //System.Console.WriteLine("Contents of WriteLines2.txt = ");
-                        //_cobros
-                        string[] linesArchivo = { };
-                        CP_ArchivoEstadoCuenta elemento = new CP_ArchivoEstadoCuenta();
-                        CP_INI cp_ini = new CP_INI();
-                        //string IDarchivo = "";
-                        EstructuraSalidaBanescoDetalle Registrolinea2 = new EstructuraSalidaBanescoDetalle();
-
-                        foreach (string line in lines)
-                        {
-                            //if (i == 2)
-                            //{
-                            lineas = lineas + line + "<br />";
-                            string sep = "\t";
-
-
-                            string tipo = line.Substring(16, 2).ToString().TrimEnd();
-
-                            if (tipo == "01")
+                            try
                             {
-
-                                EstructuraSalidaBanescoEncabezado Registro = new EstructuraSalidaBanescoEncabezado();
-                                Registro.Trading = line.Substring(0, 15).ToString().TrimEnd();
-                                Registro.Filler = line.Substring(15, 2).ToString().TrimEnd();
-                                Registro.TipoRegistro = line.Substring(16, 2).ToString().TrimEnd();
-                                Registro.__NumeroReferenciaRespuesta = line.Substring(19, 12).ToString().TrimEnd();
-                                if (Registro.__NumeroReferenciaRespuesta == "DCREPETIDO")
+                                //if (file.Name.Contains("_O0002"))
+                                //{
+                                string IBS = __item.IBS.Replace("\"", "").Trim();
+                                string departamento = "";
+                                string ordenante = "";
+                                string _numerocuenta = "";
+                                string empresaid = "";
+                                Console.WriteLine(IBS);
+                                if (IBS.Contains("540132787"))
                                 {
-                                    string final = RUTABACKCOBROS + file.Name + DateTime.Now.ToString("dd-MM-yy-mm-ss");
-                                    string[] _lines = System.IO.File.ReadAllLines(file.FullName);
-                                    System.IO.File.WriteAllLines(final, _lines);
-                                    //texto = texto + "borrando :" + ele.Name + "\r\n";
-                                    Console.WriteLine("borrando \r\n");
-                                    file.Delete();
-                                    break;
+                                    empresaid = "540132787";
+                                    departamento = "0600";
+                                    ordenante = "EFE C A";
+                                    _numerocuenta = "01340850598503004455";
+                                    Empresas.Add(departamento);
                                 }
-                                //IDarchivo = line.Substring(19, 10).ToString().TrimEnd();
-                                //Registro.__FechaRespuesta = line.Substring(54, 67).ToString().TrimEnd();
-                                //Registro.__NumeroReferenciaOrdenPago = line.Substring(68, 102).ToString().TrimEnd();
-                                //Registro.__TipoOrdenPago = line.Substring(103, 105).ToString().TrimEnd();
-                                //Registro.__CodigoBancoEmisor = line.Substring(106, 116).ToString().TrimEnd();
-                                //Registro.__NombreBancoEmisor = line.Substring(117, 186).ToString().TrimEnd();
-                                //Registro.__CodgioEmpresaReceptoraBansta = line.Substring(187, 203).ToString().TrimEnd();
-                                //Registro.__DescripcionEmpresaReceptoraBansta = line.Substring(204, 273).ToString().TrimEnd();
-                                //string _line = Registro.__NumeroReferenciaOrdenPago + "|1|";
-                                //Array.Resize(ref linesArchivo, linesArchivo.Length + 1);
-                                //linesArchivo[linesArchivo.Length - 1] = _line;
-                                string __NumeroReferencia = lines[1].Substring(20, 8).ToString().TrimEnd();
-                                getCP = ArchivoREPO.GetAllRecords().Where(u => u.ReferenciaArchivoBanco == Registro.__NumeroReferenciaRespuesta && u.Contenido.Contains(empresaid) && u.Contenido.Contains(__NumeroReferencia)).OrderByDescending(u => u.FechaCreacion).FirstOrDefault();
+                                else if (IBS.Contains("205903844"))
+                                {
+                                    empresaid = "205903844";
+                                    departamento = "0100";
+                                    ordenante = "PEPSI C A";
+                                    _numerocuenta = "01340850598503004195";
+                                    Empresas.Add(departamento);
+                                }
+                                else if (IBS.Contains("540133497"))
+                                {
+                                    empresaid = "540133497";
+                                    departamento = "0001";
+                                    ordenante = "ALIMENTOS POLAR C A";
+                                    _numerocuenta = "01340375913751013514";
+                                    Empresas.Add(departamento);
+
+                                }
+                                else if (IBS.Contains("540130908"))
+                                {
+                                    empresaid = "540130908";
+                                    departamento = "0002";
+                                    ordenante = "CERVECERIA C A";
+                                    _numerocuenta = "01340850598503004357";
+                                    Empresas.Add(departamento);
+                                }
+                                else if (IBS.Contains("210374095"))
+                                {
+                                    Console.WriteLine("Es fin pago");
+                                    empresaid = "210374095";
+                                    departamento = "0004";
+                                    ordenante = "FIN PAGOS C A";
+                                    _numerocuenta = "01340031870311158436";
+                                    Empresas.Add(departamento);
+                                }
+
+                                string[] linesArchivo = { };
+                                CP_ArchivoEstadoCuenta elemento = new CP_ArchivoEstadoCuenta();
+                                CP_INI cp_ini = new CP_INI();
+                                //string IDarchivo = "";
+                                EstructuraSalidaBanescoDetalle Registrolinea2 = new EstructuraSalidaBanescoDetalle();
+
+                                string __NumeroReferencia = __item.REF.Replace("\"", "").Trim();
+                                getCP = ArchivoREPO.GetAllRecords().Where(u => u.ReferenciaArchivoBanco == __item.NUMDOC.Replace("\"", "").Trim() && u.Contenido.Contains(empresaid) && u.Contenido.Contains(__NumeroReferencia)).OrderByDescending(u => u.FechaCreacion).FirstOrDefault();
                                 ItemsArchivo = EstadoCuentaREPO.GetAllRecords().Where(u => u.ArchivoLecturaPolar == getCP.Id).ToList();
 
-                            }
-                            else if (tipo == "02")
-                            {
-                                if (i > 1)
+                                elemento = ItemsArchivo.FirstOrDefault();
+                                cp_ini = CP_IniRepo.GetAllRecords().Where(u => u.CodigoCliente == elemento.CodigoComercio && u.Estatus == 2).FirstOrDefault();
+
+                                string referencia = ChangeString(elemento.NumeroDocumento.Substring((elemento.NumeroDocumento.Length - 8), 8).ToString());
+
+                                PAG itempag = new PAG();
+                                PAGLinea1 Linea1 = new PAGLinea1();
+                                Linea1.ReferenciaPago = referencia;
+                                Linea1.NumeroRegistro = "1";
+                                Linea1.CodigoCliente = elemento.CodigoComercio;
+                                Linea1.TipoPagador = cp_ini.RifCliente.Substring(0, 1).ToString();
+                                Linea1.IdentificacionPagador = cp_ini.RifCliente.Substring(1, 9).ToString();
+                                Linea1.RazonSocial = cp_ini.Nombre;
+                                if (__item.CODRES_DET.Replace("\"", "").Trim() == "074")
                                 {
-                                    Registrolinea2.Trading = line.Substring(0, 15).ToString().TrimEnd();
-                                    Registrolinea2.Filler = line.Substring(15, 2).ToString().TrimEnd();
-                                    Registrolinea2.TipoRegistro = line.Substring(16, 2).ToString().TrimEnd();
-                                    //Registrolinea2.NumeroReferencia = line.Substring(18, 10).ToString().TrimEnd();
-                                    Registrolinea2.NumeroReferencia = line.Substring(18, 10).ToString().TrimEnd();
-                                    //Registro.Fecha = line.Substring(54, 61).ToString().TrimEnd();
-                                    //Registro.Monto = line.Substring(62, 76).ToString().TrimEnd();
-                                    //Registro.Moneda = line.Substring(77, 79).ToString().TrimEnd();
-                                    //Registro.Rif = line.Substring(80, 96).ToString().TrimEnd();
-                                    //Registro.NumeroCuenta = line.Substring(97, 131).ToString().TrimEnd();
-                                    //Registro.BancoBeneficiario = line.Substring(132, 142).ToString().TrimEnd();
-                                    //Registro.BancoBeneficiarioDescripcion = line.Substring(143, 212).ToString().TrimEnd();
-                                    //Registro.CodigoAgencia = line.Substring(213, 215).ToString().TrimEnd();
-                                    //Registro.NombreBeneficiario = line.Substring(216, 285).ToString().TrimEnd();
-                                    //Registro.NumeroCliente = line.Substring(286, 320).ToString().TrimEnd();
-                                    //Registro.FechaVencimiento = line.Substring(321, 326).ToString().TrimEnd();
-                                    //Registro.NumeroSecuenciaArchivo = line.Substring(327, 332).ToString().TrimEnd();
+                                    Console.WriteLine("verifico");
+                                    Linea1.EstatusPago = __item.CODRES_DET.Replace("\"", "").Replace("0","").Trim();
+                                    if (Linea1.EstatusPago == "74")
+                                    {
+                                        Linea1.EstatusPago = "PAGADO";
+                                        elemento.Estatus = 2;
+                                        EstadoCuentaREPO.SaveChanges();
+                                    }
+                                }
+                                else
+                                {
+                                    Linea1.EstatusPago = "RECHAZADO - " + __item.CODRES_DET.Replace("\"", "").Replace("0","").Trim() + " : " + __item.DESCRIPCION_DET.Replace("\"", "").Trim();
+                                }
+                                Linea1.CuentaCliente = cp_ini.CuentaBancaria;
+                                itempag.Linea1 = Linea1;
 
-                                    //string _line = Registro.NumeroCuenta + "|1|";
+                                //AQUI DEBO ITERAR ENTRE DEBITOS Y CREDITOS ... VAMOS CON LA FACTURA PRIMERO
+                                List<PAGLinea2> listalinea2 = new List<PAGLinea2>();
+                                string[] Debito = elemento.DetalleDebito.Split('|');
+                                foreach (var _debito in Debito)
+                                {
+                                    string[] objetodebito = _debito.Split(';');
+                                    if (objetodebito.Count() > 4)
+                                    {
+                                        PAGLinea2 Linea2 = new PAGLinea2();
+                                        Linea2.Referenciapago = referencia;
+                                        Linea2.NumeroRegistro = "2";
 
-                                    //Array.Resize(ref linesArchivo, linesArchivo.Length + 1);
-                                    //linesArchivo[linesArchivo.Length - 1] = _line;
+                                        Linea2.NumeroDocumento = elemento.NumeroDocumento.TrimStart().TrimEnd();
+                                        Linea2.TipoDocumento = "01";
+                                        Linea2.Referencia = elemento.TipoDocumento;
+                                        Linea2.FechaVencimiento = elemento.FechaVencimiento;
+                                        Linea2.FechaPago = elemento.FechaPago;
 
-                                    //elemento = ItemsArchivo.Where(u => u.Id == int.Parse(Registrolinea2.NumeroReferencia.Substring(1, (Registrolinea2.NumeroReferencia.Length - 1)))).FirstOrDefault();
-                                    //ItemsArchivo = EstadoCuentaREPO.GetAllRecords().Where(u => u.ArchivoLecturaPolar == getCP.Id).ToList();
-                                    elemento = ItemsArchivo.FirstOrDefault();
-                                    cp_ini = CP_IniRepo.GetAllRecords().Where(u => u.CodigoCliente == elemento.CodigoComercio && u.Estatus == 2).FirstOrDefault();
-
+                                        Linea2.MontoIva = "0,00";
+                                        Linea2.MontoRetencion = "0,00";
+                                        Linea2.MontoNeto = objetodebito[1].ToString().Replace('.', ',');// elemento.MontoDebito.ToString();
+                                        Linea2.NumeroComprobanteIR = "X";
+                                        Linea2.FechaEmisionComporbanteIR = "X";
+                                        listalinea2.Add(Linea2);
+                                    }
                                 }
 
-
-
-                            }
-                            else if (tipo == "03")
-                            {
-                                if (i > 2)
+                                string[] Credito = elemento.DetalleCredito.Split('|');
+                                foreach (var _credito in Credito)
                                 {
-                                    string referencia = ChangeString(elemento.NumeroDocumento.Substring((elemento.NumeroDocumento.Length - 8), 8).ToString());
-                                    EstructuraSalidaBanescoDetalle Registro = new EstructuraSalidaBanescoDetalle();
-                                    Registro.Trading = line.Substring(0, 15).ToString().TrimEnd();
-                                    Registro.Filler = line.Substring(15, 2).ToString().TrimEnd();
-                                    Registro.TipoRegistro = line.Substring(16, 2).ToString().TrimEnd();
-                                    //Registro.NumeroReferencia = line.Substring(20, 2).ToString().TrimEnd();
-                                    string codigoError = line.Substring(20, 2).ToString().TrimEnd();
-                                    Registro.BancoBeneficiarioDescripcion = line.Substring(22, (line.Length - 22)).ToString().TrimEnd();
-                                    PAG itempag = new PAG();
-                                    PAGLinea1 Linea1 = new PAGLinea1();
-                                    //Linea1.ReferenciaPago = Registrolinea2.NumeroReferencia;
-                                    Linea1.ReferenciaPago = referencia;
-                                    Linea1.NumeroRegistro = "1";
-                                    Linea1.CodigoCliente = elemento.CodigoComercio;
-                                    Linea1.TipoPagador = cp_ini.RifCliente.Substring(0, 1).ToString();
-                                    Linea1.IdentificacionPagador = cp_ini.RifCliente.Substring(1, 9).ToString();
-                                    Linea1.RazonSocial = cp_ini.Nombre;
-                                    if (codigoError == "74")
+                                    string[] objetocredito = _credito.Split(';');
+                                    if (objetocredito.Count() > 4)
                                     {
-                                        Linea1.EstatusPago = Registro.BancoBeneficiarioDescripcion;
-                                        if (Linea1.EstatusPago == "COBRO EXITOSO")
-                                        {
-                                            Linea1.EstatusPago = "PAGADO";
-                                            elemento.Estatus = 2;
-                                            EstadoCuentaREPO.SaveChanges();
-                                        }
+                                        PAGLinea2 Linea2 = new PAGLinea2();
+                                        Linea2.Referenciapago = referencia;
+                                        Linea2.NumeroRegistro = "2";
+
+                                        Linea2.NumeroDocumento = objetocredito[0].ToString().TrimStart().TrimEnd();// elemento.NumeroDocumento.TrimStart().TrimEnd();
+                                        Linea2.TipoDocumento = "02";
+                                        Linea2.Referencia = objetocredito[4].ToString();
+                                        Linea2.FechaVencimiento = objetocredito[3].ToString();
+                                        Linea2.FechaPago = objetocredito[2].ToString();
+
+                                        Linea2.MontoIva = "0,00";
+                                        Linea2.MontoRetencion = "0,00";
+                                        Linea2.MontoNeto = objetocredito[1].ToString().Replace('.', ',');// elemento.MontoDebito.ToString();
+                                        Linea2.NumeroComprobanteIR = "X";
+                                        Linea2.FechaEmisionComporbanteIR = "X";
+                                        listalinea2.Add(Linea2);
                                     }
-                                    else
-                                    {
-                                        Linea1.EstatusPago = "RECHAZADO - " + codigoError + " : " + Registro.BancoBeneficiarioDescripcion;
-                                    }
-                                    Linea1.CuentaCliente = cp_ini.CuentaBancaria;
-                                    itempag.Linea1 = Linea1;
-
-                                    //AQUI DEBO ITERAR ENTRE DEBITOS Y CREDITOS ... VAMOS CON LA FACTURA PRIMERO
-                                    List<PAGLinea2> listalinea2 = new List<PAGLinea2>();
-
-                                    
-                                    string[] Debito = elemento.DetalleDebito.Split('|');
-                                    foreach (var _debito in Debito)
-                                    {
-                                        string[] objetodebito = _debito.Split(';');
-                                        if (objetodebito.Count() > 4)
-                                        {
-                                            PAGLinea2 Linea2 = new PAGLinea2();
-                                            Linea2.Referenciapago = referencia;
-                                            Linea2.NumeroRegistro = "2";
-
-                                            Linea2.NumeroDocumento = elemento.NumeroDocumento.TrimStart().TrimEnd();
-                                            Linea2.TipoDocumento = "01";
-                                            Linea2.Referencia = elemento.TipoDocumento;
-                                            Linea2.FechaVencimiento = elemento.FechaVencimiento;
-                                            Linea2.FechaPago = elemento.FechaPago;
-
-                                            Linea2.MontoIva = "0,00";
-                                            Linea2.MontoRetencion = "0,00";
-                                            Linea2.MontoNeto = objetodebito[1].ToString().Replace('.', ',');// elemento.MontoDebito.ToString();
-                                            Linea2.NumeroComprobanteIR = "X";
-                                            Linea2.FechaEmisionComporbanteIR = "X";
-                                            listalinea2.Add(Linea2);
-                                        }
-                                    }
-
-                                    string[] Credito = elemento.DetalleCredito.Split('|');
-                                    foreach (var _credito in Credito)
-                                    {
-                                        string[] objetocredito = _credito.Split(';');
-                                        if (objetocredito.Count() > 4)
-                                        {
-                                            PAGLinea2 Linea2 = new PAGLinea2();
-                                            Linea2.Referenciapago = referencia;
-                                            Linea2.NumeroRegistro = "2";
-
-                                            Linea2.NumeroDocumento = objetocredito[0].ToString().TrimStart().TrimEnd();// elemento.NumeroDocumento.TrimStart().TrimEnd();
-                                            Linea2.TipoDocumento = "02";
-                                            Linea2.Referencia = objetocredito[4].ToString();
-                                            Linea2.FechaVencimiento = objetocredito[3].ToString();
-                                            Linea2.FechaPago = objetocredito[2].ToString();
-
-                                            Linea2.MontoIva = "0,00";
-                                            Linea2.MontoRetencion = "0,00";
-                                            Linea2.MontoNeto = objetocredito[1].ToString().Replace('.', ',');// elemento.MontoDebito.ToString();
-                                            Linea2.NumeroComprobanteIR = "X";
-                                            Linea2.FechaEmisionComporbanteIR = "X";
-                                            listalinea2.Add(Linea2);
-                                        }
-                                    }
-
-                                    //Linea2.Referenciapago = Registrolinea2.NumeroReferencia;
-
-                                    //List<PAGLinea2> listalinea2 = new List<PAGLinea2>();
-                                    ///aqui debo agregar las notas de credito
-                                    //string[] _itm = elemento.DetalleCredito.Split('|');
-                                    //foreach (var __ele in _itm)
-                                    //{
-                                    //    string[] obe = __ele.Split(';');
-
-                                    //    if (obe.Count() == 5)
-                                    //    {
-                                    //        PAGLinea2 LineaX = new PAGLinea2();
-
-                                    //        LineaX.Referenciapago = Registrolinea2.NumeroReferencia;
-                                    //        LineaX.NumeroRegistro = "2";
-
-                                    //        LineaX.NumeroDocumento = obe[0].TrimStart().TrimEnd();
-                                    //        LineaX.TipoDocumento = "01";
-                                    //        LineaX.Referencia = obe[4];
-                                    //        LineaX.FechaVencimiento = obe[3];
-                                    //        LineaX.FechaPago = obe[2];
-
-                                    //        LineaX.MontoIva = "0,00";
-                                    //        LineaX.MontoRetencion = "0,00";
-                                    //        LineaX.MontoNeto = obe[1];
-                                    //        LineaX.NumeroComprobanteIR = "X";
-                                    //        LineaX.FechaEmisionComporbanteIR = "X";
-                                    //        listalinea2.Add(LineaX);
-                                    //    }
-                                    //}
-
-                                    itempag.Linea2 = listalinea2;
-
-                                    PAGLinea3 Linea3 = new PAGLinea3();
-                                    //Linea3.Referenciapago = Registrolinea2.NumeroReferencia;
-                                    Linea3.Referenciapago = referencia;
-                                    Linea3.NumeroRegistro = "4";
-                                    Linea3.CodigoDepartamento = departamento;
-                                    Linea3.TipoTransaccion = "03";
-                                    Linea3.NumerocCuenta = _numerocuenta;
-                                    Linea3.Subtotal = elemento.TotalArchivo.ToString();
-                                    Linea3.Totaldebito = "X";
-                                    Linea3.TotalCargootrosBancos = elemento.TotalArchivo.ToString();
-                                    Linea3.TotaltarjetaCredito = "X";
-                                    Linea3.SubtotalCheques = "X";
-                                    Linea3.SubtotalEfectivo = "X";
-                                    Linea3.TotalDeposito = "X";
-
-                                    itempag.Linea3 = Linea3;
-
-                                    itempag.departamento = departamento;
-                                    ListaPAG.Add(itempag);
                                 }
-                                //string _line = Registro._CodigoEstatus + "|1|";
 
-                                //Array.Resize(ref linesArchivo, linesArchivo.Length + 1);
-                                //linesArchivo[linesArchivo.Length - 1] = _line;
+                                itempag.Linea2 = listalinea2;
+
+                                PAGLinea3 Linea3 = new PAGLinea3();
+                                Linea3.Referenciapago = referencia;
+                                Linea3.NumeroRegistro = "4";
+                                Linea3.CodigoDepartamento = departamento;
+                                Linea3.TipoTransaccion = "03";
+                                Linea3.NumerocCuenta = _numerocuenta;
+                                Linea3.Subtotal = elemento.TotalArchivo.ToString();
+                                Linea3.Totaldebito = "X";
+                                Linea3.TotalCargootrosBancos = elemento.TotalArchivo.ToString();
+                                Linea3.TotaltarjetaCredito = "X";
+                                Linea3.SubtotalCheques = "X";
+                                Linea3.SubtotalEfectivo = "X";
+                                Linea3.TotalDeposito = "X";
+
+                                itempag.Linea3 = Linea3;
+
+                                itempag.departamento = departamento;
+                                Console.WriteLine("agregando");
+                                ListaPAG.Add(itempag);
                             }
-                            else if (tipo == "04")
+                            catch (Exception e)
                             {
-
                             }
-                            //}
-                            i++;
                         }
-                        getCP.FechaLectura = DateTime.Now;
-                        getCP.ContenidoRespuesta = lineas;
-                        getCP.EsRespuesta = true;
-                        //ArchivoREPO.SaveChanges();
-                        //file.MoveTo(rutafinal + file.Name + ".txt");
-                        //item.Contenido = lineas;
-                        //item.Descripcion = "[FINPAGO] RESPUESTA Cargo cuenta masivo.";
-                        //item.Tipo = 1;
-                        //item.IdEmpresa = 1;
-                        //item.IdReferencia = Guid.NewGuid();
-                        //ArchivoREPO.AddEntity(item);
+
                     }
                     else
                     {
-                        //file.MoveTo(rutafinal + file.Name + ".txt");
+                        if (file.Name.Contains("_O0002"))
+                        {
+
+                        }
+                        else
+                        {
+                            file.MoveTo(rutafinal + file.Name + ".txt");
+                        }
+
+
                     }
                 }
                 catch (Exception e)
                 {
 
-                    string final = RUTABACKCOBROS + file.Name + DateTime.Now.ToString("dd-MM-yy-mm-ss");
-                    string[] lines = System.IO.File.ReadAllLines(file.FullName);
-                    System.IO.File.WriteAllLines(final, lines);
-                    //texto = texto + "borrando :" + ele.Name + "\r\n";
-                    Console.WriteLine("borrando \r\n");
-                    file.Delete();
+                    //string final = RUTABACKCOBROS + file.Name + DateTime.Now.ToString("dd-MM-yy-mm-ss");
+                    //string[] lines = System.IO.File.ReadAllLines(file.FullName);
+                    //System.IO.File.WriteAllLines(final, lines);
+                    ////texto = texto + "borrando :" + ele.Name + "\r\n";
+                    //Console.WriteLine("borrando \r\n");
+                    //file.Delete();
 
                 }
             }
 
-            ListaPendientes = COB_ValidacionArchivoSalidaBanesco();
+            //ListaPendientes = COB_ValidacionArchivoSalidaBanesco();
 
-            foreach (var pendiente in ListaPendientes.Distinct().ToList())
-            {
-                CP_Archivo _getCP = new CP_Archivo();
-                List<CP_ArchivoEstadoCuenta> _ItemsArchivo = new List<CP_ArchivoEstadoCuenta>();
-                CP_ArchivoEstadoCuenta elemento = new CP_ArchivoEstadoCuenta();
-                CP_INI cp_ini = new CP_INI();
-                _getCP = ArchivoREPO.GetAllRecords().Where(u => u.ReferenciaArchivoBanco == pendiente).FirstOrDefault();
-                _ItemsArchivo = EstadoCuentaREPO.GetAllRecords().Where(u => u.ArchivoLecturaPolar == _getCP.Id).ToList();
-                elemento = _ItemsArchivo.FirstOrDefault();
-                cp_ini = CP_IniRepo.GetAllRecords().Where(u => u.CodigoCliente == elemento.CodigoComercio && u.Estatus == 2).FirstOrDefault();
+            //foreach (var pendiente in ListaPendientes.Distinct().ToList())
+            //{
+            //    CP_Archivo _getCP = new CP_Archivo();
+            //    List<CP_ArchivoEstadoCuenta> _ItemsArchivo = new List<CP_ArchivoEstadoCuenta>();
+            //    CP_ArchivoEstadoCuenta elemento = new CP_ArchivoEstadoCuenta();
+            //    CP_INI cp_ini = new CP_INI();
+            //    _getCP = ArchivoREPO.GetAllRecords().Where(u => u.ReferenciaArchivoBanco == pendiente).FirstOrDefault();
+            //    _ItemsArchivo = EstadoCuentaREPO.GetAllRecords().Where(u => u.ArchivoLecturaPolar == _getCP.Id).ToList();
+            //    elemento = _ItemsArchivo.FirstOrDefault();
+            //    cp_ini = CP_IniRepo.GetAllRecords().Where(u => u.CodigoCliente == elemento.CodigoComercio && u.Estatus == 2).FirstOrDefault();
 
-                string departamento = "";
-                string ordenante = "";
-                string _numerocuenta = "";
-                if (_getCP.Contenido.Contains("540132787"))
-                {
-                    departamento = "0600";
-                    ordenante = "EFE C A";
-                    _numerocuenta = "01340850598503004455";
-                    Empresas.Add(departamento);
-                }
-                else if (_getCP.Contenido.Contains("205903844"))
-                {
-                    departamento = "0100";
-                    ordenante = "PEPSI C A";
-                    _numerocuenta = "01340850598503004195";
-                    Empresas.Add(departamento);
-                }
-                else if (_getCP.Contenido.Contains("540133497"))
-                {
-                    departamento = "0001";
-                    ordenante = "ALIMENTOS POLAR C A";
-                    _numerocuenta = "01340375913751013514";
-                    Empresas.Add(departamento);
+            //    string departamento = "";
+            //    string ordenante = "";
+            //    string _numerocuenta = "";
+            //    if (_getCP.Contenido.Contains("540132787"))
+            //    {
+            //        departamento = "0600";
+            //        ordenante = "EFE C A";
+            //        _numerocuenta = "01340850598503004455";
+            //        Empresas.Add(departamento);
+            //    }
+            //    else if (_getCP.Contenido.Contains("205903844"))
+            //    {
+            //        departamento = "0100";
+            //        ordenante = "PEPSI C A";
+            //        _numerocuenta = "01340850598503004195";
+            //        Empresas.Add(departamento);
+            //    }
+            //    else if (_getCP.Contenido.Contains("540133497"))
+            //    {
+            //        departamento = "0001";
+            //        ordenante = "ALIMENTOS POLAR C A";
+            //        _numerocuenta = "01340375913751013514";
+            //        Empresas.Add(departamento);
 
-                }
-                else if (_getCP.Contenido.Contains("540130908"))
-                {
-                    departamento = "0002";
-                    ordenante = "CERVECERIA C A";
-                    _numerocuenta = "01340850598503004357";
-                    Empresas.Add(departamento);
-                }
-                PAG itempag = new PAG();
-                PAGLinea1 Linea1 = new PAGLinea1();
+            //    }
+            //    else if (_getCP.Contenido.Contains("540130908"))
+            //    {
+            //        departamento = "0002";
+            //        ordenante = "CERVECERIA C A";
+            //        _numerocuenta = "01340850598503004357";
+            //        Empresas.Add(departamento);
+            //    }
+            //    PAG itempag = new PAG();
+            //    PAGLinea1 Linea1 = new PAGLinea1();
 
-                string referencia = ChangeString(elemento.NumeroDocumento.Substring((elemento.NumeroDocumento.Length - 8), 8).ToString());
-                //Linea1.ReferenciaPago = Registrolinea2.NumeroReferencia;
-                Linea1.ReferenciaPago = referencia;
-                Linea1.NumeroRegistro = "1";
-                Linea1.CodigoCliente = elemento.CodigoComercio;
-                Linea1.TipoPagador = cp_ini.RifCliente.Substring(0, 1).ToString();
-                Linea1.IdentificacionPagador = cp_ini.RifCliente.Substring(1, 9).ToString();
-                Linea1.RazonSocial = cp_ini.Nombre;
-                Linea1.EstatusPago = "RECHAZADO - " + "21" + " : " + "SALDO INSUFICIENTE SR";
+            //    string referencia = ChangeString(elemento.NumeroDocumento.Substring((elemento.NumeroDocumento.Length - 8), 8).ToString());
+            //    //Linea1.ReferenciaPago = Registrolinea2.NumeroReferencia;
+            //    Linea1.ReferenciaPago = referencia;
+            //    Linea1.NumeroRegistro = "1";
+            //    Linea1.CodigoCliente = elemento.CodigoComercio;
+            //    Linea1.TipoPagador = cp_ini.RifCliente.Substring(0, 1).ToString();
+            //    Linea1.IdentificacionPagador = cp_ini.RifCliente.Substring(1, 9).ToString();
+            //    Linea1.RazonSocial = cp_ini.Nombre;
+            //    Linea1.EstatusPago = "RECHAZADO - " + "21" + " : " + "SALDO INSUFICIENTE SR";
 
-                Linea1.CuentaCliente = cp_ini.CuentaBancaria;
-                itempag.Linea1 = Linea1;
+            //    Linea1.CuentaCliente = cp_ini.CuentaBancaria;
+            //    itempag.Linea1 = Linea1;
 
-                List<PAGLinea2> listalinea2 = new List<PAGLinea2>();
-
-
-                string[] Debito = elemento.DetalleDebito.Split('|');
-                foreach (var _debito in Debito)
-                {
-                    string[] objetodebito = _debito.Split(';');
-                    if (objetodebito.Count() > 4)
-                    {
-                        PAGLinea2 Linea2 = new PAGLinea2();
-                        Linea2.Referenciapago = referencia;
-                        Linea2.NumeroRegistro = "2";
-
-                        Linea2.NumeroDocumento = elemento.NumeroDocumento.TrimStart().TrimEnd();
-                        Linea2.TipoDocumento = "01";
-                        Linea2.Referencia = elemento.TipoDocumento;
-                        Linea2.FechaVencimiento = elemento.FechaVencimiento;
-                        Linea2.FechaPago = elemento.FechaPago;
-
-                        Linea2.MontoIva = "0,00";
-                        Linea2.MontoRetencion = "0,00";
-                        Linea2.MontoNeto = objetodebito[1].ToString().Replace('.', ',');// elemento.MontoDebito.ToString();
-                        Linea2.NumeroComprobanteIR = "X";
-                        Linea2.FechaEmisionComporbanteIR = "X";
-                        listalinea2.Add(Linea2);
-                    }
-                }
-
-                string[] Credito = elemento.DetalleCredito.Split('|');
-                foreach (var _credito in Credito)
-                {
-                    string[] objetocredito = _credito.Split(';');
-                    if (objetocredito.Count() > 4)
-                    {
-                        PAGLinea2 Linea2 = new PAGLinea2();
-                        Linea2.Referenciapago = referencia;
-                        Linea2.NumeroRegistro = "2";
-
-                        Linea2.NumeroDocumento = objetocredito[0].ToString().TrimStart().TrimEnd();// elemento.NumeroDocumento.TrimStart().TrimEnd();
-                        Linea2.TipoDocumento = "02";
-                        Linea2.Referencia = objetocredito[4].ToString();
-                        Linea2.FechaVencimiento = objetocredito[3].ToString();
-                        Linea2.FechaPago = objetocredito[2].ToString();
-
-                        Linea2.MontoIva = "0,00";
-                        Linea2.MontoRetencion = "0,00";
-                        Linea2.MontoNeto = objetocredito[1].ToString().Replace('.', ',');// elemento.MontoDebito.ToString();
-                        Linea2.NumeroComprobanteIR = "X";
-                        Linea2.FechaEmisionComporbanteIR = "X";
-                        listalinea2.Add(Linea2);
-                    }
-                }
-
-                itempag.Linea2 = listalinea2;
-
-                PAGLinea3 Linea3 = new PAGLinea3();
-                //Linea3.Referenciapago = Registrolinea2.NumeroReferencia;
-                Linea3.Referenciapago = referencia;
-                Linea3.NumeroRegistro = "4";
-                Linea3.CodigoDepartamento = departamento;
-                Linea3.TipoTransaccion = "03";
-                Linea3.NumerocCuenta = _numerocuenta;
-                Linea3.Subtotal = elemento.TotalArchivo.ToString();
-                Linea3.Totaldebito = "X";
-                Linea3.TotalCargootrosBancos = elemento.TotalArchivo.ToString();
-                Linea3.TotaltarjetaCredito = "X";
-                Linea3.SubtotalCheques = "X";
-                Linea3.SubtotalEfectivo = "X";
-                Linea3.TotalDeposito = "X";
-
-                itempag.Linea3 = Linea3;
-
-                itempag.departamento = departamento;
-                ListaPAG.Add(itempag);
-            }
+            //    List<PAGLinea2> listalinea2 = new List<PAGLinea2>();
 
 
+            //    string[] Debito = elemento.DetalleDebito.Split('|');
+            //    foreach (var _debito in Debito)
+            //    {
+            //        string[] objetodebito = _debito.Split(';');
+            //        if (objetodebito.Count() > 4)
+            //        {
+            //            PAGLinea2 Linea2 = new PAGLinea2();
+            //            Linea2.Referenciapago = referencia;
+            //            Linea2.NumeroRegistro = "2";
+
+            //            Linea2.NumeroDocumento = elemento.NumeroDocumento.TrimStart().TrimEnd();
+            //            Linea2.TipoDocumento = "01";
+            //            Linea2.Referencia = elemento.TipoDocumento;
+            //            Linea2.FechaVencimiento = elemento.FechaVencimiento;
+            //            Linea2.FechaPago = elemento.FechaPago;
+
+            //            Linea2.MontoIva = "0,00";
+            //            Linea2.MontoRetencion = "0,00";
+            //            Linea2.MontoNeto = objetodebito[1].ToString().Replace('.', ',');// elemento.MontoDebito.ToString();
+            //            Linea2.NumeroComprobanteIR = "X";
+            //            Linea2.FechaEmisionComporbanteIR = "X";
+            //            listalinea2.Add(Linea2);
+            //        }
+            //    }
+
+            //    string[] Credito = elemento.DetalleCredito.Split('|');
+            //    foreach (var _credito in Credito)
+            //    {
+            //        string[] objetocredito = _credito.Split(';');
+            //        if (objetocredito.Count() > 4)
+            //        {
+            //            PAGLinea2 Linea2 = new PAGLinea2();
+            //            Linea2.Referenciapago = referencia;
+            //            Linea2.NumeroRegistro = "2";
+
+            //            Linea2.NumeroDocumento = objetocredito[0].ToString().TrimStart().TrimEnd();// elemento.NumeroDocumento.TrimStart().TrimEnd();
+            //            Linea2.TipoDocumento = "02";
+            //            Linea2.Referencia = objetocredito[4].ToString();
+            //            Linea2.FechaVencimiento = objetocredito[3].ToString();
+            //            Linea2.FechaPago = objetocredito[2].ToString();
+
+            //            Linea2.MontoIva = "0,00";
+            //            Linea2.MontoRetencion = "0,00";
+            //            Linea2.MontoNeto = objetocredito[1].ToString().Replace('.', ',');// elemento.MontoDebito.ToString();
+            //            Linea2.NumeroComprobanteIR = "X";
+            //            Linea2.FechaEmisionComporbanteIR = "X";
+            //            listalinea2.Add(Linea2);
+            //        }
+            //    }
+
+            //    itempag.Linea2 = listalinea2;
+
+            //    PAGLinea3 Linea3 = new PAGLinea3();
+            //    //Linea3.Referenciapago = Registrolinea2.NumeroReferencia;
+            //    Linea3.Referenciapago = referencia;
+            //    Linea3.NumeroRegistro = "4";
+            //    Linea3.CodigoDepartamento = departamento;
+            //    Linea3.TipoTransaccion = "03";
+            //    Linea3.NumerocCuenta = _numerocuenta;
+            //    Linea3.Subtotal = elemento.TotalArchivo.ToString();
+            //    Linea3.Totaldebito = "X";
+            //    Linea3.TotalCargootrosBancos = elemento.TotalArchivo.ToString();
+            //    Linea3.TotaltarjetaCredito = "X";
+            //    Linea3.SubtotalCheques = "X";
+            //    Linea3.SubtotalEfectivo = "X";
+            //    Linea3.TotalDeposito = "X";
+
+            //    itempag.Linea3 = Linea3;
+
+            //    itempag.departamento = departamento;
+            //    ListaPAG.Add(itempag);
+            //}
+
+            Console.WriteLine("mande a generar pag");
             PAG_Construir(ListaPAG, Empresas.Distinct().ToList());
 
             string RUTAOUTCOB2 = ConfigurationManager.AppSettings["rutaLecturaSalidaBanescoR"].ToString();
@@ -653,98 +567,163 @@ namespace ProcesoPAG
             List<string> ArchivosPendientes = new List<string>();
             List<string> ArchivosRepsuesta = new List<string>();
             List<string> ArchivosEnviados = new List<string>();
+
             foreach (FileInfo file in Files)
             {
-                if (file.Name.Contains("_O0002"))
+
+                ItemArchivo[] Registros;
+                if (file.Name.Contains(".csv") || file.Name.Contains(".CSV"))
                 {
-                    string departamento = "";
-                    string ordenante = "";
-                    string _numerocuenta = "";
-                    if (file.Name.Contains("540132787"))
-                    {
-                        departamento = "540132787";
-                        ordenante = "EFE C A";
-                        _numerocuenta = "01340850598503004455";
-                        //Empresas.Add(departamento);
-                    }
-                    else if (file.Name.Contains("205903844"))
-                    {
-                        departamento = "205903844";
-                        ordenante = "PEPSI C A";
-                        _numerocuenta = "01340850598503004195";
-                        //Empresas.Add(departamento);
-                    }
-                    else if (file.Name.Contains("540133497"))
-                    {
-                        departamento = "540133497";
-                        ordenante = "ALIMENTOS POLAR C A";
-                        _numerocuenta = "01340375913751013514";
-                        //Empresas.Add(departamento);
 
-                    }
-                    else if (file.Name.Contains("540130908"))
-                    {
-                        departamento = "540130908";
-                        ordenante = "CERVECERIA C A";
-                        _numerocuenta = "01340850598503004357";
-                        //Empresas.Add(departamento);
-                    }
-                    //item.Nombre = file.Name;
-                    //item.Ruta = file.FullName;
-                    //item.FechaLectura = DateTime.Now;
-                    string lineas = "";
-                    int i = 0;
-                    string text = System.IO.File.ReadAllText(file.FullName);
-                    //System.Console.WriteLine("Contents of WriteText.txt = {0}", text);
-                    // Example #2
-                    // Read each line of the file into a string array. Each element
-                    // of the array is one line of the file.
-                    string[] lines = System.IO.File.ReadAllLines(file.FullName);
-                    // Display the file contents by using a foreach loop.
-                    //System.Console.WriteLine("Contents of WriteLines2.txt = ");
-                    //_cobros
-                    string[] linesArchivo = { };
-                    CP_ArchivoEstadoCuenta elemento = new CP_ArchivoEstadoCuenta();
-                    CP_INI cp_ini = new CP_INI();
-                    //string IDarchivo = "";
-                    EstructuraSalidaBanescoDetalle Registrolinea2 = new EstructuraSalidaBanescoDetalle();
+                    var fileHelperEngine = new FileHelperEngine<ItemArchivo>();
+                    Registros = fileHelperEngine.ReadFile(file.FullName);
 
-                    foreach (string line in lines)
+                    //VALIDACION RESPUESTAS RECIBIDAS 
+                    foreach (var __item in Registros.Skip(1))
                     {
-                        //if (i == 2)
+                        //if (file.Name.Contains("_O0002"))
                         //{
-                        lineas = lineas + line + "<br />";
-                        string sep = "\t";
-
-
-                        string tipo = line.Substring(16, 2).ToString().TrimEnd();
-
-                        if (tipo == "01")
+                        string IBS = __item.IBS.Replace("\"", "").Trim();
+                        string departamento = "";
+                        string ordenante = "";
+                        string _numerocuenta = "";
+                        if (IBS.Contains("540132787"))
                         {
-
-                            EstructuraSalidaBanescoEncabezado Registro = new EstructuraSalidaBanescoEncabezado();
-                            Registro.Trading = line.Substring(0, 15).ToString().TrimEnd();
-                            Registro.Filler = line.Substring(15, 2).ToString().TrimEnd();
-                            Registro.TipoRegistro = line.Substring(16, 2).ToString().TrimEnd();
-                            Registro.__NumeroReferenciaRespuesta = line.Substring(19, 12).ToString().TrimEnd();
-                            if (Registro.__NumeroReferenciaRespuesta != "DCREPETIDO")
-                            {
-                                ArchivosRepsuesta.Add(Registro.__NumeroReferenciaRespuesta);
-                            }
-
+                            //empresaid = "540132787";
+                            departamento = "0600";
+                            ordenante = "EFE C A";
+                            _numerocuenta = "01340850598503004455";
+                            //Empresas.Add(departamento);
+                        }
+                        else if (IBS.Contains("205903844"))
+                        {
+                            //empresaid = "205903844";
+                            departamento = "0100";
+                            ordenante = "PEPSI C A";
+                            _numerocuenta = "01340850598503004195";
+                            //Empresas.Add(departamento);
+                        }
+                        else if (IBS.Contains("540133497"))
+                        {
+                            //empresaid = "540133497";
+                            departamento = "0001";
+                            ordenante = "ALIMENTOS POLAR C A";
+                            _numerocuenta = "01340375913751013514";
+                            //Empresas.Add(departamento);
 
                         }
+                        else if (IBS.Contains("540130908"))
+                        {
+                            //empresaid = "540130908";
+                            departamento = "0002";
+                            ordenante = "CERVECERIA C A";
+                            _numerocuenta = "01340850598503004357";
+                            //Empresas.Add(departamento);
+                        }
+                        else if (IBS.Contains("540148559"))
+                        {
+                            //empresaid = "540148559";
+                            departamento = "0004";
+                            ordenante = "INSTAPAGO";
+                            _numerocuenta = "01340850598503004357";
+                            //Empresas.Add(departamento);
+                        }
+                        ArchivosRepsuesta.Add(__item.NUMDOC.Replace("\"", "").Trim());
 
-                        i++;
+
                     }
-                }
-                else
-                {
-                    //file.MoveTo(rutafinal + file.Name + ".txt");
+
+                    //if (file.Name.Contains("_O0002"))
+                    //{
+                    //    string departamento = "";
+                    //    string ordenante = "";
+                    //    string _numerocuenta = "";
+                    //    if (file.Name.Contains("540132787"))
+                    //    {
+                    //        departamento = "540132787";
+                    //        ordenante = "EFE C A";
+                    //        _numerocuenta = "01340850598503004455";
+                    //        //Empresas.Add(departamento);
+                    //    }
+                    //    else if (file.Name.Contains("205903844"))
+                    //    {
+                    //        departamento = "205903844";
+                    //        ordenante = "PEPSI C A";
+                    //        _numerocuenta = "01340850598503004195";
+                    //        //Empresas.Add(departamento);
+                    //    }
+                    //    else if (file.Name.Contains("540133497"))
+                    //    {
+                    //        departamento = "540133497";
+                    //        ordenante = "ALIMENTOS POLAR C A";
+                    //        _numerocuenta = "01340375913751013514";
+                    //        //Empresas.Add(departamento);
+
+                    //    }
+                    //    else if (file.Name.Contains("540130908"))
+                    //    {
+                    //        departamento = "540130908";
+                    //        ordenante = "CERVECERIA C A";
+                    //        _numerocuenta = "01340850598503004357";
+                    //        //Empresas.Add(departamento);
+                    //    }
+                    //    //item.Nombre = file.Name;
+                    //    //item.Ruta = file.FullName;
+                    //    //item.FechaLectura = DateTime.Now;
+                    //    string lineas = "";
+                    //    int i = 0;
+                    //    string text = System.IO.File.ReadAllText(file.FullName);
+                    //    //System.Console.WriteLine("Contents of WriteText.txt = {0}", text);
+                    //    // Example #2
+                    //    // Read each line of the file into a string array. Each element
+                    //    // of the array is one line of the file.
+                    //    string[] lines = System.IO.File.ReadAllLines(file.FullName);
+                    //    // Display the file contents by using a foreach loop.
+                    //    //System.Console.WriteLine("Contents of WriteLines2.txt = ");
+                    //    //_cobros
+                    //    string[] linesArchivo = { };
+                    //    CP_ArchivoEstadoCuenta elemento = new CP_ArchivoEstadoCuenta();
+                    //    CP_INI cp_ini = new CP_INI();
+                    //    //string IDarchivo = "";
+                    //    EstructuraSalidaBanescoDetalle Registrolinea2 = new EstructuraSalidaBanescoDetalle();
+
+                    //    foreach (string line in lines)
+                    //    {
+                    //        //if (i == 2)
+                    //        //{
+                    //        lineas = lineas + line + "<br />";
+                    //        string sep = "\t";
+
+
+                    //        string tipo = line.Substring(16, 2).ToString().TrimEnd();
+
+                    //        if (tipo == "01")
+                    //        {
+
+                    //            EstructuraSalidaBanescoEncabezado Registro = new EstructuraSalidaBanescoEncabezado();
+                    //            Registro.Trading = line.Substring(0, 15).ToString().TrimEnd();
+                    //            Registro.Filler = line.Substring(15, 2).ToString().TrimEnd();
+                    //            Registro.TipoRegistro = line.Substring(16, 2).ToString().TrimEnd();
+                    //            Registro.__NumeroReferenciaRespuesta = line.Substring(19, 12).ToString().TrimEnd();
+                    //            if (Registro.__NumeroReferenciaRespuesta != "DCREPETIDO")
+                    //            {
+                    //                ArchivosRepsuesta.Add(Registro.__NumeroReferenciaRespuesta);
+                    //            }
+
+
+                    //        }
+
+                    //        i++;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    //file.MoveTo(rutafinal + file.Name + ".txt");
+                    //}
                 }
             }
-
-            string RUTABACKCOB = ConfigurationManager.AppSettings["rutaLecturaBackupCobrosBanescoR"].ToString();
+            //hola
+            string RUTABACKCOB = ConfigurationManager.AppSettings["rutaCobroBanescoTemporalR"].ToString();
             DirectoryInfo e = new DirectoryInfo(RUTABACKCOB);
             //FileInfo[] _Files = e.GetFiles().Where(u => u.LastWriteTime > DateTime.Now.AddHours(-(int.Parse(DateTime.Now.Hour.ToString())))).ToArray();
             FileInfo[] _Files = e.GetFiles().ToArray();
@@ -782,6 +761,14 @@ namespace ProcesoPAG
                     {
                         departamento = "540130908";
                         ordenante = "CERVECERIA C A";
+                        _numerocuenta = "01340850598503004357";
+                        //Empresas.Add(departamento);
+                    }
+                    else if (file.Name.Contains("540148559"))
+                    {
+                        //empresaid = "540148559";
+                        departamento = "0004";
+                        ordenante = "INSTAPAGO";
                         _numerocuenta = "01340850598503004357";
                         //Empresas.Add(departamento);
                     }
@@ -929,6 +916,69 @@ namespace ProcesoPAG
             }
             return true;
 
+
+        }
+
+
+        public bool enviarCorreo(StringBuilder message)
+        {
+            Console.WriteLine("aqui viene el correo");
+
+            var mailmessage = new MailMessage(new MailAddress("notificacion@instapago.com", "Thanos Merchant"),
+                new MailAddress("notificacion@instapago.com", "Alerta Thanos Merchant"));
+            mailmessage.BodyEncoding = System.Text.Encoding.Default;
+            mailmessage.Subject = "SIN RESPUESTA THANOS";
+            mailmessage.Body = "PRUEBA";
+
+            mailmessage.IsBodyHtml = true;
+
+            SmtpClient smtpMail = new SmtpClient(System.Configuration.ConfigurationManager.AppSettings["SMTP_ADDRESS"],
+                int.Parse(System.Configuration.ConfigurationManager.AppSettings["SMTP_PORT"]));
+            smtpMail.EnableSsl = false;
+            if (System.Configuration.ConfigurationManager.AppSettings["SMTP_SSL"] == "1")
+            {
+                smtpMail.Credentials = new NetworkCredential(System.Configuration.ConfigurationManager.AppSettings["SMTP_USERNAME"],
+                    System.Configuration.ConfigurationManager.AppSettings["SMTP_PASSWORD"]);
+                smtpMail.EnableSsl = true;
+            }
+            smtpMail.Timeout = 5000;
+
+            smtpMail.Send(mailmessage);
+
+
+
+
+            return true;
+        }
+
+
+        [DelimitedRecord(",")]
+        [IgnoreFirst()]
+        [IgnoreEmptyLines]
+        public class ItemArchivo
+        {
+
+            public string IBS { get; set; }
+
+            public string NUMDOC { get; set; }
+
+            public string REF { get; set; }
+
+       
+
+
+            public string CODRES { get; set; }
+
+            public string DESCRIPCION { get; set; }
+
+            public string FECHA { get; set; }
+
+            public string CODRES_DET { get; set; }
+
+            public string DESCRIPCION_DET { get; set; }
+
+
+       
 
         }
 
@@ -1171,29 +1221,7 @@ namespace ProcesoPAG
             public string __DescripcionEmpresaReceptoraBansta { get; set; }
 
         }
-        static void Main(string[] args)
-        {
-            CultureInfo __newCulture;
-            __newCulture = new CultureInfo("es-VE");
-            Thread.CurrentThread.CurrentUICulture = __newCulture;
-            Thread.CurrentThread.CurrentCulture = __newCulture;
 
-
-            Program p = new Program();
-            StringBuilder Logs = new StringBuilder();
-            Logs.Append("Iniciamos busqueda en carpeta de co bros\r\n");
-            p.COB_LecturaArchivoSalidaBanesco();
-
-            Console.WriteLine("Procesamos cobros para generar pag \r\n");
-            //p.PAG_UploadAndMove();
-            Console.WriteLine("Fin procesamiento \r\n");
-
-
-            string RUTALOGS = ConfigurationManager.AppSettings["rutaLogs"].ToString() + "LOGS" + DateTime.Now.ToString("dd-MM-yy-ss-mm") + ".txt";
-            System.IO.File.WriteAllText(RUTALOGS, Logs.ToString());
-
-            Console.ReadLine();
-        }
 
     }
 
