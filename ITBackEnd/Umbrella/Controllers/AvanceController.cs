@@ -53,6 +53,8 @@ namespace Umbrella.Controllers
             return View(ListAvance);
         }
 
+    
+
         public ActionResult Masivo()
         {
             DateTime fecha = DateTime.Now;

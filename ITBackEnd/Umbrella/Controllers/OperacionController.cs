@@ -242,7 +242,7 @@ namespace Umbrella.Controllers
                 AE_BalanceDiarioREPO.SaveChanges();
                 ///VALOR ACCION PROYECTADA
                 var valoracciones = AE_ValorAccionREPO.GetAllRecords().OrderByDescending(u => u.Id).Take(10).ToList();
-                if (valoracciones != null && valoracciones.Count() > 0)
+                if (valoracciones != null && valoracciones.Count() > 0 && valoracciones.FirstOrDefault().ValorAccion > 0)
                 {
                     AE_ValorAccion item = valoracciones.FirstOrDefault();
 
@@ -276,7 +276,7 @@ namespace Umbrella.Controllers
 
                 //VALOR ACCION TIEMPO REAL
                 var _valoraccionesTR = AE_ValorAccionTRREPO.GetAllRecords().OrderByDescending(u => u.Id).Take(10).ToList();
-                if (_valoraccionesTR != null && _valoraccionesTR.Count() > 0)
+                if (_valoraccionesTR != null && _valoraccionesTR.Count() > 0 && _valoraccionesTR.FirstOrDefault().ValorAccion > 0)
                 {
                     AE_ValorAccionTR ultimovaloraacion = _valoraccionesTR.FirstOrDefault();
 
@@ -296,6 +296,7 @@ namespace Umbrella.Controllers
                     NuevoItem.CapitalNuevoIngreso = Operacion.Monto;
                     NuevoItem.NuevoCapital = Operacion.Monto + ultimovaloraacion.NuevoCapital;
                     NuevoItem.ValorAccion = ultimovaloraacion.ValorAccion;
+                    
                     AE_ValorAccionTRREPO.AddEntity(NuevoItem);
                     AE_ValorAccionTRREPO.SaveChanges();
 
@@ -328,8 +329,9 @@ namespace Umbrella.Controllers
                     NuevoItem.PagoUtilidadMesInversionista = 0;
                     NuevoItem.PagoUtilidadAdministrador = 0;
                     NuevoItem.CapitalNuevoIngreso = Operacion.Monto;
-                    NuevoItem.NuevoCapital = NuevoBalance.TotalCapital;
-                    NuevoItem.ValorAccion = NuevoBalance.TotalCapital / elemento.TotalAcciones;
+                    NuevoItem.NuevoCapital = Operacion.Monto;
+                    NuevoItem.ValorAccion = Operacion.Monto / elemento.TotalAcciones;
+                    NuevoItem.SaldoUSD = Operacion.Monto;
                     AE_ValorAccionTRREPO.AddEntity(NuevoItem);
                     AE_ValorAccionTRREPO.SaveChanges();
                 }

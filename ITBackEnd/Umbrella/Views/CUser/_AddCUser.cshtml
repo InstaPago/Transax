@@ -5,11 +5,11 @@
 
 <div class="nicescroll">
     @*<div class="col-xs-12">
-        <button type="button" class="close right-bar-toggle  pull-right" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 id="rightsidebar-title">
-            Agregar usuario
-        </h4>
-    </div>*@
+            <button type="button" class="close right-bar-toggle  pull-right" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 id="rightsidebar-title">
+                Agregar usuario
+            </h4>
+        </div>*@
     <div id="rightsidebar-body" class="col-xs-12">
         <form id="userform" method="post" action="@Url.Action("CreateCUser", "CUser")" novalidate class="text-left" data_parsley_validate="">
 
@@ -22,17 +22,17 @@
             </div>
             <div class="form-group">
                 <label class="control-label">Apellido</label>
-                @Html.TextBoxFor(m => m.commerceUserModel.LastName, new { @class = "form-control", required = ""})
-                @Html.ValidationMessageFor(m => m.commerceUserModel.LastName, null, new { @class = "text-danger"})
+                @Html.TextBoxFor(m => m.commerceUserModel.LastName, new { @class = "form-control", required = "" })
+                @Html.ValidationMessageFor(m => m.commerceUserModel.LastName, null, new { @class = "text-danger" })
             </div>
             <div class="form-group">
                 <label class="control-label">Correo electrónico</label>
                 @Html.TextBoxFor(m => m.Email, new
            {
                @class = "form-control",
-               type="email",
+               type = "email",
                required = ""
-               
+
 
            })
                 @Html.ValidationMessageFor(m => m.Email, null, new { @class = "text-danger" })
@@ -43,7 +43,7 @@
            {
                @class = "form-control",
                required = "",
-               type="password"
+               type = "password"
            })
                 @Html.ValidationMessageFor(m => m.Password, null, new { @class = "text-danger" })
             </div>
@@ -102,25 +102,28 @@
             closeOnConfirm: false
         }, function () {
             ShowLoader();
+            //alert("est");
             $.ajax({
                 method: "POST",
                 url: '@Url.Action("CreateCUser", "CUser")',
                 data: $("#userform").serialize()
-            })
-    .done(function (r) {
-        HideLoader();
-        if (r.success) {
-            swal({
-                title: "Exito!",
-                text: r.message,
-                type: "success",
-            }, function () {
-                location.reload();
+            }).done(function (r)
+            {
+                    location.reload();
+                    HideLoader();
+                    if (r.success) {
+                        swal({
+                            title: "Exito!",
+                            text: r.message,
+                            type: "success",
+                        }, function () {
+                            location.reload();
+                        });
+                    } else
+                    {
+                        swal("Error!", r.message, "error");
+                    }
             });
-        } else {
-            swal("Error!", r.message, "error");
-        }
-    });
         });
         HideLoader();
     }
@@ -157,6 +160,7 @@
         // Submit
         $('#userform').on('submit', function () {
             checkSession(createUser);
+            return false;
         });
 
     });

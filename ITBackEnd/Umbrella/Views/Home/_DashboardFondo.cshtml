@@ -6,6 +6,7 @@
     decimal[] _capital = ViewBag.Capital;
     decimal[] _valroaccionTR = ViewBag.ValorAccionTR;
     decimal[] _valroaccion = ViewBag.ValorAccion;
+    decimal ValorGenesis = (decimal)ViewBag.ValorGenesis;
     //Umbrella.Controllers.HomeController.OperacionesActivas[] _operaciones = ViewBag.OperacionesActivas;
     string _operaciones = ViewBag.OperacionesActivas;
     List<InstaTransfer.DataAccess.AE_Operacion> Operaciones = (List<InstaTransfer.DataAccess.AE_Operacion>)ViewBag.Opreaciones;
@@ -26,7 +27,7 @@
         <div class="widget-bg-color-icon card-box bg-info">
        
             <div class="text-right">
-                <h3 class="text-white"><b class="counter">@(((decimal.Parse(AccionesTR.ToString()) - decimal.Parse("27,62")) * 100 / decimal.Parse("27,62")).ToString("N2") ) %</b></h3>
+                <h3 class="text-white"><b class="counter">@(((decimal.Parse(AccionesTR.ToString()) - ValorGenesis) * 100 / (ValorGenesis > 0 ? ValorGenesis : 1)).ToString("N2") ) %</b></h3>
                 <p class="text-white">Rendimiento</p>
             </div>
             <div class="clearfix"></div>

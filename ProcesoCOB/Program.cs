@@ -13,7 +13,7 @@ using FileHelpers;
 using System.Globalization;
 using System.Threading;
 using System.IO.Compression;
-
+using System.Net.Mail;
 
 namespace ProcesoCOB
 {
@@ -25,16 +25,80 @@ namespace ProcesoCOB
         URepository<CP_INI> CP_IniRepo = new URepository<CP_INI>();
         URepository<CP_ArchivoItem> CP_ArchivoItemRepo = new URepository<CP_ArchivoItem>();
         static int GlobalCounter = 1;
+        static string produccion = ConfigurationManager.AppSettings["produccion"].ToString();
+
+        static void Main(string[] args)
+        {
+            CultureInfo __newCulture;
+            __newCulture = new CultureInfo("es-VE");
+
+            Thread.CurrentThread.CurrentUICulture = __newCulture;
+
+            Program p = new Program();
+
+            try
+            {
+                StringBuilder Logs = new StringBuilder();
+
+                if (produccion != "PRUEBA")
+                {
+                    Logs.Append("Iniciamos busqueda en ftp\r\n");
+                    string result = p.COB_DownloadAndMove(); // Calling method
+                                                             //Logs.Append(result);
+                    Console.WriteLine("Finalizada la Descarga \r\n");
+                }
+
+                Console.WriteLine("Procesamos Lectura \r\n");
+                string result2 = p.COB_LecturaPOLAR(); // Calling method
+                Logs.Append(result2);
+                Console.WriteLine("Fin procesamiento \r\n");
+
+
+                if (produccion != "PRUEBA")
+                {
+                    Console.WriteLine("Subiendo errores COB y PAG sin cobros \r\n");
+                    string result3 = p.COBERROR_UploadAndMove();
+                }
+
+                Console.WriteLine("Subiendo cobros \r\n");
+                string result4 = p.COBRO_UploadAndMove();
+
+                string RUTALOGS = ConfigurationManager.AppSettings["rutaLogs"].ToString() + "LOGS" + DateTime.Now.ToString("dd-MM-yy-ss-mm") + ".txt";
+                System.IO.File.WriteAllText(RUTALOGS, Logs.ToString());
+            }
+            catch (Exception e)
+            {
+                p.enviarCorreoFallo(e);
+            }
+
+
+        }
 
         public bool COMPRIMIR()
         {
+
+
+
+
+            Console.WriteLine("comprimiendo\r\n");
             string RUTACOBRO = ConfigurationManager.AppSettings["rutaCobroBanesco"].ToString();
             string RUTACOBROZIP = ConfigurationManager.AppSettings["rutaCobroBanescoZIP"].ToString();
-
+            string RUTACOBROTEMPORAL = ConfigurationManager.AppSettings["rutaCobroBanescoTemporal"].ToString();
+            string RUTABACKUPZIP = ConfigurationManager.AppSettings["rutaBackUpCOB"].ToString();
+            RUTACOBROZIP = RUTACOBROZIP + "cobros" + ".zip";
+            RUTABACKUPZIP = RUTABACKUPZIP + "cobros" + DateTime.Now.ToString("dd-MM-yy-mm-ss") + ".zip";
             ZipFile.CreateFromDirectory(RUTACOBRO, RUTACOBROZIP);
+            ZipFile.CreateFromDirectory(RUTACOBRO, RUTABACKUPZIP);
 
-            //ZipFile.ExtractToDirectory(zipPath, extractPath);
+            //ZipFile.ExtractToDirectory(RUTACOBROZIP, RUTACOBROTEMPORAL);
+            //Getting Text files
 
+            //armar el correo de resumen
+            int count = Directory.GetFiles(RUTACOBRO, "*", SearchOption.TopDirectoryOnly).Length;
+            enviarCorreo(count.ToString());
+
+            Directory.Delete(RUTACOBRO, true);
+            Directory.CreateDirectory(RUTACOBRO);
             return true;
         }
 
@@ -100,6 +164,7 @@ namespace ProcesoCOB
                             {
 
                                 texto = texto + e.Message + "\r\n";
+                                enviarCorreoFallo(e);
 
                             }
 
@@ -129,29 +194,27 @@ namespace ProcesoCOB
             var username = "instapag";
             var password = "540144017";
             //var workingdirectory = ConfigurationManager.AppSettings["rutaFtpOut"].ToString();
-            var workingdirectory = "/INtoAS400p";
+            //PRODUCCION
+            //var workingdirectory = "/INtoAS400p";
+            //TEST
+            var workingdirectory = "/filezip/";
             //var workingdirectory = "/OUT";
-            // path for file you want to upload 
+            // path for file you want to upload
             //string RUTACOBRO = ConfigurationManager.AppSettings["rutaCobroBanescoR"].ToString();
-            string RUTACOBROZIP = ConfigurationManager.AppSettings["rutaCobroBanescoZIPR"].ToString();
+            string RUTACOBROZIP = ConfigurationManager.AppSettings["rutaCobroBanescoRZIP"].ToString();
             string RUTABACKUPCOB = ConfigurationManager.AppSettings["rutaBackUpCOB"].ToString();
+
+
+
             InstaTransfer.BLL.Concrete.URepository<CP_INI> CP_IniRepo = new URepository<CP_INI>();
             DirectoryInfo d = new DirectoryInfo(RUTACOBROZIP);
             FileInfo[] Files = d.GetFiles(); //Getting Text files
             Console.WriteLine("procesando:" + Files.Count() + " archivos \r\n");
             texto = texto + "se encontraron:" + Files.Count() + "archivos \r\n";
 
-            string startPath = RUTACOBRO;
-            string zipPath = RUTACOBRO + @"\zipped\cobros.zip";
-  
-
-            ZipFile.CreateFromDirectory(startPath, zipPath);
-
-
-
             foreach (FileInfo file in Files)
             {
-                if (file.Name.Contains(".ZIP"))
+                if (file.Name.Contains(".ZIP") || file.Name.Contains(".zip"))
                 {
                     Console.WriteLine("procesando:" + file.Name + " \r\n");
                     string uploadFile = file.FullName.ToString();
@@ -175,22 +238,21 @@ namespace ProcesoCOB
                                         client.UploadFile(fileStream, Path.GetFileName(uploadFile));
                                     }
                                 }
-                                Console.WriteLine("moviendo \r\n");
-                                texto = texto + "moviendo :" + file.Name + "\r\n";
-                                string final = RUTABACKUPCOB + file.Name + DateTime.Now.ToString("dd-MM-yy-mm-ss");
-                                string[] lines = System.IO.File.ReadAllLines(file.FullName);
-                                System.IO.File.WriteAllLines(final, lines);
-                                texto = texto + "borrando :" + file.Name + "\r\n";
+                                //Console.WriteLine("moviendo \r\n");
+                                //texto = texto + "moviendo :" + file.Name + "\r\n";
+                                //string final = RUTABACKUPCOB + file.Name + DateTime.Now.ToString("dd-MM-yy-mm-ss");
+                                //string[] lines = System.IO.File.ReadAllLines(file.FullName);
+                                //System.IO.File.WriteAllLines(final, lines);
+                                //texto = texto + "borrando :" + file.Name + "\r\n";
                                 Console.WriteLine("borrando \r\n");
                                 file.Delete();
+
                             }
                             catch (Exception e)
                             {
-
                                 texto = texto + e.Message + "\r\n";
-
+                                enviarCorreoFallo(e);
                             }
-
                         }
                         else
                         {
@@ -199,7 +261,6 @@ namespace ProcesoCOB
                         }
                     }
                 }
-
             }
 
             return texto;
@@ -274,6 +335,7 @@ namespace ProcesoCOB
             {
                 texto = texto + e.Message + "  " + e.StackTrace;
                 Console.WriteLine(texto);
+                enviarCorreoFallo(e);
                 return texto;
             }
             Console.WriteLine(texto);
@@ -284,13 +346,25 @@ namespace ProcesoCOB
 
         public string COB_LecturaPOLAR()
         {
-            GlobalCounter = 1;
+            //GlobalCounter = 1;
             CultureInfo __newCulture;
             __newCulture = new CultureInfo("es-VE");
             Thread.CurrentThread.CurrentUICulture = __newCulture;
             Thread.CurrentThread.CurrentCulture = __newCulture;
             string RUTALECTURACOB = ConfigurationManager.AppSettings["rutaLecturaCOBR"].ToString();
             string RUTABACKUPCOB = ConfigurationManager.AppSettings["rutaBackUpCOB"].ToString();
+            string RUTACOBRO = ConfigurationManager.AppSettings["rutaCobroBanesco"].ToString();
+            DirectoryInfo t = new DirectoryInfo(RUTACOBRO);
+            if (!t.Exists)
+            {
+                Directory.CreateDirectory(RUTACOBRO);
+            }
+
+            bool _produccion = true;
+            if (produccion == "PRUEBA")
+            {
+                _produccion = false;
+            }
             DirectoryInfo d = new DirectoryInfo(RUTALECTURACOB);//Assuming Test is your Folder
             List<CP_ArchivoItem> ListItemsFile = new List<CP_ArchivoItem>();
             FileInfo[] Files = d.GetFiles(); //Getting Text files
@@ -302,6 +376,8 @@ namespace ProcesoCOB
                 Console.WriteLine("procesando:" + file.Name + " \r\n");
                 List<EstructuraCOB> Lista = new List<EstructuraCOB>();
                 CP_Archivo item = new CP_Archivo();
+                //if (_produccion)
+                //{
                 if (file.Name.Contains("BANCOB0001"))
                 {
                     asociado = "540133497";
@@ -333,6 +409,15 @@ namespace ProcesoCOB
                     referencia = "0100";
 
                 }
+                //}
+                //else
+                //{
+
+                //    //asociado = "210374095";
+                //    ////asociado = "540148559";
+                //    //referencia = "0400";
+                //}
+
 
                 bool vencido = false;
                 string text = System.IO.File.ReadAllText(file.FullName);
@@ -348,14 +433,18 @@ namespace ProcesoCOB
                 int ultimalinea = lines.Count();
                 var contenidoultimalinea = lines[ultimalinea - 1];
                 string fechaarchivo = contenidoultimalinea.Substring(0, 4) + "/" + contenidoultimalinea.Substring(4, 2) + "/" + contenidoultimalinea.Substring(6, 2);
-                //if (DateTime.Now > DateTime.Parse(fechaarchivo).AddHours(23))
-                //{
-                //    vencido = true;
-                //    string line = "Sin Cobros";
-                //    string RUTAERRORCOB = ConfigurationManager.AppSettings["rutaErrorCOB"].ToString();
-                //    string ruta = RUTAERRORCOB + "BANPAG" + referencia + ".txt";
-                //    System.IO.File.WriteAllText(ruta, line);
-                //}
+                //ESTO ESTABA COMENTADO , PERO CARMELO CREE QUE TIENE QUE IR DESCOMENTADO CAMBIO APLICADO E 07/07/2022, DIOS BENDIGA ESTE CODIGO.
+                Console.WriteLine(DateTime.Now);
+                Console.WriteLine(DateTime.Parse(fechaarchivo).AddHours(23));
+                if (DateTime.Now.Date > DateTime.Parse(fechaarchivo).Date)
+                {
+                    Console.WriteLine(DateTime.Now + " > " + DateTime.Parse(fechaarchivo).AddHours(23) + "????");
+                    vencido = true;
+                    string line = "Sin Cobros";
+                    string RUTAERRORCOB = ConfigurationManager.AppSettings["rutaErrorCOB"].ToString();
+                    string ruta = RUTAERRORCOB + "BANPAG" + referencia + ".txt";
+                    System.IO.File.WriteAllText(ruta, line);
+                }
 
                 List<_EstructuraCOB> Archivo = new List<_EstructuraCOB>();
                 List<CP_ArchivoItem> CPITEMS = new List<CP_ArchivoItem>();
@@ -394,7 +483,7 @@ namespace ProcesoCOB
                 {
                     if (__item.DescripcionError == null)
                     {
-                        if (vencido)
+                        if (vencido && _produccion)
                         {
                             __item.CodigoError = 001;
                             __item.DescripcionError = "ERROR EN FECHA DE ARCHIVO";
@@ -407,38 +496,39 @@ namespace ProcesoCOB
                             __item.DescripcionError = "RETENCION - NO PROCESADO";
                             goto Finish;
                         }
-
-                        //falta agregar que esta activo en 
-                        CP_INI beneficiario = CP_IniRepo.GetAllRecords().Where(u => u.CodigoCliente == __item.CodigoCliente
-                        && u.Departamento == __item.CodigoDepartamento
-                        && u.Estatus == 2).FirstOrDefault();
-
-                        if (beneficiario != null && beneficiario.Id > 0)
+                        CP_INI beneficiario = new CP_INI();
+                        if (_produccion)
                         {
-                            //ADICIONA LESTA ACTIVO POR CLI
-                            if (!beneficiario.ActivoCLI)
+                            //falta agregar que esta activo en 
+                            beneficiario = CP_IniRepo.GetAllRecords().Where(u => u.CodigoCliente == __item.CodigoCliente
+                            && u.Departamento == __item.CodigoDepartamento
+                            && u.Estatus == 2).FirstOrDefault();
+
+                            if (beneficiario != null && beneficiario.Id > 0)
                             {
-                                __item.CodigoError = 005;
-                                __item.DescripcionError = "CLIENTE INACTIVO PARA COBRO";
+                                //ADICIONA LESTA ACTIVO POR CLI
+                                if (!beneficiario.ActivoCLI)
+                                {
+                                    __item.CodigoError = 005;
+                                    __item.DescripcionError = "CLIENTE INACTIVO PARA COBRO";
+                                    goto Finish;
+                                }
+                            }
+                            else
+                            {
+                                //092 nota sin factura 028 cuenta beneficiario invalidad 016 cuenta bloqueada 070 monto invalido
+                                __item.CodigoError = 006;
+                                __item.DescripcionError = "CLIENTE SIN CARGA PREVIA";
                                 goto Finish;
                             }
 
-                        }
-                        else
-                        {
-                            //092 nota sin factura 028 cuenta beneficiario invalidad 016 cuenta bloqueada 070 monto invalido
-                            __item.CodigoError = 006;
-                            __item.DescripcionError = "CLIENTE SIN CARGA PREVIA";
-                            goto Finish;
-                        }
-
-
-                        //aqui validacion de flag nuevo agregado en el clic
-                        if (DateTime.Now.Date <= DateTime.Parse(__item.FechaVencimiento) && beneficiario.FechaVencimiento)
-                        {
-                            __item.CodigoError = 003;
-                            __item.DescripcionError = "REGISTRO NO VENCIDO";
-                            goto Finish;
+                            //aqui validacion de flag nuevo agregado en el clic
+                            if (DateTime.Now.Date <= DateTime.Parse(__item.FechaVencimiento) && beneficiario.FechaVencimiento)
+                            {
+                                __item.CodigoError = 003;
+                                __item.DescripcionError = "REGISTRO NO VENCIDO";
+                                goto Finish;
+                            }
                         }
 
 
@@ -452,32 +542,36 @@ namespace ProcesoCOB
                                 goto Finish;
                             }
 
-                            //debo ir base de datos y ver si ya fue cobrado
-                            var duplicado = EstadoCuentaREPO.GetAllRecords().Where(u => u.CodigoComercio == beneficiario.CodigoCliente && u.NumeroDocumento == __item.DocumentoComercial && u.Estatus == 2).ToList();
-                            if (duplicado.Count() > 0)
+                            if (_produccion)
                             {
-                                foreach (var objeto in duplicado)
+                                //debo ir base de datos y ver si ya fue cobrado
+                                var duplicado = EstadoCuentaREPO.GetAllRecords().Where(u => u.CodigoComercio == beneficiario.CodigoCliente && u.NumeroDocumento == __item.DocumentoComercial && u.Estatus == 2).ToList();
+                                if (duplicado.Count() > 0)
+                                {
+                                    foreach (var objeto in duplicado)
+                                    {
+                                        __item.CodigoError = 002;
+                                        __item.DescripcionError = "DOCUMENTO DUPLICADO - COBRO REALIZADO";
+                                        goto Finish;
+                                    }
+                                }
+                            }
+                        }
+                        //DES - COMENTAR
+                        if (_produccion)
+                        {
+                            var resultduplciado = CPITEMS.Where(u => u.DocumentoComercial == __item.DocumentoComercial && u.Referencia == __item.Referencia).ToList();
+
+                            if (resultduplciado.Count() > 1)
+                            {
+                                foreach (var objeto in resultduplciado)
                                 {
                                     __item.CodigoError = 002;
-                                    __item.DescripcionError = "DOCUMENTO DUPLICADO - COBRO REALIZADO";
+                                    __item.DescripcionError = "DOCUMENTO DUPLICADO";
                                     goto Finish;
                                 }
                             }
                         }
-
-                        var resultduplciado = CPITEMS.Where(u => u.DocumentoComercial == __item.DocumentoComercial && u.Referencia == __item.Referencia).ToList();
-
-                        if (resultduplciado.Count() > 1)
-                        {
-                            foreach (var objeto in resultduplciado)
-                            {
-                                __item.CodigoError = 002;
-                                __item.DescripcionError = "DOCUMENTO DUPLICADO";
-                                goto Finish;
-                            }
-                        }
-
-
 
                         if (__item.TipoDocumento == "02")
                         {
@@ -503,8 +597,6 @@ namespace ProcesoCOB
                 Finish:
                     string hola = "";
                 }
-
-
                 //var groupedCustomerList1 = CPITEMS.GroupBy(u => u.DocumentoComercial).Select(grp => grp.ToList()).ToList();
                 //SEGUNDA RONDA VALIDAR MONTOS
                 List<CP_ArchivoItem> ListaConsultaI = new List<CP_ArchivoItem>();
@@ -561,9 +653,10 @@ namespace ProcesoCOB
                                     }
                                 }
                             }
-                            catch
+                            catch (Exception e)
                             {
                                 //crear log de error y guardar en base de datos
+                                enviarCorreoFallo(e);
                             }
                             ListaConsultaI.Add(row);
                         }
@@ -608,13 +701,15 @@ namespace ProcesoCOB
 
                 ERRORCOB_GenerarPOLAR(CPITEMS.Where(u => u.CodigoError != null).ToList(), referencia);
 
+
+                Console.WriteLine("termine con los errores: \r\n");
                 item.Registro = 0;
                 item.ReferenciaOrigen = "";
                 item.ReferenciaArchivoBanco = "";
                 item.FechaCreacion = DateTime.Now;
                 item.FechaLectura = DateTime.Now;
                 item.Contenido = lineas;
-                item.Descripcion = "Lectura Archivo Porlar COB";
+                item.Descripcion = "Lectura Archivo Polar COB";
                 item.Tipo = 1;
                 item.EsRespuesta = false;
                 item.ContenidoRespuesta = "";
@@ -656,7 +751,7 @@ namespace ProcesoCOB
 
                     foreach (var row in list)
                     {
-                        if (!ListaConsulta.Any(u => u.DocumentoComercial == row.DocumentoComercial && u.Referencia == row.Referencia))
+                        if (!ListaConsulta.Any(u => u.DocumentoComercial == row.DocumentoComercial && u.Referencia == row.Referencia) || !_produccion)
                         {
                             try
                             {
@@ -699,9 +794,9 @@ namespace ProcesoCOB
 
                                 ListaConsulta.Add(row);
                             }
-                            catch
+                            catch (Exception ex)
                             {
-                                //crear log de error y guardar en base de datos
+                                enviarCorreoFallo(ex);
                             }
                         }
                         else
@@ -738,25 +833,35 @@ namespace ProcesoCOB
                         EstadoCuentaREPO.AddEntity(EstadoCuenta);
 
                     }
-
-
-
-
                 }
+                Console.WriteLine("guardando en base de datos \r\n");
                 EstadoCuentaREPO.SaveChanges();
                 ListaEstado = EstadoCuentaREPO.GetAllRecords().Where(u => u.ArchivoLecturaPolar == item.Id && u.Estatus == 1).ToList();
+                Console.WriteLine("lista de cobros:" + ListaEstado.Count() + " \r\n");
                 if (!vencido)
                 {
                     Console.WriteLine("cobros:" + file.Name + " \r\n");
                     if (ListaEstado.Count > 0)
+                    {
+                        Console.WriteLine("listado de cobros:" + ListaEstado.Count + " \r\n");
                         COB_GenerarCobroBanesco(ListaEstado, asociado);
+                        //Console.WriteLine("vamos a comprirmir:" + ListaEstado.Count() + " \r\n");
+
+                    }
                     else
                     {
+                        Console.WriteLine("Estamos vencidos \r\n");
                         string line = "Sin Cobros";
                         string RUTAERRORCOB = ConfigurationManager.AppSettings["rutaErrorCOB"].ToString();
                         string ruta = RUTAERRORCOB + "BANPAG" + referencia + ".txt";
                         System.IO.File.WriteAllText(ruta, line);
                     }
+                }
+                else
+                {
+                    Console.WriteLine("Estamos vencidos \r\n");
+                    enviarCorreoFallo(new Exception("El archivo de cobros no se pudo generar. Están vencidos."));
+
                 }
 
                 //texto = texto + "moviendo archivo:" + file.Name + "\r\n";
@@ -765,6 +870,8 @@ namespace ProcesoCOB
                 System.IO.File.WriteAllLines(final, _lines2);
                 file.Delete();
             }
+            Console.WriteLine("********COMPRIMIENDO****** \r\n");
+            COMPRIMIR();
             return "todo ok";
         }
 
@@ -810,6 +917,7 @@ namespace ProcesoCOB
             Console.ReadLine();
             return true;
         }
+
         public bool ERRORCOB_GenerarPOLAR(List<CP_ArchivoItem> _items, string codigo)
         {
             CultureInfo __newCulture;
@@ -879,6 +987,15 @@ namespace ProcesoCOB
             Thread.CurrentThread.CurrentUICulture = __newCulture;
             Thread.CurrentThread.CurrentCulture = __newCulture;
             string RUTACOBRO = ConfigurationManager.AppSettings["rutaCobroBanesco"].ToString();
+            DirectoryInfo t = new DirectoryInfo(RUTACOBRO);
+            if (t.Exists)
+            {
+
+            }
+            else
+            {
+                Directory.CreateDirectory(RUTACOBRO);
+            }
             List<CP_Archivo> Archivos = new List<CP_Archivo>();
             //int i = 1;
             foreach (var cobro in Cobros)
@@ -886,12 +1003,12 @@ namespace ProcesoCOB
                 //System.Threading.Thread.Sleep(250);
                 CP_Archivo item = new CP_Archivo();
 
-                item.FechaLectura = DateTime.Now;
+                item.FechaLectura = DateTime.Now.AddDays(0);
                 item.Registro = 1;
                 item.ReferenciaOrigen = "";
                 item.ReferenciaArchivoBanco = "";
-                item.FechaCreacion = DateTime.Now;
-                item.FechaLectura = DateTime.Now;
+                item.FechaCreacion = DateTime.Now.AddDays(0);
+                item.FechaLectura = DateTime.Now.AddDays(0);
                 item.Descripcion = "Lectura Archivo Porlar COB";
                 item.Tipo = 3;
                 item.EsRespuesta = false;
@@ -914,23 +1031,24 @@ namespace ProcesoCOB
                 int _length = __NumeroDocumento.Length >= 8 ? 8 : __NumeroDocumento.Length;
                 string recibo = __NumeroDocumento.Substring(__NumeroDocumento.Length - _length, _length).PadLeft(8, '0');
                 string reciboX = __NumeroDocumento.Substring(__NumeroDocumento.Length - 3, 3).PadLeft(3, '0');
-               
-                
+
+
                 string asociado = _asociado;
                 string __newrandom = string.Empty;
                 try
                 {
                     __newrandom = Convert.ToInt64(Convert.ToDecimal(cobro.NumeroDocumento) * Convert.ToDecimal(cobro.CodigoComercio) / (Convert.ToDecimal(cobro.Id))).ToString();
-                    
+
                     __newrandom = Regex.Match(__newrandom, @"(.{7})\s*$").ToString().PadLeft(7, '0');
-                    
+
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     Random _Random = new Random(cobro.Id);
                     string ram = _Random.Next(0, 999).ToString();
                     __newrandom = DateTime.Now.AddDays(0).ToString("ddss") + ram.PadLeft(3, '0');
+                    enviarCorreoFallo(ex);
 
                 }
 
@@ -969,11 +1087,35 @@ namespace ProcesoCOB
                 string _cuenta = "";
                 string _nombrecomercial = "";
                 string _rifc = "";
-                if (beneficiario != null && beneficiario.Id > 0)
+
+                if (produccion == "PRUEBA")
                 {
-                    _cuenta = beneficiario.CuentaBancaria;
-                    _nombrecomercial = beneficiario.Nombre;
-                    _rifc = beneficiario.RifCliente.PadLeft(9, '0');
+                    if (GlobalCounter >= 5001 && GlobalCounter < 5100)
+                    {
+                        _cuenta = "01340440204401038491";
+                        _nombrecomercial = "GRUPO LATIN BOLETOS";
+                        _rifc = "J408187680";
+
+                    }
+                    else
+                    {
+
+                        _cuenta = beneficiario.CuentaBancaria;
+                        _nombrecomercial = beneficiario.Nombre;
+                        _rifc = "V18601098";
+
+                    }
+                }
+                else
+                {
+
+                    if (beneficiario != null && beneficiario.Id > 0)
+                    {
+                        _cuenta = beneficiario.CuentaBancaria;
+                        _nombrecomercial = beneficiario.Nombre;
+                        _rifc = beneficiario.RifCliente.PadLeft(9, '0');
+                    }
+
                 }
 
                 string tipo = "03";
@@ -983,7 +1125,18 @@ namespace ProcesoCOB
                 decimal _cambio = Math.Round(cobro.TotalArchivo, 2);
                 _cambio = _cambio * 100;
                 total = total + _cambio;
-                string montoacobrar = _cambio.ToString().Split(',')[0];
+
+                string montoacobrar = "";
+                if (produccion == "PRUEBA")
+                {
+
+                    montoacobrar = "10000";
+                }
+                else
+                {
+
+                    montoacobrar = _cambio.ToString().Split(',')[0];
+                }
                 string moneda = "VES";
                 string numerocuenta = _cuenta;
                 string swift = "UNIOVECA";
@@ -1000,16 +1153,10 @@ namespace ProcesoCOB
                     + libre + contrato.Truncate(35).PadRight(35) + fechavencimiento;
                 _cobros.Add(debito);
 
-
-
                 //registro credito
                 string _tipo2 = "02";
                 int __length = __NumeroDocumento.Length >= 8 ? 8 : __NumeroDocumento.Length;
                 string _recibo = __NumeroDocumento.Substring(__NumeroDocumento.Length - __length, __length).PadLeft(8, '0');
-
-                //Cobros.First().Id.ToString().PadLeft(8, '0');
-
-
 
                 if (asociado == "540132787")
                 {
@@ -1040,14 +1187,30 @@ namespace ProcesoCOB
                     _numerocuenta = "01340850598503004357";
                     //_numerocuenta = "01340375993751007271";
                 }
+                else if (asociado == "210374095")
+                {
+                    _rif = "J410066105";
+                    ordenante = "FINPAGOS TECNOLOGIA C A";
+                    _numerocuenta = "01340031870311158437";
 
-
+                }
                 //string _rif = "J401878105";
                 //string ordenante = "TECNOLOGIA INSTAPAGO C A";
                 //string _numerocuenta = "01340031810311158627";
                 //decimal cambio = Math.Round(Cobros.Sum(y => y.Monto), 2);
                 //cambio = cambio * 100;
-                string _montoabono = total.ToString().Split(',')[0];
+                string _montoabono = "";
+                if (produccion == "PRUEBA")
+                {
+
+                    _montoabono = "10000";
+                }
+                else
+                {
+
+                    _montoabono = total.ToString().Split(',')[0];
+                }
+                //string _montoabono = total.ToString().Split(',')[0];
                 string _moneda = "VES";
                 string _swift = "UNIOVECA";
                 //string _fecha = DateTime.Now.ToString("yyyyMMdd");
@@ -1069,7 +1232,18 @@ namespace ProcesoCOB
                 string _tipo = "04";
                 string totalcreditos = "1";
                 string debitos = "1";
-                string montototal = total.ToString().Split(',')[0];
+                string montototal = "";
+                if (produccion == "PRUEBA")
+                {
+
+                    montototal = "10000";
+                }
+                else
+                {
+
+                    montototal = total.ToString().Split(',')[0];
+                }
+                //string montototal = total.ToString().Split(',')[0];
                 string totales = _tipo + totalcreditos.PadLeft(15, '0') + debitos.PadLeft(15, '0') + montototal.PadLeft(15, '0');
                 Array.Resize(ref lines, lines.Length + 1);
                 lines[lines.Length - 1] = totales;
@@ -1087,11 +1261,16 @@ namespace ProcesoCOB
 
                 CP_ArchivoREPO.AddEntity(item);
                 CP_ArchivoREPO.SaveChanges();
+
+                ///ESTO ES UN PROBLEMA
                 cobro.ArchivoLecturaPolar = item.Id;
+                EstadoCuentaREPO.SaveChanges();
+
                 GlobalCounter++;
+
             }
 
-            EstadoCuentaREPO.SaveChanges();
+
             return true;
         }
 
@@ -1220,43 +1399,77 @@ namespace ProcesoCOB
         }
 
 
-
-        static void Main(string[] args)
+        public bool enviarCorreo(string message)
         {
-            CultureInfo __newCulture;
-            __newCulture = new CultureInfo("es-VE");
+            Console.WriteLine("aqui viene el correo");
 
-            Thread.CurrentThread.CurrentUICulture = __newCulture;
+            try
+            {
+                var mailmessage = new MailMessage(new MailAddress("notificacion@instapago.com", "Robot InstaPago"),
+               new MailAddress("soporte@instapago.com", "soporte@instapago.com"));
+                mailmessage.BodyEncoding = System.Text.Encoding.Default;
+                mailmessage.Subject = "[CEC POLAR] - Proceso de cobro COB " + DateTime.Now.ToString("dd/MM/yyyy");
+                mailmessage.Body = "<p>Buenos dias.</p> <p>Sirva la presente para hacer de su conocimiento que se ha ejecutado satisfactoriamente el proceso de lectura de archivos COB del grupo de empresas POLAR.</p> <br /><br /><b>Archivos de cobro generados:</b> " + message;
 
-            Program p = new Program();
+                mailmessage.IsBodyHtml = true;
+                mailmessage.To.Add(ConfigurationManager.AppSettings["SMTP_TO"]);
 
-            StringBuilder Logs = new StringBuilder();
-            //p.Test();
+                SmtpClient smtpMail = new SmtpClient(System.Configuration.ConfigurationManager.AppSettings["SMTP_ADDRESS"],
+                    int.Parse(System.Configuration.ConfigurationManager.AppSettings["SMTP_PORT"]));
+                smtpMail.EnableSsl = false;
+                smtpMail.Timeout = 5000;
 
-            Logs.Append("Iniciamos busqueda en ftp\r\n");
-            //string result = p.COB_DownloadAndMove(); // Calling method
-           // Logs.Append(result);
-            Console.WriteLine("Finalizada la Descarga \r\n");
-            Console.WriteLine("Procesamos Lectura \r\n");
-            string result2 = p.COB_LecturaPOLAR(); // Calling method
-            Logs.Append(result2);
-            Console.WriteLine("Fin procesamiento \r\n");
+                smtpMail.Send(mailmessage);
 
-            Console.WriteLine("Subiendo errores COB y PAG sin cobros \r\n");
-           // string result3 = p.COBERROR_UploadAndMove();
 
-            Console.WriteLine("Subiendo cobros \r\n");
-          //  string result4 = p.COBRO_UploadAndMove();
+                return true;
 
-            string RUTALOGS = ConfigurationManager.AppSettings["rutaLogs"].ToString() + "LOGS" + DateTime.Now.ToString("dd-MM-yy-ss-mm") + ".txt";
-            System.IO.File.WriteAllText(RUTALOGS, Logs.ToString());
-
-            //Console.ReadLine();
-
+            }
+            catch (Exception ex)
+            {
+                enviarCorreoFallo(ex);
+                Console.WriteLine(ex.Message);
+                return false;
+            }
 
 
 
         }
+        public bool enviarCorreoFallo(Exception ex)
+        {
+            Console.WriteLine("aqui viene el correo de falla");
+
+            try
+            {
+                var mailmessage = new MailMessage(new MailAddress("notificacion@instapago.com", "Robot InstaPago"),
+               new MailAddress("soporte@instapago.com", "soporte@instapago.com"));
+                mailmessage.BodyEncoding = System.Text.Encoding.Default;
+                mailmessage.Subject = "[CEC POLAR] - FALLA COB " + DateTime.Now.ToString("dd/MM/yyyy");
+                mailmessage.Body = "<p>Error al procesar el servicio de COB:</p>" + ex.Message + "<br/><br/>" + ex.StackTrace;
+                mailmessage.IsBodyHtml = true;
+                mailmessage.Priority = MailPriority.High;
+
+                SmtpClient smtpMail = new SmtpClient(System.Configuration.ConfigurationManager.AppSettings["SMTP_ADDRESS"], int.Parse(System.Configuration.ConfigurationManager.AppSettings["SMTP_PORT"]));
+                smtpMail.EnableSsl = false;
+                smtpMail.Timeout = 5000;
+
+                smtpMail.Send(mailmessage);
+
+
+                return true;
+
+            }
+            catch (Exception a)
+            {
+
+                Console.WriteLine(a.Message);
+                return false;
+            }
+
+
+
+        }
+
 
     }
 
@@ -1271,3 +1484,7 @@ namespace ProcesoCOB
 
 
 }
+
+
+
+

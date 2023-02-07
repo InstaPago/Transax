@@ -23,6 +23,7 @@ using System.IO;
 using Umbrella.App_Code;
 using BLL.Concrete;
 using System.Configuration;
+using FileHelpers;
 
 namespace Umbrella.Controllers
 {
@@ -52,6 +53,7 @@ namespace Umbrella.Controllers
         URepository<AE_Dolar> AE_DolarREPO = new URepository<InstaTransfer.DataAccess.AE_Dolar>();
         URepository<AE_ValorAccionTR> AE_ValorAccionTRREPO = new URepository<AE_ValorAccionTR>();
         URepository<AE_ArchivoUpload> AE_ArchivoUploadREPO = new URepository<AE_ArchivoUpload>();
+        URepository<AE_Variable> AE_VariableREPO = new URepository<AE_Variable>();
         BaseSuccessResponse _baseSuccessResponse;
         BaseErrorResponse _baseErrorResponse;
 
@@ -931,6 +933,49 @@ namespace Umbrella.Controllers
             }
         }
 
+
+        [DelimitedRecord(";")]
+        public class ItemArchivo
+        {
+
+            public string Fecha { get; set; }
+
+            public string Referencia { get; set; }
+            [FieldTrim(TrimMode.Both)]
+            public string Descripcion { get; set; }
+
+            public string Monto { get; set; }
+
+            public string Balance { get; set; }
+
+            [FieldTrim(TrimMode.Both)]
+            public string Extra { get; set; }
+
+        }
+
+        [DelimitedRecord("\t")]
+        public class ItemArchivoMercantil
+        {
+
+            public string Fecha { get; set; }
+
+      
+            public string Descripcion { get; set; }
+
+      
+            public string Referencia { get; set; }
+
+            public string Extra { get; set; }
+
+            public string Monto { get; set; }
+        
+            public string Extra2 { get; set; }
+
+        
+            public string Extra3 { get; set; }
+
+        }
+
         [HttpPost]
         [ValidateInput(false)]
         public JsonResult UploadEstadoCuenta(List<HttpPostedFileBase> files, string _rif)
@@ -942,103 +987,362 @@ namespace Umbrella.Controllers
                 List<string> _texto = new List<string>();
                 List<InstaTransfer.DataAccess.AE_MovimientosCuenta> ListaMovimientos = new List<AE_MovimientosCuenta>();
                 bool win = SaveFile(file, _filename);
-
+                ItemArchivo[] Registros;
                 if (win)
                 {
                     try
                     {
                         string ruta = System.Configuration.ConfigurationManager.AppSettings["RutaPropuestaMontando"];
-                        //Create COM Objects. Create a COM object for everything that is referenced
-                        Application xlApp = new Application();
-                        Workbook xlWorkbook = xlApp.Workbooks.Open(ruta + _filename);
-                        _Worksheet xlWorksheet = xlWorkbook.Sheets[1];
-                        Range xlRange = xlWorksheet.UsedRange;
 
-                        int rowCount = xlRange.Rows.Count;
-                        int colCount = 4;
+                        var fileHelperEngine = new FileHelperEngine<ItemArchivo>();
+                        Registros = fileHelperEngine.ReadFile(ruta + _filename);
+
+                        foreach (var item in Registros)
+                        {
+                            InstaTransfer.DataAccess.AE_MovimientosCuenta _Movimiento = new AE_MovimientosCuenta();
+                            if (ValidateRow(item.Descripcion))
+                            {
+                                if (BuscarRegistro(item.Descripcion, item.Referencia, item.Fecha, _rif))
+                                {
+                                    //double d = double.Parse(item.Fecha);
+                                    //DateTime conv = DateTime.FromOADate(d);
+                                    _Movimiento.Fecha = DateTime.Parse(item.Fecha);
+                                    _Movimiento.Referencia = item.Referencia;
+                                    _Movimiento.Descripcion = item.Descripcion;
+                                    _Movimiento.Monto = decimal.Parse(item.Monto);
+                                    _Movimiento.RifCommerce = _rif;
+                                    _Movimiento.FechaRegistro = DateTime.Now;
+                                    _Movimiento.Activo = true;
+                                    AEmovimientosREPO.AddEntity(_Movimiento);
+                                    AEmovimientosREPO.SaveChanges();
+                                }
+                            }
+                            else
+                            {
+                                if (BuscarRegistro(item.Descripcion, item.Referencia, item.Fecha, _rif))
+                                {
+                                    _Movimiento.Fecha = DateTime.Parse(item.Fecha);
+                                    _Movimiento.Referencia = item.Referencia;
+                                    _Movimiento.Descripcion = item.Descripcion;
+                                    _Movimiento.Monto = 0;
+                                    _Movimiento.RifCommerce = _rif;
+                                    _Movimiento.FechaRegistro = DateTime.Now;
+                                    _Movimiento.Activo = true;
+                                    AEmovimientosREPO.AddEntity(_Movimiento);
+                                    AEmovimientosREPO.SaveChanges();
+                                }
+                            }
+                        }
+
+
+                        //Create COM Objects. Create a COM object for everything that is referenced
+                        //Application xlApp = new Application();
+                        //Workbook xlWorkbook = xlApp.Workbooks.Open(ruta + _filename);
+                        //_Worksheet xlWorksheet = xlWorkbook.Sheets[1];
+                        //Range xlRange = xlWorksheet.UsedRange;
+
+                        //int rowCount = xlRange.Rows.Count;
+                        //int colCount = 4;
 
                         //iterate over the rows and columns and print to the console as it appears in the file
                         //excel is not zero based!!
-                        for (int i = 1; i <= rowCount; i++)
+                        //for (int i = 1; i <= rowCount; i++)
+                        //{
+                        //    InstaTransfer.DataAccess.AE_MovimientosCuenta _Movimiento = new AE_MovimientosCuenta();
+
+                        //    bool error = false;
+                        //    if (i > 0)
+                        //    {
+                        //        string item = "";
+                        //        for (int j = 1; j <= colCount; j++)
+                        //        {
+                        //            //new line
+                        //            if (j == 1)
+                        //                Console.Write("\r\n");
+                        //            try
+                        //            {
+                        //                //write the value to the console
+                        //                if (xlRange.Cells[i, j] != null && xlRange.Cells[i, j].Value2 != null)
+                        //                {
+                        //                    item = item + xlRange.Cells[i, j].Value2.ToString() + "~";
+                        //                }
+
+                        //            }
+                        //            catch
+                        //            {
+                        //                error = true;
+
+                        //            }
+
+                        //        }
+                        //        try
+                        //        {
+                        //            var _arreglo = item.Split('~');
+                        //            decimal.Parse(_arreglo[3].ToString());
+                        //        }
+                        //        catch { error = true; }
+                        //        if (!error)
+                        //        {
+                        //            var arreglo = item.Split('~');
+                        //            if (ValidateRow(arreglo[2]))
+                        //            {
+                        //                if (BuscarRegistro(arreglo[2].ToString(), arreglo[1].ToString(), arreglo[0], _rif))
+                        //                {
+                        //                    double d = double.Parse(arreglo[0]);
+                        //                    DateTime conv = DateTime.FromOADate(d);
+                        //                    _Movimiento.Fecha = conv;
+                        //                    _Movimiento.Referencia = arreglo[1].ToString();
+                        //                    _Movimiento.Descripcion = arreglo[2].ToString();
+                        //                    _Movimiento.Monto = decimal.Parse(arreglo[3].ToString());
+                        //                    _Movimiento.RifCommerce = _rif;
+                        //                    _Movimiento.FechaRegistro = DateTime.Now;
+                        //                    _Movimiento.Activo = true;
+                        //                    AEmovimientosREPO.AddEntity(_Movimiento);
+                        //                    AEmovimientosREPO.SaveChanges();
+                        //                }
+                        //            }
+                        //            else
+                        //            {
+                        //                //if (BuscarRegistro(arreglo[2].ToString(), arreglo[1].ToString(), arreglo[0], _rif))
+                        //                //{
+                        //                double d = double.Parse(arreglo[0]);
+                        //                DateTime conv = DateTime.FromOADate(d);
+                        //                _Movimiento.Fecha = conv;
+                        //                _Movimiento.Referencia = arreglo[1].ToString();
+                        //                _Movimiento.Descripcion = arreglo[2].ToString();
+                        //                _Movimiento.Monto = 0;
+                        //                _Movimiento.RifCommerce = _rif;
+                        //                _Movimiento.FechaRegistro = DateTime.Now;
+                        //                _Movimiento.Activo = true;
+                        //                AEmovimientosREPO.AddEntity(_Movimiento);
+                        //                AEmovimientosREPO.SaveChanges();
+                        //                //}
+                        //            }
+
+
+                        //        }
+                        //    }
+                        //}
+                        //xlApp.Workbooks.Close();
+                        //xlApp.Quit();
+                        //System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApp);
+                        //System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApp.Workbooks);
+                        //xlApp = null;
+                        //GC.Collect();
+
+                    }
+                    catch (Exception e)
+                    {
+                        throw e;
+                        //return Json(new
+                        //{
+                        //    success = false,
+                        //    message = e.Message
+                        //}, JsonRequestBehavior.DenyGet);
+                    }
+                }
+                else
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        message = "No logramos procesar el archivo."
+                    }, JsonRequestBehavior.DenyGet);
+                }
+                z++;
+            }
+
+            List<InstaTransfer.DataAccess.AE_MovimientosCuenta> Movimientos = AEmovimientosREPO.GetAllRecords().Where(u => u.RifCommerce == _rif && u.Activo).ToList();
+            Movimientos = Movimientos.OrderByDescending(u => u.Fecha).ToList();
+            bool _mostar = Movimientos.Sum(u => u.Monto) > 0 ? true : false;
+
+            return Json(new
+            {
+                success = true,
+                message = z + " - Archivo(s) procesado(s) de forma correcta.",
+                cantidad = Movimientos.Count(),
+                desde = Movimientos.LastOrDefault().Fecha.ToString("dd/MM/yyy"),
+                hasta = Movimientos.FirstOrDefault().Fecha.ToString("dd/MM/yyy"),
+                validohasta = Movimientos.FirstOrDefault().Fecha.AddDays(7).ToString("dd/MM/yyy"),
+                mostrar = _mostar
+            }, JsonRequestBehavior.DenyGet);
+            //return Json(new
+            //{
+            //    success = true,
+            //    message = "Procesamos" + z + "Archivos de fprma correcta."
+            //}, JsonRequestBehavior.DenyGet);
+
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public JsonResult UploadEstadoCuentaMercantil(List<HttpPostedFileBase> files, string _rif)
+        {
+            int z = 0;
+            foreach (var file in files)
+            {
+                string _filename = DateTime.Now.ToString("hh_mm_ss") + file.FileName;
+                List<string> _texto = new List<string>();
+                List<InstaTransfer.DataAccess.AE_MovimientosCuenta> ListaMovimientos = new List<AE_MovimientosCuenta>();
+                bool win = SaveFile(file, _filename);
+                ItemArchivoMercantil[] Registros;
+                if (win)
+                {
+                    try
+                    {
+                        string ruta = System.Configuration.ConfigurationManager.AppSettings["RutaPropuestaMontando"];
+
+                        var fileHelperEngine = new FileHelperEngine<ItemArchivoMercantil>();
+                        Registros = fileHelperEngine.ReadFile(ruta + _filename);
+                        decimal monto = 0;
+                   
+
+                        foreach (var item in Registros)
                         {
-                            InstaTransfer.DataAccess.AE_MovimientosCuenta _Movimiento = new AE_MovimientosCuenta();
-
-                            bool error = false;
-                            if (i > 0)
+                            if (z == 0 || z == Registros.Count())
                             {
-                                string item = "";
-                                for (int j = 1; j <= colCount; j++)
+
+                            }
+                            else
+                            {
+                                if (item.Extra != "")
                                 {
-                                    //new line
-                                    if (j == 1)
-                                        Console.Write("\r\n");
-                                    try
-                                    {
-                                        //write the value to the console
-                                        if (xlRange.Cells[i, j] != null && xlRange.Cells[i, j].Value2 != null)
-                                        {
-                                            item = item + xlRange.Cells[i, j].Value2.ToString() + "~";
-                                        }
-
-                                    }
-                                    catch
-                                    {
-                                        error = true;
-
-                                    }
-
+                                    monto = decimal.Parse(item.Extra);
                                 }
-                                try
+                                else if (item.Monto != "")
                                 {
-                                    var _arreglo = item.Split('~');
-                                    decimal.Parse(_arreglo[3].ToString());
+                                    monto = decimal.Parse(item.Monto);
                                 }
-                                catch { error = true; }
-                                if (!error)
+                                    InstaTransfer.DataAccess.AE_MovimientosCuenta _Movimiento = new AE_MovimientosCuenta();
+                                if (ValidateRowMercantil(item.Descripcion.TrimEnd()))
                                 {
-                                    var arreglo = item.Split('~');
-                                    if (ValidateRow(arreglo[2]))
+                                    if (BuscarRegistro(item.Descripcion.TrimEnd(), item.Referencia, item.Fecha, _rif))
                                     {
-                                        if (BuscarRegistro(arreglo[2].ToString(), arreglo[1].ToString(), arreglo[0], _rif))
-                                        {
-                                            double d = double.Parse(arreglo[0]);
-                                            DateTime conv = DateTime.FromOADate(d);
-                                            _Movimiento.Fecha = conv;
-                                            _Movimiento.Referencia = arreglo[1].ToString();
-                                            _Movimiento.Descripcion = arreglo[2].ToString();
-                                            _Movimiento.Monto = decimal.Parse(arreglo[3].ToString());
-                                            _Movimiento.RifCommerce = _rif;
-                                            _Movimiento.FechaRegistro = DateTime.Now;
-                                            _Movimiento.Activo = true;
-                                            AEmovimientosREPO.AddEntity(_Movimiento);
-                                            AEmovimientosREPO.SaveChanges();
-                                        }
+                                        //double d = double.Parse(item.Fecha);
+                                        //DateTime conv = DateTime.FromOADate(d);
+                                        _Movimiento.Fecha = DateTime.Parse(item.Fecha);
+                                        _Movimiento.Referencia = item.Referencia;
+                                        _Movimiento.Descripcion = item.Descripcion.TrimEnd();
+                                        _Movimiento.Monto = monto;
+                                        _Movimiento.RifCommerce = _rif;
+                                        _Movimiento.FechaRegistro = DateTime.Now;
+                                        _Movimiento.Activo = true;
+                                        AEmovimientosREPO.AddEntity(_Movimiento);
+                                        AEmovimientosREPO.SaveChanges();
                                     }
-                                    else
+                                }
+                                else
+                                {
+                                    if (BuscarRegistro(item.Descripcion.TrimEnd(), item.Referencia, item.Fecha, _rif))
                                     {
-                                        //if (BuscarRegistro(arreglo[2].ToString(), arreglo[1].ToString(), arreglo[0], _rif))
-                                        //{
-                                        double d = double.Parse(arreglo[0]);
-                                        DateTime conv = DateTime.FromOADate(d);
-                                        _Movimiento.Fecha = conv;
-                                        _Movimiento.Referencia = arreglo[1].ToString();
-                                        _Movimiento.Descripcion = arreglo[2].ToString();
+                                        _Movimiento.Fecha = DateTime.Parse(item.Fecha);
+                                        _Movimiento.Referencia = item.Referencia;
+                                        _Movimiento.Descripcion = item.Descripcion.TrimEnd();
                                         _Movimiento.Monto = 0;
                                         _Movimiento.RifCommerce = _rif;
                                         _Movimiento.FechaRegistro = DateTime.Now;
                                         _Movimiento.Activo = true;
                                         AEmovimientosREPO.AddEntity(_Movimiento);
                                         AEmovimientosREPO.SaveChanges();
-                                        //}
                                     }
-
-
                                 }
+
                             }
+                            z++;
                         }
-                        xlApp.Workbooks.Close();
-                        xlApp.Quit();
-                        System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApp);
+
+
+                        //Create COM Objects. Create a COM object for everything that is referenced
+                        //Application xlApp = new Application();
+                        //Workbook xlWorkbook = xlApp.Workbooks.Open(ruta + _filename);
+                        //_Worksheet xlWorksheet = xlWorkbook.Sheets[1];
+                        //Range xlRange = xlWorksheet.UsedRange;
+
+                        //int rowCount = xlRange.Rows.Count;
+                        //int colCount = 4;
+
+                        //iterate over the rows and columns and print to the console as it appears in the file
+                        //excel is not zero based!!
+                        //for (int i = 1; i <= rowCount; i++)
+                        //{
+                        //    InstaTransfer.DataAccess.AE_MovimientosCuenta _Movimiento = new AE_MovimientosCuenta();
+
+                        //    bool error = false;
+                        //    if (i > 0)
+                        //    {
+                        //        string item = "";
+                        //        for (int j = 1; j <= colCount; j++)
+                        //        {
+                        //            //new line
+                        //            if (j == 1)
+                        //                Console.Write("\r\n");
+                        //            try
+                        //            {
+                        //                //write the value to the console
+                        //                if (xlRange.Cells[i, j] != null && xlRange.Cells[i, j].Value2 != null)
+                        //                {
+                        //                    item = item + xlRange.Cells[i, j].Value2.ToString() + "~";
+                        //                }
+
+                        //            }
+                        //            catch
+                        //            {
+                        //                error = true;
+
+                        //            }
+
+                        //        }
+                        //        try
+                        //        {
+                        //            var _arreglo = item.Split('~');
+                        //            decimal.Parse(_arreglo[3].ToString());
+                        //        }
+                        //        catch { error = true; }
+                        //        if (!error)
+                        //        {
+                        //            var arreglo = item.Split('~');
+                        //            if (ValidateRow(arreglo[2]))
+                        //            {
+                        //                if (BuscarRegistro(arreglo[2].ToString(), arreglo[1].ToString(), arreglo[0], _rif))
+                        //                {
+                        //                    double d = double.Parse(arreglo[0]);
+                        //                    DateTime conv = DateTime.FromOADate(d);
+                        //                    _Movimiento.Fecha = conv;
+                        //                    _Movimiento.Referencia = arreglo[1].ToString();
+                        //                    _Movimiento.Descripcion = arreglo[2].ToString();
+                        //                    _Movimiento.Monto = decimal.Parse(arreglo[3].ToString());
+                        //                    _Movimiento.RifCommerce = _rif;
+                        //                    _Movimiento.FechaRegistro = DateTime.Now;
+                        //                    _Movimiento.Activo = true;
+                        //                    AEmovimientosREPO.AddEntity(_Movimiento);
+                        //                    AEmovimientosREPO.SaveChanges();
+                        //                }
+                        //            }
+                        //            else
+                        //            {
+                        //                //if (BuscarRegistro(arreglo[2].ToString(), arreglo[1].ToString(), arreglo[0], _rif))
+                        //                //{
+                        //                double d = double.Parse(arreglo[0]);
+                        //                DateTime conv = DateTime.FromOADate(d);
+                        //                _Movimiento.Fecha = conv;
+                        //                _Movimiento.Referencia = arreglo[1].ToString();
+                        //                _Movimiento.Descripcion = arreglo[2].ToString();
+                        //                _Movimiento.Monto = 0;
+                        //                _Movimiento.RifCommerce = _rif;
+                        //                _Movimiento.FechaRegistro = DateTime.Now;
+                        //                _Movimiento.Activo = true;
+                        //                AEmovimientosREPO.AddEntity(_Movimiento);
+                        //                AEmovimientosREPO.SaveChanges();
+                        //                //}
+                        //            }
+
+
+                        //        }
+                        //    }
+                        //}
+                        //xlApp.Workbooks.Close();
+                        //xlApp.Quit();
+                        //System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApp);
                         //System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApp.Workbooks);
                         //xlApp = null;
                         //GC.Collect();
@@ -1251,11 +1555,29 @@ namespace Umbrella.Controllers
 
         public bool ValidateRow(string Descripcion)
         {
-            String referecnias = System.Configuration.ConfigurationManager.AppSettings["Referencia"];
+            AE_Variable Elemto = AE_VariableREPO.GetAllRecords().Where(u => u.Id == 15).FirstOrDefault();
+            String referecnias = Elemto.InfoExtra;
             var lista = referecnias.Split(',');
             foreach (var item in lista)
             {
-                if (Descripcion.Contains(item))
+                if (Descripcion.Contains(item.Trim()))
+                {
+
+                    return true;
+                }
+            }
+            return false;
+
+        }
+
+        public bool ValidateRowMercantil(string Descripcion)
+        {
+            AE_Variable Elemto = AE_VariableREPO.GetAllRecords().Where(u => u.Id == 16).FirstOrDefault();
+            String referecnias = Elemto.InfoExtra; //System.Configuration.ConfigurationManager.AppSettings["Referencia"];
+            var lista = referecnias.Split(',');
+            foreach (var item in lista)
+            {
+                if (Descripcion.Contains(item.Trim()))
                 {
 
                     return true;
@@ -1267,9 +1589,9 @@ namespace Umbrella.Controllers
 
         public bool BuscarRegistro(string Descripcion, string Referencia, string fecha, string _rif)
         {
-            double d = double.Parse(fecha);
-            DateTime _fecha = DateTime.FromOADate(d);
-            //DateTime _fecha = DateTime.Parse(_Fecha);
+            //double d = double.Parse(fecha);
+            //DateTime _fecha = DateTime.FromOADate(d);
+            DateTime _fecha = DateTime.Parse(fecha);
             List<InstaTransfer.DataAccess.AE_MovimientosCuenta> _movimientos = AEmovimientosREPO.GetAllRecords().Where(u => u.RifCommerce == _rif && u.Activo && u.Referencia == Referencia && u.Descripcion == Descripcion && u.Fecha == _fecha).ToList();
             if (_movimientos.Count() > 0)
             {
@@ -1295,6 +1617,8 @@ namespace Umbrella.Controllers
 
         public ActionResult _GenerarPropuesta(string rif, bool _modo)
         {
+            
+
             InstaTransfer.DataAccess.AE_Dolar Dolar = AE_DolarREPO.GetAllRecords().OrderByDescending(u => u.FechaValor).ToList().FirstOrDefault();
             decimal tasa = Dolar.Tasa;
             List<InstaTransfer.DataAccess.AE_MovimientosCuenta> _ListaMovimientos = new List<InstaTransfer.DataAccess.AE_MovimientosCuenta>();
@@ -1344,25 +1668,66 @@ namespace Umbrella.Controllers
             decimal porcetajeexito = decimal.Parse(diasexito.ToString()) / decimal.Parse(_ListaMontos.Count().ToString());
             decimal _porcetajeexitocrudo = decimal.Parse(diasexito.ToString()) / decimal.Parse(_ListaMontos.Count().ToString());
             int _porcetajeexito = int.Parse(Math.Round(porcetajeexito * 100).ToString());
+            List<InstaTransfer.DataAccess.AE_Variable> AE_Variable = AE_VariableREPO.GetAllRecords().Where(u => u.Id != 15 || u.Id != 16).ToList();
 
-            decimal _variableA = decimal.Parse("0,2");
-            decimal _variableB = decimal.Parse("0,8");
-            decimal _variableCobranza = decimal.Parse("0,15");
-            decimal _variableN = decimal.Parse("3,00");
-            decimal _prima = decimal.Parse("1,20");
-            decimal _prima1 = decimal.Parse("1,12");
-            decimal _prima2 = decimal.Parse("1,10");
-            decimal _prima3 = decimal.Parse("1,10");
-            int plazo = 30;
+            decimal _variableA = AE_Variable.Where(u => u.Id == 1).FirstOrDefault().Monto;
+            decimal _variableB = AE_Variable.Where(u => u.Id == 2).FirstOrDefault().Monto;
+
+            decimal _Segementot1 = AE_Variable.Where(u => u.Id == 3).FirstOrDefault().Monto;
+            decimal _Segementot2 = AE_Variable.Where(u => u.Id == 4).FirstOrDefault().Monto;
+
+            decimal _variableCobranza = AE_Variable.Where(u => u.Id == 5).FirstOrDefault().Monto;
+            decimal porcentajecobranza2 = AE_Variable.Where(u => u.Id == 6).FirstOrDefault().Monto;
+            decimal porcentajecobranza3 = AE_Variable.Where(u => u.Id == 7).FirstOrDefault().Monto;
+
+            decimal _prima1 = AE_Variable.Where(u => u.Id == 12).FirstOrDefault().Monto;
+            decimal _prima2 = AE_Variable.Where(u => u.Id == 13).FirstOrDefault().Monto;
+            decimal _prima3 = AE_Variable.Where(u => u.Id == 17).FirstOrDefault().Monto;
+
+            int plazo = int.Parse(Math.Round(AE_Variable.Where(u => u.Id == 22).FirstOrDefault().Monto,0).ToString());
+            decimal Avance2factor = AE_Variable.Where(u => u.Id == 23).FirstOrDefault().Monto;
+            decimal Avance3factor = AE_Variable.Where(u => u.Id == 24).FirstOrDefault().Monto;
+
+            decimal _prima = AE_Variable.Where(u => u.Id == 25).FirstOrDefault().Monto;
+            decimal _variableN = AE_Variable.Where(u => u.Id == 26).FirstOrDefault().Monto;
+
+
+            //decimal _variableA = decimal.Parse("0,2");
+            //decimal _variableB = decimal.Parse("0,8");
+
+            //decimal _Segementot1 = decimal.Parse("0,33");
+            //decimal _Segementot2 = decimal.Parse("1");
+
+            //decimal _variableCobranza = decimal.Parse("0,15");
+            //decimal porcentajecobranza2 = decimal.Parse("0,22");
+            //decimal porcentajecobranza3 = decimal.Parse("0,30");
+
+
+            //decimal _prima1 = decimal.Parse("1,12");
+            //decimal _prima2 = decimal.Parse("1,10");
+            //decimal _prima3 = decimal.Parse("1,10");
+
+            //int plazo = 30;
+            //decimal Avance2factor = decimal.Parse("1,50");
+            //decimal Avance3factor = decimal.Parse("2,00");
+
+
+            //decimal _variableN = decimal.Parse("3,00");
+            //decimal _prima = decimal.Parse("1,20");
+
 
             //GENERALES
             int totalregistro = _ListaMontos.Count();
-            double countT1 = totalregistro * 0.35;
+            double countT1 = totalregistro * double.Parse(_Segementot1.ToString());
             int _countT1 = int.Parse(Math.Ceiling(countT1).ToString());
+            //
+            double countT2 = totalregistro * double.Parse(_Segementot2.ToString());
+            int _countT2 = int.Parse(Math.Ceiling(countT2).ToString());
             //CALCULAMOS PROMEDIO
             //var bola = _ListaMontos.Take(_countT1).Sum(u => u.Monto);
             decimal _pomediot1 = Math.Round((_ListaMontos.Take(_countT1).Sum(u => u.Monto) / _countT1), 2);
-            decimal _pomediot2 = Math.Round((_ListaMontos.Sum(u => u.Monto) / (totalregistro)), 2);
+            decimal _pomediot2 = Math.Round((_ListaMontos.Take(_countT2).Sum(u => u.Monto) / _countT2), 2);
+            //decimal _pomediot2 = Math.Round((_ListaMontos.Sum(u => u.Monto) / (totalregistro)), 2);
             decimal _promedio = Math.Round(((_variableA * _pomediot1) + (_variableB * _pomediot2)), 2);
 
             // CALCULAMOS T1 33 %
@@ -1375,7 +1740,7 @@ namespace Umbrella.Controllers
             //CALCULAMOS LA MEDIANA AJUSTADA
             decimal media = (_variableA * T1) + (_variableB * T2);
             int totalregistrosin0 = _ListaMontos.Where(u => u.Monto > 0).Count();
-            double countT1sin0 = totalregistrosin0 * 0.35;
+            double countT1sin0 = totalregistrosin0 * double.Parse(_Segementot1.ToString());
             int _countT1sin0 = int.Parse(Math.Ceiling(countT1sin0).ToString());
 
             //var _ListaNueva = _ListaMontos.Where(u => u.Monto > 0).Take(_countT1sin0).Select(y => y.Monto).ToArray();
@@ -1402,8 +1767,8 @@ namespace Umbrella.Controllers
             //double helpavance1 = double.Parse(_stepavance1.ToString());
             //helpavance1 = Math.Round(helpavance1 / 1000d, 0) * 1000;
             //decimal _stepavance1 = mediananueva * _variableCobranza;
-            decimal avance1 = decimal.Parse(cobranzapromdedio.ToString()) * plazo;
-            avance1 = decimal.Parse((Math.Round(double.Parse(avance1.ToString()) / 10000d, 0) * 10000).ToString());
+            decimal avance1 = decimal.Parse(cobranzapromdedio.ToString()) * decimal.Parse(plazo.ToString());
+            avance1 = decimal.Parse((Math.Round(double.Parse(avance1.ToString()) / 100d, 0) * 100).ToString());
             avance1 = avance1 / _prima;
             //avance1 = decimal.Parse((Math.Round(double.Parse(avance1.ToString()) / 10000d, 0) * 10000).ToString());
             decimal reembolso1 = avance1 * _prima1;
@@ -1412,14 +1777,14 @@ namespace Umbrella.Controllers
             //decimal mcd = Math.Round((cobranzapromdedio * plazo), 2);
             decimal mcd = Math.Round(((_promedio + (_variableN * desvAJU)) * _variableCobranza), 2);
             //decimal mcd = Math.Round((cobranzapromedio * plazo), 2);
-            mcd = decimal.Parse((Math.Round(double.Parse(mcd.ToString()) / 1000d, 0) * 1000).ToString());
+            mcd = decimal.Parse((Math.Round(double.Parse(mcd.ToString()) / 100d, 0) * 100).ToString());
             //mcd = decimal.Parse((Math.Round(double.Parse(mcd.ToString()) / 1000d, 0) * 1000).ToString());
             //mcd = decimal.Parse((Math.Round(double.Parse(mcd.ToString()) / 1000d, 0) * 1000).ToString());
             mcd = RetornaRedondeadoUP(mcd);
 
-
+  
             //CALCULO AVANCE EFECTIVO 2
-            decimal avance2 = decimal.Parse("1,50") * avance1;
+            decimal avance2 = Avance2factor * avance1;
             avance2 = Math.Round(avance2, 2);
             //avance2 = decimal.Parse((Math.Round(double.Parse(avance2.ToString()) / 10000d, 0) * 10000).ToString());
             //decimal porcentajecobranza2 = (_prima * avance2) / (mediananueva * plazo);
@@ -1427,22 +1792,21 @@ namespace Umbrella.Controllers
             //porcentajecobranza2 = Math.Floor(porcentajecobranza2);
             //porcentajecobranza2 = porcentajecobranza2 / 100;
             decimal reembolso2 = avance2 * _prima2;
-            decimal porcentajecobranza2 = decimal.Parse("0,22");
+
             decimal mcd2 = Math.Round(((_promedio + (_variableN * desvAJU)) * porcentajecobranza2), 2);
             //decimal mcd2 = Math.Round((avance2/55), 2);
             //mcd2 = decimal.Parse((Math.Round(double.Parse(mcd2.ToString()) / 1000d, 0) * 1000).ToString());
             mcd2 = RetornaRedondeadoUP(mcd2);
 
-
             //CALCULO AVANCE EFECTIVO 3
-            decimal avance3 = decimal.Parse("2,00") * avance1;
+            decimal avance3 = Avance3factor * avance1;
             //avance3 = decimal.Parse((Math.Round(double.Parse(avance3.ToString()) / 10000d, 0) * 10000).ToString());
             avance3 = Math.Round(avance3, 2);
             //double _avance3 = double.Parse(avance3.ToString());
             //_avance3 = Math.Round(_avance3 / 1000d, 2) * 1000;
             //avance3 = decimal.Parse(_avance3.ToString());
             //decimal porcentajecobranza3 = (_prima * avance3) / (mediananueva * plazo);
-            decimal porcentajecobranza3 = decimal.Parse("0,30");
+        
             //porcentajecobranza3 = Math.Floor(porcentajecobranza3);
             porcentajecobranza3 = porcentajecobranza3 * 100;
             porcentajecobranza3 = Math.Floor(porcentajecobranza3);

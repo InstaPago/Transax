@@ -1,0 +1,272 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Settings App";
+    List<InstaTransfer.DataAccess.AE_Variable> ListaVariables = (List<InstaTransfer.DataAccess.AE_Variable>)ViewBag.ListaVariables;
+}
+@{Html.RenderPartial("~/Views/Shared/_PageTitle.cshtml", new Umbrella.Models.PageTitle { title = ViewBag.Title }); }
+<style>
+    input {
+        font-size: 20px;
+        padding: 0;
+        border: 2px solid #ccc;
+        border-left: 0;
+        width: 100%;
+        color: #666;
+        border-radius: 0 7px 7px 0;
+        /*font-family: 'PT Sans', sans-serif;
+        font-weight: bold;*/
+    }
+
+    form input:focus {
+        outline: 0;
+    }
+
+    form input.error {
+        border-color: #ff0000;
+    }
+
+    form label.error {
+        background-color: #ff0000;
+        color: #fff;
+        padding: 10px;
+        font-size: 11px;
+    }
+
+    label {
+        color: #999;
+        display: block;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        font-size: 15px;
+        font-weight: bold;
+        letter-spacing: 0.05em;
+    }
+
+    .flex {
+        display: flex;
+        justify-content: flex-start;
+    }
+
+        .flex input {
+            max-width: 300px;
+            flex: 1 1 300px;
+        }
+
+        .flex .currency {
+            font-size: 20px;
+            padding: 0 10px 0 20px;
+            color: #999;
+            border: 2px solid #ccc;
+            border-right: 0;
+            line-height: 1.7;
+            border-radius: 7px 0 0 7px;
+            background: white;
+        }
+</style>
+<div class="row">
+    <div class="col-sm-12">
+
+
+        <ul class="nav nav-tabs tabs">
+            <li class=" active tab">
+                <a href="#cierre" idtable="cierre-mes" data-toggle="tab" aria-expanded="true" data-action="">
+                    <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
+                    <span class="hidden-xs">Variables Algoritmo Prestamo</span>
+                </a>
+            </li>
+            <li class=" tab">
+                <a href="#balance" idtable="avance-abono2" data-toggle="tab" aria-expanded="false" data-action="">
+                    <span class="visible-xs"><i class="fa fa-database"></i></span>
+                    <span class="hidden-xs">Variables Bancarias</span>
+                </a>
+            </li>
+            <li class="tab">
+                <a href="#tasa" idtable="avance-abono" data-toggle="tab" aria-expanded="false" data-action="">
+                    <span class="visible-xs"><i class="fa fa-shopping-basket"></i></span>
+                    <span class="hidden-xs">Balancear Fondo</span>
+                </a>
+            </li>
+
+
+        </ul>
+        <div class="tab-pane active fade in" id="cierre">
+            <div class="card-box table-responsive">
+
+                <h4 class="header-title"><b>VARIABLES ALGORITMO</b></h4>
+                <small>Variables asociadas al algoritmo que genera las propuesta de presatamo al comercio.</small>
+                <div class="clearfix"></div>
+                <div class="col-lg-12" style="margin-top:1%;">
+
+                    @foreach (var item in ListaVariables.Where(u => u.Id != 15 && u.Id != 16))
+                    {
+                        <form role="form" id="variablesform">
+                            <div class="col-lg-6" style="margin-top:1%;">
+                                <input type="hidden" value="@item.Id" name="id" />
+                                <span>@item.Descripcion</span>
+                                <br />
+                                <small>@item.InfoExtra</small>
+                                <input type="text" class="form-control" name="valor" value="@item.Monto" />
+                            </div>
+                        </form>
+                    }
+                    <div class="clearfix"></div>
+                    <div class="col-lg-12 text-center" style="margin-top:1%;">
+                        <input type="button" style="width:200px;" class="btn-primary btn" value="Actualizar" id="actualizarvariables" />
+
+                    </div>
+
+                </div>
+
+
+
+            </div>
+        </div>
+        <div class="tab-pane" id="balance">
+            <div class="card-box table-responsive">
+
+                <h4 class="header-title"><b>VARIABLES BANCARIAS</b></h4>
+                <small>Las caracteristicas de las descripciones que se tomaran en cuenta como validos al momento de evaluar el estado de cuenta del comercio</small>
+                <div class="clearfix"></div>
+                <div class="col-lg-12" style="margin-top:1%;">
+
+                    @foreach (var item in ListaVariables.Where(u => u.Id == 15 || u.Id == 16))
+                    {
+                        <form role="form" id="variablesbancoform">
+                            <div class="col-lg-6" style="margin-top:1%;">
+                                <input type="hidden" value="@item.Id" name="id" />
+                                <label>@item.Descripcion</label>
+                                <input type="text" class="form-control" name="descripcion" value="@item.InfoExtra" />
+                            </div>
+                        </form>
+                    }
+                    <div class="clearfix"></div>
+                    <div class="col-lg-12 text-center" style="margin-top:1%;">
+                        <input type="button" style="width:200px;" class="btn-primary btn" id="actualizarvariablesbanco" value="Actualizar" />
+
+                    </div>
+
+                </div>
+
+
+
+
+
+            </div>
+        </div>
+        <div class="tab-pane" id="tasa">
+            <div class="card-box table-responsive">
+                <h4 class="header-title"><b>BALANCEAR FONDO </b></h4>
+                <small>Antes de realizar el balanceo mensual toma en cuenta las siguiente consideraciones:</small><br />
+                
+                <small>1.- Valida que la configuración de los accionista es la correcta.</small><br />
+                <small>2.- Luego de ejecutar la acción verificar el balance y confirmar que esten los nuevos registros.</small><br />
+                <small>3.- Esta acción solo se debe ejecutar el primer día de cada mes. ejemplo: para el cierre de junio se debe ejecutar el 01 de julio.</small><br />
+                <small>4.- Si el día de balanceo es un día operativo normal, la sugerencia es que primero realices esta acción y luego continuas con la operativa diaria.</small><br />
+
+
+                <div class="clearfix"></div>
+                @*<div class="col-lg-12" style="margin-top:1%;">
+            <div class="clearfix"></div>
+            <div class="col-lg-12 text-center" style="margin-top:1%;">
+                <input type="button" style="width:200px;" id="balancearfondo" class="btn-info btn" value="Ejecutar!" />
+            </div>
+        </div>*@
+
+                <form id="balancearform" role="form">
+                    <div class="col-xs-12 text-center" style="display:block; margin-top:1%;">
+
+                        <div class="form-group flex" style="margin-left:44%;">
+                            <span class="currency">?</span>
+                            <input type="password" name="pass" style="max-width:120px !important;" class="col-lg-1">
+                        </div>
+                        <div class="clearfix"></div>
+                        <button id="balancearfondo" class="btn btn-primary waves-effect waves-light w-md" type="button">
+                            Aplicar
+                            <i class="md md-check"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var clicando = false;
+        $(document).ready(function () {
+            $("#actualizarvariables").on("click", function () {
+
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("GuardarVariables", "Home")",
+                    data: $("#variablesform").serialize(),
+                }).done(function (r) {
+
+                    if (r.success) {
+
+                        toastr.success("Valores guardados con exito!", 'Éxito!');
+                        window.setTimeout(location.reload(), 2000);
+                    } else {
+                        // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                        toastr.error(r.message, 'Error!');
+                    }
+                });
+                Pace.stop();
+
+            });
+
+            $("#actualizarvariablesbanco").on("click", function () {
+
+                Pace.start();
+                $.ajax({
+                    method: "POST",
+                    url: "@Url.Action("GuardarVariablesBanco", "Home")",
+                    data: $("#variablesbancoform").serialize(),
+                })
+                    .done(function (r) {
+
+                        if (r.success) {
+
+                            toastr.success("Valores guardados con exito!", 'Éxito!');
+                            window.setTimeout(location.reload(), 2000);
+                        } else {
+                            // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                            toastr.error(r.message, 'Error!');
+                        }
+                    });
+                Pace.stop();
+
+            });
+
+            $("#balancearfondo").on("click", function () {
+                $("#balancearfondo").fadeOut();
+                if (clicando) {
+                    alert("realizado un click.");
+                } else {
+                    Pace.start();
+                    $.ajax({
+                        method: "POST",
+                        url: "@Url.Action("BalancearFondo", "Home")",
+                        data: $("#balancearform").serialize(),
+                    }).done(function (r) {
+
+                        if (r.success) {
+
+                            toastr.success("Acción realizada con exito!", 'Éxito!');
+                            window.setTimeout(location.reload(), 4000);
+                        } else {
+                            // $.Notification.notify('error', 'top right', 'Error!', r.message)
+                            toastr.error(r.message, 'Error!');
+                        }
+                    });
+                    Pace.stop();
+                    clicando = true;
+                }
+            });
+        });
+    </script>
+
+}

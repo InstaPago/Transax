@@ -12257,6 +12257,8 @@ namespace InstaTransfer.DataAccess
 		
 		private System.DateTime _Date;
 		
+		private string _InfoExtra;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -12271,6 +12273,8 @@ namespace InstaTransfer.DataAccess
     partial void OnTasaChanged();
     partial void OnDateChanging(System.DateTime value);
     partial void OnDateChanged();
+    partial void OnInfoExtraChanging(string value);
+    partial void OnInfoExtraChanged();
     #endregion
 		
 		public AE_Variable()
@@ -12374,6 +12378,26 @@ namespace InstaTransfer.DataAccess
 					this._Date = value;
 					this.SendPropertyChanged("Date");
 					this.OnDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_InfoExtra", DbType="NVarChar(250) NOT NULL", CanBeNull=false)]
+		public string InfoExtra
+		{
+			get
+			{
+				return this._InfoExtra;
+			}
+			set
+			{
+				if ((this._InfoExtra != value))
+				{
+					this.OnInfoExtraChanging(value);
+					this.SendPropertyChanging();
+					this._InfoExtra = value;
+					this.SendPropertyChanged("InfoExtra");
+					this.OnInfoExtraChanged();
 				}
 			}
 		}

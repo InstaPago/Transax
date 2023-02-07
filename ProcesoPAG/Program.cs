@@ -34,21 +34,27 @@ namespace ProcesoPAG
 
             Program p = new Program();
             StringBuilder Logs = new StringBuilder();
-            //p.Test();
-            Logs.Append("Iniciamos busqueda en carpeta de cobros\r\n");
-            p.COB_LecturaArchivoSalidaBanesco();
-
-            Console.WriteLine("Procesamos cobros para generar pag \r\n");
-            p.PAG_UploadAndMove();
-            Console.WriteLine("Fin procesamiento \r\n");
+            try
+            {
 
 
-            //p.enviarCorreo(Logs);
+                Logs.Append("Iniciamos busqueda en carpeta de cobros\r\n");
+                p.COB_LecturaArchivoSalidaBanesco();
 
-            string RUTALOGS = ConfigurationManager.AppSettings["rutaLogs"].ToString() + "LOGS" + DateTime.Now.ToString("dd-MM-yy-ss-mm") + ".txt";
-            System.IO.File.WriteAllText(RUTALOGS, Logs.ToString());
+                Console.WriteLine("Procesamos cobros para generar pag \r\n");
+                p.PAG_UploadAndMove();
+                Console.WriteLine("Fin procesamiento \r\n");
 
-            Console.ReadLine();
+                string RUTALOGS = ConfigurationManager.AppSettings["rutaLogs"].ToString() + "LOGS" + DateTime.Now.ToString("dd-MM-yy-ss-mm") + ".txt";
+                File.WriteAllText(RUTALOGS, Logs.ToString());
+            }
+            catch (Exception e)
+            {
+                p.enviarCorreoFallo(e);
+
+            }
+
+
         }
 
         public string PAG_UploadAndMove()
@@ -73,10 +79,13 @@ namespace ProcesoPAG
             FileInfo[] Files = d.GetFiles(); //Getting Text files
             Console.WriteLine("procesando:" + Files.Count() + " archivos \r\n");
             texto = texto + "se encontraron:" + Files.Count() + "archivos \r\n";
+            StringBuilder __filenames = new StringBuilder();
+            StringBuilder sftpfiles = new StringBuilder();
             foreach (FileInfo file in Files)
             {
                 if (file.Name.Contains("PAG"))
                 {
+                    __filenames.Append(file.FullName + "<br />");
                     Console.WriteLine("procesando:" + file.Name + " \r\n");
                     string uploadFile = file.FullName.ToString();
                     using (var client = new SftpClient(host, port, username, password))
@@ -98,6 +107,7 @@ namespace ProcesoPAG
                                         texto = texto + "subiendo archivo :" + file.Name + "\r\n";
                                         client.UploadFile(fileStream, Path.GetFileName(uploadFile));
                                     }
+                                    sftpfiles.Append(client.WorkingDirectory + "/" + file.Name + "<br />");
                                 }
                                 Console.WriteLine("moviendo \r\n");
                                 texto = texto + "moviendo :" + file.Name + "\r\n";
@@ -112,7 +122,7 @@ namespace ProcesoPAG
                             {
 
                                 texto = texto + e.Message + "\r\n";
-
+                                enviarCorreoFallo(e);
                             }
 
                         }
@@ -126,6 +136,14 @@ namespace ProcesoPAG
 
             }
 
+
+            if (Files.Count() > 0)
+            {
+                __filenames.Append("<br/><p>Archivos enviados via SFTP:</p>");
+                __filenames.Append(sftpfiles.ToString());
+                enviarCorreo(__filenames.ToString());
+            }
+               
             return texto;
         }
 
@@ -244,7 +262,7 @@ namespace ProcesoPAG
                                 if (__item.CODRES_DET.Replace("\"", "").Trim() == "074")
                                 {
                                     Console.WriteLine("verifico");
-                                    Linea1.EstatusPago = __item.CODRES_DET.Replace("\"", "").Replace("0","").Trim();
+                                    Linea1.EstatusPago = __item.CODRES_DET.Replace("\"", "").Replace("0", "").Trim();
                                     if (Linea1.EstatusPago == "74")
                                     {
                                         Linea1.EstatusPago = "PAGADO";
@@ -254,7 +272,7 @@ namespace ProcesoPAG
                                 }
                                 else
                                 {
-                                    Linea1.EstatusPago = "RECHAZADO - " + __item.CODRES_DET.Replace("\"", "").Replace("0","").Trim() + " : " + __item.DESCRIPCION_DET.Replace("\"", "").Trim();
+                                    Linea1.EstatusPago = "RECHAZADO - " + __item.CODRES_DET.Replace("\"", "").Replace("0", "").Trim() + " : " + __item.DESCRIPCION_DET.Replace("\"", "").Trim();
                                 }
                                 Linea1.CuentaCliente = cp_ini.CuentaBancaria;
                                 itempag.Linea1 = Linea1;
@@ -362,6 +380,7 @@ namespace ProcesoPAG
                     ////texto = texto + "borrando :" + ele.Name + "\r\n";
                     //Console.WriteLine("borrando \r\n");
                     //file.Delete();
+                    enviarCorreoFallo(e);
 
                 }
             }
@@ -509,8 +528,12 @@ namespace ProcesoPAG
             string RUTAOUTCOB2 = ConfigurationManager.AppSettings["rutaLecturaSalidaBanescoR"].ToString();
             DirectoryInfo d2 = new DirectoryInfo(RUTAOUTCOB2);
             FileInfo[] Files2 = d2.GetFiles();
+
+
             foreach (var ele in Files2)
             {
+
+    
                 string final = RUTABACKCOBROS + ele.Name + DateTime.Now.ToString("dd-MM-yy-mm-ss");
                 string[] lines = System.IO.File.ReadAllLines(ele.FullName);
                 System.IO.File.WriteAllLines(final, lines);
@@ -519,6 +542,7 @@ namespace ProcesoPAG
                 ele.Delete();
             }
 
+          
 
             return true;
         }
@@ -920,36 +944,79 @@ namespace ProcesoPAG
         }
 
 
-        public bool enviarCorreo(StringBuilder message)
+        public bool enviarCorreo(string message)
         {
             Console.WriteLine("aqui viene el correo");
 
-            var mailmessage = new MailMessage(new MailAddress("notificacion@instapago.com", "Thanos Merchant"),
-                new MailAddress("notificacion@instapago.com", "Alerta Thanos Merchant"));
-            mailmessage.BodyEncoding = System.Text.Encoding.Default;
-            mailmessage.Subject = "SIN RESPUESTA THANOS";
-            mailmessage.Body = "PRUEBA";
-
-            mailmessage.IsBodyHtml = true;
-
-            SmtpClient smtpMail = new SmtpClient(System.Configuration.ConfigurationManager.AppSettings["SMTP_ADDRESS"],
-                int.Parse(System.Configuration.ConfigurationManager.AppSettings["SMTP_PORT"]));
-            smtpMail.EnableSsl = false;
-            if (System.Configuration.ConfigurationManager.AppSettings["SMTP_SSL"] == "1")
+            try
             {
-                smtpMail.Credentials = new NetworkCredential(System.Configuration.ConfigurationManager.AppSettings["SMTP_USERNAME"],
-                    System.Configuration.ConfigurationManager.AppSettings["SMTP_PASSWORD"]);
-                smtpMail.EnableSsl = true;
+                var mailmessage = new MailMessage(new MailAddress("notificacion@instapago.com", "Robot InstaPago"),
+             new MailAddress("soporte@instapago.com", "soporte@instapago.com"));
+                mailmessage.BodyEncoding = System.Text.Encoding.Default;
+                mailmessage.Subject = "[CEC POLAR] - Proceso de respuesta PAG " + DateTime.Now.ToString("dd/MM/yyyy");
+                mailmessage.Body = "<p>Buenos dias.</p> <p>Sirva la presente para hacer de su conocimiento que se ha ejecutado satisfactoriamente el proceso de escritura de archivos PAG del grupo de empresas POLAR.</p> <p>Archivos de respuesta generados</p>" + message;
+                mailmessage.IsBodyHtml = true;
+                mailmessage.To.Add(ConfigurationManager.AppSettings["SMTP_TO"]);
+
+
+                SmtpClient smtpMail = new SmtpClient(System.Configuration.ConfigurationManager.AppSettings["SMTP_ADDRESS"],
+                    int.Parse(System.Configuration.ConfigurationManager.AppSettings["SMTP_PORT"]));
+                smtpMail.EnableSsl = false;
+                smtpMail.Timeout = 5000;
+
+                smtpMail.Send(mailmessage);
+
+
+                return true;
+
+
             }
-            smtpMail.Timeout = 5000;
+            catch (Exception ex)
+            {
 
-            smtpMail.Send(mailmessage);
+                Console.WriteLine(ex.Message);
+                return false;
+            }
 
 
 
-
-            return true;
         }
+
+        public bool enviarCorreoFallo(Exception ex)
+        {
+            Console.WriteLine("aqui viene el correo de falla");
+
+            try
+            {
+                var mailmessage = new MailMessage(new MailAddress("notificacion@instapago.com", "Robot InstaPago"),
+               new MailAddress("soporte@instapago.com", "soporte@instapago.com"));
+                mailmessage.BodyEncoding = System.Text.Encoding.Default;
+                mailmessage.Subject = "[CEC POLAR] - FALLA PAG " + DateTime.Now.ToString("dd/MM/yyyy");
+                mailmessage.Body = "<p>Error al procesar el servicio de PAG:</p>" + ex.Message + "<br/><br/>" + ex.StackTrace;
+                mailmessage.IsBodyHtml = true;
+                mailmessage.Priority = MailPriority.High;
+
+                SmtpClient smtpMail = new SmtpClient(System.Configuration.ConfigurationManager.AppSettings["SMTP_ADDRESS"], int.Parse(System.Configuration.ConfigurationManager.AppSettings["SMTP_PORT"]));
+                smtpMail.EnableSsl = false;
+                smtpMail.Timeout = 5000;
+
+                smtpMail.Send(mailmessage);
+
+
+                return true;
+
+            }
+            catch (Exception a)
+            {
+
+                Console.WriteLine(a.Message);
+                return false;
+            }
+
+
+
+        }
+
 
 
         [DelimitedRecord(",")]
@@ -964,7 +1031,7 @@ namespace ProcesoPAG
 
             public string REF { get; set; }
 
-       
+
 
 
             public string CODRES { get; set; }
@@ -978,7 +1045,7 @@ namespace ProcesoPAG
             public string DESCRIPCION_DET { get; set; }
 
 
-       
+
 
         }
 

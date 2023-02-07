@@ -143,8 +143,10 @@ namespace ProcesoFINPAGO
                 var port = 5522;
                 var username = "instapag";
                 var password = "540144017";
-                var remoteDirectory = "/OUT";
-                var backupDirectory = "/OUTbackup/";
+                //var remoteDirectory = "/OUT";
+                var remoteDirectory = "/filezip_Resp";
+                //var backupDirectory = "/OUTbackup/";
+                var backupDirectory = "/filezip_bkp/";
                 string RUTALECTURAOUT = ConfigurationManager.AppSettings["rutaDescargaOUTPOLAR"].ToString();
                 //string remoteDirectory = "/RemotePath/";
                 string localDirectory = RUTALECTURAOUT;
@@ -152,74 +154,82 @@ namespace ProcesoFINPAGO
                 {
                     sftp.Connect();
                     texto = "conecto con el sftp \r\n ";
+                    Console.WriteLine("conetando");
                     if (sftp.IsConnected)
                     {
                         //Debug.WriteLine("I'm connected to the client");
                         if (sftp.Exists(sftp.WorkingDirectory + remoteDirectory))
                         {
+                            Console.WriteLine("directorio existe");
                             texto = texto + "directorio existe" + sftp.WorkingDirectory + remoteDirectory + " \r\n ";
+                            //Console.WriteLine(texto);
                             //sftp.ChangeDirectory(sftp.WorkingDirectory + remoteDirectory);
                             //texto = texto + "cambie directorio" + sftp.WorkingDirectory + remoteDirectory + "| ";
                             texto = texto + "busco archivos cobro en" + sftp.WorkingDirectory + remoteDirectory + " \r\n ";
+                         
                             var files = sftp.ListDirectory(sftp.WorkingDirectory + remoteDirectory);
                             //texto = texto + "busque archivos " + sftp.WorkingDirectory + remoteDirectory + "  -> " + files.Count().ToString() + " | ";
                             foreach (var file in files)
                             {
-
-                                if ((!file.Name.StartsWith(".")) 
-                                && (file.Name.Contains("205903844_O0002") 
-                                || file.Name.Contains("205903844_O0004")
-                                || file.Name.Contains("540132787_O0002")
-                                || file.Name.Contains("540132787_O0004")
-                                || file.Name.Contains("540130908_O0002")
-                                || file.Name.Contains("540130908_O0004")
-                                || file.Name.Contains("540133497_O0002")
-                                || file.Name.Contains("540133497_O0004")))
+                                Console.WriteLine(file.Name);
+                                if (file.Name.Contains("BANSTA_IP")  || file.Name.Contains(".CSV"))
                                 {
 
-                                    if (file.Name.Contains("_O0004"))
+                                    //if (file.Name.Contains("_O0004"))
+                                    //{
+                                    //    string remoteFileName = file.Name;
+                                    //    try
+                                    //    {
+                                    //        //using (Stream file1 = System.IO.File.OpenWrite(localDirectory + remoteFileName))
+                                    //        //{
+                                    //        //sftp.DownloadFile(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName, file1);
+                                    //        //texto = texto + "lo descargue \r\n";
+                                    //        var inFile = sftp.Get(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName);
+                                    //        //texto = texto + "lo movi \r\n" + sftp.WorkingDirectory + backupDirectory + " | ";
+                                    //        inFile.MoveTo(sftp.WorkingDirectory + backupDirectory + remoteFileName);
+                                    //        //}
+                                    //    }
+                                    //    catch (Exception e)
+                                    //    {
+                                    //        texto = texto + "intento descargar y fallo : " + e.Message + " \r\n ";
+                                    //    }
+
+                                    //}
+                                    //else
+                                    //{
+                                    texto = texto + "encontre: " + file.Name + "\r\n";
+                                    string remoteFileName = file.Name;
+                                    Console.WriteLine("econtre:"+ file.Name);
+                                    //texto = texto + "encontre y recorro " + localDirectory + remoteFileName + " | ";
+                                    try
                                     {
-                                        string remoteFileName = file.Name;
-                                        try
+                                        using (Stream file1 = System.IO.File.OpenWrite(localDirectory + DateTime.Now.ToString("yyyyMMdd") + remoteFileName ))
                                         {
-                                            //using (Stream file1 = System.IO.File.OpenWrite(localDirectory + remoteFileName))
-                                            //{
-                                            //sftp.DownloadFile(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName, file1);
-                                            //texto = texto + "lo descargue \r\n";
+                                            Console.WriteLine(sftp.WorkingDirectory);
+                                            Console.WriteLine(remoteDirectory + "/" + DateTime.Now.ToString("yyyyMMdd") + remoteFileName);
+                                            Console.WriteLine(sftp.WorkingDirectory + remoteDirectory + "/" + DateTime.Now.ToString("yyyyMMdd") + remoteFileName);
+                                            Console.WriteLine(file1);
+                                            sftp.DownloadFile(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName, file1);
+                                            texto = texto + "lo descargue \r\n";
+                                            Console.WriteLine("Descargando");
+
                                             var inFile = sftp.Get(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName);
-                                            //texto = texto + "lo movi \r\n" + sftp.WorkingDirectory + backupDirectory + " | ";
-                                            inFile.MoveTo(sftp.WorkingDirectory + backupDirectory + remoteFileName);
-                                            //}
+                                            texto = texto + "lo movi \r\n" + sftp.WorkingDirectory + backupDirectory + " | ";
+                                            //Console.WriteLine("Moviendo - " + sftp.WorkingDirectory + remoteDirectory + "/Backup/BANSTA_IP_" + DateTime.Now.ToString("yyyyMMdd") + ".CSV");
+                                            //inFile.MoveTo(sftp.WorkingDirectory + remoteDirectory + "/Backup/BANSTA_IP_" + DateTime.Now.ToString("yyyyMMdd") + ".CSV");
+                                            
+                                            inFile.Delete();
                                         }
-                                        catch (Exception e)
-                                        {
-                                            texto = texto + "intento descargar y fallo : " + e.Message + " \r\n ";
-                                        }
-
                                     }
-                                    else
+                                    catch (Exception e)
                                     {
-                                        texto = texto + "encontre: " + file.Name + "\r\n";
-                                        string remoteFileName = file.Name;
-                                        //texto = texto + "encontre y recorro " + localDirectory + remoteFileName + " | ";
-                                        try
-                                        {
-                                            using (Stream file1 = System.IO.File.OpenWrite(localDirectory + remoteFileName))
-                                            {
-                                                sftp.DownloadFile(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName, file1);
-                                                texto = texto + "lo descargue \r\n";
-                                                var inFile = sftp.Get(sftp.WorkingDirectory + remoteDirectory + "/" + remoteFileName);
-                                                texto = texto + "lo movi \r\n" + sftp.WorkingDirectory + backupDirectory + " | ";
-                                                inFile.MoveTo(sftp.WorkingDirectory + backupDirectory + remoteFileName);
-                                            }
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            texto = texto + "intento descargar y fallo : " + e.Message + " \r\n ";
-                                        }
+                                        Console.WriteLine(e.Message);
+                                        Console.WriteLine(e.StackTrace);
+                                        texto = texto + "intento descargar y fallo : " + e.Message + " \r\n ";
                                     }
+                                    //}
 
-
+                                    
 
                                 }
                             }
@@ -234,10 +244,11 @@ namespace ProcesoFINPAGO
             catch (Exception e)
             {
                 texto = texto + e.Message + "  " + e.StackTrace;
-                Console.WriteLine(texto);
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
                 return texto;
             }
-            Console.WriteLine(texto);
+            //Console.WriteLine(texto);
             return texto;
 
 
@@ -455,11 +466,11 @@ namespace ProcesoFINPAGO
                         //}
                         //i++;
                     }
-            
+
                     getCP.FechaLectura = DateTime.Now;
                     getCP.ContenidoRespuesta = lineas;
                     getCP.EsRespuesta = true;
-                 
+
                     ArchivoREPO.SaveChanges();
 
 
@@ -502,18 +513,20 @@ namespace ProcesoFINPAGO
 
             Program p = new Program();
             StringBuilder Logs = new StringBuilder();
+   
+            Logs.Append("Iniciamos busqueda en Sftp\r\n");
+
             p.COBRO_DownloadAndMovePOLAR();
-            Logs.Append("Iniciamos busqueda en ftp\r\n");
-            string result = p.COBRO_UploadAndMove(); // Calling method
-            Logs.Append(result);
-            Console.WriteLine("Subimos Archivoss \r\n");
-            Console.WriteLine("Buscamos si hay descargas descargas \r\n");
-            string result2 = p.COBRO_DownloadAndMove(); // Calling method
-            Logs.Append(result2);
+            //string result = p.COBRO_UploadAndMove(); // Calling method
+            //Logs.Append(result);
+            //Console.WriteLine("Subimos Archivoss \r\n");
+            //Console.WriteLine("Buscamos si hay descargas descargas \r\n");
+            //string result2 = p.COBRO_DownloadAndMove(); // Calling method
+            //Logs.Append(result2);
             Console.WriteLine("Fin descarga \r\n");
 
-            Console.WriteLine("Procesamos archivos locales \r\n");
-            string result3 = p.PROCESARCOBRO();
+            //Console.WriteLine("Procesamos archivos locales \r\n");
+            //string result3 = p.PROCESARCOBRO();
 
 
 
